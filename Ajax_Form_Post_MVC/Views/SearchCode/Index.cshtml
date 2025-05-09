@@ -1,0 +1,8 @@
+@model MVC_QuanLyTHP.Models.SearchCode
+@using DatabaseTHP;
+@using PagedList.Mvc;
+@using DatabaseTHP.Class;
+@using MVC_QuanLyTHP.Class;
+@using MVC_QuanLyTHP.Models;
+
+@{Html.RenderAction("Index", Model.MAFROM, new { type = 1, id = "" });}

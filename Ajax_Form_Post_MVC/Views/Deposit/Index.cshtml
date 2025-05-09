@@ -1,0 +1,494 @@
+﻿@model MVC_QuanLyTHP.Models.v_v_ct_PhieuDatHang
+@using PagedList.Mvc;
+@using DatabaseTHP.Class;
+@using MVC_QuanLyTHP.Class;
+@using DatabaseTHP;
+@{
+    ViewBag.Title = API.ViewBagTitle;
+    Layout = "~/Views/Shared/Admin.cshtml";
+}
+<style>
+    #map {
+        height: 10px;
+        height: 10px;
+    }
+
+    .productDeposit-list {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 5px;
+        padding: 0px;
+    }
+
+    .productDeposit {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .productDeposit-button {
+        width: 150px;
+        height: 200px; /* Adjusted height to accommodate image and text */
+        font-size: 1.5ex;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 5px;
+    }
+
+        .productDeposit-button img {
+            width: 100px; /* Fixed width */
+            height: 100px; /* Fixed height */
+            object-fit: cover; /* Ensures the image covers the area without distortion */
+            border-bottom: 1px solid #ccc;
+            margin-bottom: 5px;
+        }
+
+        .productDeposit-button:hover {
+            background-color: #f0f0f0;
+        }
+
+    .productDeposit-details {
+        text-align: center;
+        color: black;
+    }
+
+    .productDeposit-info {
+        font-size: 10px;
+        margin-top: 0px;
+    }
+
+    .activeDeposit {
+        background-color: #d1e7dd; /* Change to your desired color */
+    }
+
+    .popupDeposit {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 80%;
+        height: 80%;
+        max-width: 800px;
+        max-height: 500px;
+        background-color: white;
+        border: 1px solid #ccc;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+        padding: 20px;
+    }
+
+        .popupDeposit img {
+            width: 100%;
+            height: 100%;
+        }
+
+    .popupDeposit-close {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        cursor: pointer;
+        font-size: 20px;
+    }
+
+    .galleryDeposit {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: center;
+        padding: 20px;
+    }
+
+    .galleryDeposit-item {
+        flex: 1 1 calc(33.333% - 20px);
+        box-sizing: border-box;
+    }
+
+        .galleryDeposit-item img {
+            width: 50%;
+            height: auto;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+    .gallery-item img:hover {
+        transform: scale(1.05);
+    }
+
+    .modalimgDeposit {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+    }
+
+    .modalimgDeposit-content {
+        margin: auto;
+        display: block;
+        width: 80%;
+        max-width: 700px;
+    }
+
+    .closeDeposit {
+        position: absolute;
+        top: 20px;
+        right: 30px;
+        color: #ffcc00;
+        font-size: 40px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .prevDeposit, .nextDeposit {
+        cursor: pointer;
+        position: absolute;
+        top: 50%;
+        width: auto;
+        padding: 16px;
+        margin-top: -50px;
+        color: white;
+        font-weight: bold;
+        font-size: 20px;
+        transition: 0.6s ease;
+        border-radius: 0 3px 3px 0;
+        user-select: none;
+        background-color: rgba(0, 0, 0, 0.8);
+    }
+
+    .nextDeposit {
+        right: 0;
+        border-radius: 3px 0 0 3px;
+        background-color: rgba(0, 0, 0, 0.8);
+    }
+
+        .prevDeposit:hover, .nextDeposit:hover {
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+</style>
+@Html.Partial("LoadCssDanhMuc")
+<script src="@Url.Content("~/Scripts/Deposit_Temp.js")"></script>
+<div class="panel-group" id="accordion">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h1 class="panel-title" style="text-align:center">
+                <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+                    @Utility.GetTitleFrom(API.ct_PhieuDatHang)
+                </a>
+            </h1>
+        </div>
+
+
+        <div id="collapseOne" class="panel-collapse collapse in">
+            <div class="form-group">
+                <div class="col-sm-3" style="padding-bottom: 5px;">
+                    <button id="download-excel" style="background-color: #217346;" class="btn btn-success" onclick="ExportExcel('example-table')"><i class="fa fa-file-text-o" style="margin-right:10px"></i>@Utility.XuatExcel</button>
+                    @if (ViewBag.PermissionCreate)
+                    {
+                        if (Utility.IntWidth == 1)
+                        {
+                            <button class="btn btn-success" onclick="myFunctionCreate('@{@API.ct_PhieuDatHang;}')"><i class="fa fa-pencil-square-o" style="margin-right:20px"></i>@Utility.Them</button>
+                        }
+                        else
+                        {
+                            <a class="btn btn-success" href="@Url.Action("Create", @API.ct_PhieuDatHang)"><i class="fa fa-pencil-square-o" style="margin-right:20px"></i>@Utility.Them</a>
+                        }
+                    }
+                </div>
+
+                <div class="col-sm-2" style="padding-bottom: 5px;">
+                    <select class="form-control chosen-select" onchange="show('@API.ct_PhieuDatHang')" id="Show" name="Show">
+                        @for (int show = 0; show < Utility.arrShow.Length; show++)
+                        {
+                            if (Utility.GetPageSize() == @Utility.arrShow[show])
+                            {
+                                <option value="@Utility.arrShow[show]" selected>@Utility.arrShow[show]</option>
+                            }
+                            else
+                            {
+                                <option value="@Utility.arrShow[show]">@Utility.arrShow[show]</option>
+                            }
+                        }
+                    </select>
+                </div>
+
+                <div class="col-sm-2">
+                    <select class="form-control chosen-select" id="id_depot" name="id_depot">
+                        @foreach (var itm in Model.lstdm_Kho)
+                        {
+                            if (ViewBag.ID_KHO_DF == itm.ID)
+                            {
+                                <option value="@itm.ID" selected>@itm.NAME</option>
+                            }
+                            else
+                            {
+                                <option value="@itm.ID">@itm.NAME</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="col-sm-2">
+                    @Html.DropDownListFor(model => model.ID_KHUVUC, new SelectList(Model.lstdm_KhuVuc, "ID", "NAME"), Utility.GetTitleChon(API.dm_KhuVuc), htmlAttributes: new { @class = "form-control chosen-select", id = "lstID_KHUVUCSEARCH" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-sm-2" style="padding-bottom: 5px;">
+                    <input type="date" class="form-control" name="fromdate" id="fromdate" value="@ViewBag.fromdate" />
+                </div>
+                <div class="col-sm-2">
+                    <input type="date" class="form-control" name="todate" id="todate" value="@ViewBag.todate" />
+                </div>
+
+                <div class="col-sm-4">
+                    @Html.TextBox("SearchString", (string)ViewBag.searchValue, htmlAttributes: new { @class = "form-control", @style = "width:80%;display:inline-block", @placeholder = Utility.TimKiem })
+                    <button class="btn btn-default" onclick="funSearchItemOrder('@API.ct_PhieuDatHang')"><span class='glyphicon glyphicon-search'></span></button>
+                </div>
+            </div>
+
+            <div class="tablescroll" style="overflow-x:auto; Overflow-y:scroll; height: auto;">
+                <div class="panel-body panel-body-nopadding">
+                    <table class="table table-bordered mb30" id="example-table">
+                        <thead>
+                            <tr>
+                                <th style="font-weight: bold; text-align:center; white-space: nowrap;">
+                                    @if (ViewBag.PermissionCreateInput)
+                                    {
+                                        <input type="checkbox" onchange="OnchangeCheckbox(event, 'tbodytmpitem')" />
+                                    }
+                                </th>
+                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuDatHang, "ID_KHO")</th>
+                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuDatHang, "MAPHIEU")</th>
+                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuDatHang, "NGAYLAP")</th>
+                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuDatHang, "ID_KHACHHANG")</th>
+                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuDatHang, "ADDRESS")</th>
+                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuDatHang, "TEL")</th>
+                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuDatHang, "ID_NHANVIEN")</th>
+                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuDatHang, "ID_PHIEUXUAT")</th>
+                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuDatHang, "TONGTIENGIAMGIA")</th>
+                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuDatHang, "TONGTHANHTIEN")</th>
+                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuDatHang, "TONGTIENVAT")</th>
+                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuDatHang, "TONGTIEN")</th>
+                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuDatHang, "GHICHU")</th>
+                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuDatHang, "Người tạo")</th>
+                                @*<th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuDatHang, "ISKHUYENMAI")</th>*@
+                                <th>
+                                    @*@if (ViewBag.PermissionCreate)
+                                        {
+                                        <a class="btn btn-success" href="@Url.Action("Create", "Order")"><i class="fa fa-pencil-square-o" style="margin-right:20px"></i>@Utility.Them</a>
+                                        }*@
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbodytmpitem">
+                            @if (Model.IPagedList != null)
+                            {
+                                foreach (var item in Model.IPagedList)
+                                {
+                                    <tr id="@item.ID">
+                                        @if (ViewBag.PermissionCreateInput && string.IsNullOrEmpty(item.ID_PHIEUXUAT))
+                                        {
+                                            <td style="white-space: nowrap;" id="CHON"> @Html.CheckBoxFor(modelItem => item.CHON, htmlAttributes: new { @class = "form-control", @id = item.ID })</td>
+                                        }
+                                        else
+                                        {
+                                            <td></td>
+                                        }
+                                        <td style="white-space: nowrap;" id="NAME_KHO"> @Html.DisplayFor(modelItem => item.NAME_KHO)</td>
+                                        <td style="white-space: nowrap;" id="MAPHIEU"> @Html.DisplayFor(modelItem => item.MAPHIEU)</td>
+                                        <td style="white-space: nowrap;" id="NGAYLAP"> @item.NGAYLAP.ToString("dd/MM/yy HH:mm")</td>
+                                        <td style="white-space: nowrap;" id="NAME_KHACHHANG"> @Html.DisplayFor(model => item.NAME_KHACHHANG)</td>
+                                        <td style="white-space: nowrap;" id="ADDRESS"> @Html.DisplayFor(modelItem => item.ADDRESS)</td>
+                                        <td style="white-space: nowrap;" id="TEL"> @Html.DisplayFor(modelItem => item.TEL)</td>
+                                        <td style="white-space: nowrap;" id="NAME_NHANVIEN"> @Html.DisplayFor(modelItem => item.NAME_NHANVIEN)</td>
+                                        <td style="white-space: nowrap;" id="MAPHIEUXUAT"> @Html.DisplayFor(modelItem => item.MAPHIEUXUAT)</td>
+                                        <td style="white-space: nowrap;" id="TONGTIENGIAMGIA"> @item.TONGTIENGIAMGIA.ToString("N0")</td>
+                                        <td style="white-space: nowrap;" id="TONGTHANHTIEN"> @item.TONGTHANHTIEN.ToString("N0")</td>
+                                        <td style="white-space: nowrap;" id="TONGTIENVAT"> @item.TONGTIENVAT.ToString("N0")</td>
+                                        <td style="white-space: nowrap;" id="TONGTIEN"> @item.TONGTIEN.ToString("N0")</td>
+                                        <td style="white-space: nowrap;" id="GHICHU"> @Html.DisplayFor(modelItem => item.GHICHU)</td>
+                                        <td style="white-space: nowrap;" id="GHICHU"> @Html.DisplayFor(modelItem => item.NAME_NGUOITAO)</td>
+                                        @*<td style="white-space: nowrap;" id="ISKHUYENMAI"> @Html.DisplayFor(modelItem => item.ISKHUYENMAI)</td>*@
+                                        <td style="white-space: nowrap; " class="fix">
+                                            <a class="label label-default" onclick="myFunctionViewReport('@{@API.ct_PhieuDatHang;}','@item.ID')" href="#"><i class="fa fa-print" style="margin-right:5px"></i>@Utility.In</a>
+                                            @if (ViewBag.PermissionEdit && string.IsNullOrEmpty(item.ID_PHIEUXUAT))
+                                            {
+                                                if (Utility.IntWidth == 1)
+                                                {
+                                                    <a class="label label-primary" onclick="myFunctionEdit('@{@API.ct_PhieuDatHang;}','@item.ID')" href="#"><i class="fa fa-edit" style="margin-right:5px"></i>@Utility.Sua</a>
+                                                }
+                                                else
+                                                {
+                                                    @Html.ActionLink(Utility.Sua, "Edit", new { id = item.ID }, htmlAttributes: new { @class = "label label-primary" });
+                                                }
+                                            }
+
+
+                                            @if (ViewBag.PermissionDelete && string.IsNullOrEmpty(item.ID_PHIEUXUAT))
+                                            {
+                                                if (Utility.IntWidth == 1)
+                                                {
+                                                    <a class="label label-danger" onclick="myFunctionPopup('@{@API.ct_PhieuDatHang;}','@item.ID')" href="#"><i class="glyphicon glyphicon-trash" style="margin-right:5px"></i>@Utility.Xoa</a>
+                                                }
+                                                else
+                                                {
+                                                    <a class="label label-danger" onclick="myFunction('@{@API.ct_PhieuDatHang;}','@item.ID')" href="#"><i class="glyphicon glyphicon-trash" style="margin-right:5px"></i>@Utility.Xoa</a>
+                                                }
+
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                    </table>
+                </div>
+            </div><!-- table-responsive -->
+        </div>
+
+        <div class="panel-footer">
+            @if (Model.IPagedList != null)
+            {
+                @Html.PagedListPager((PagedList.IPagedList<v_ct_PhieuDatHang>)Model.IPagedList, page => Url.Action("Index", new { Page = page, SearchString = ViewBag.searchValue, ID_DEPOT = ViewBag.ID_KHO_DF, ID_KHUVUC = Model.ID_KHUVUC, FromDate = ViewBag.fromdate, ToDate = ViewBag.todate }))
+                if (ViewBag.PermissionCreateInput)
+                {
+                    <div class="form-group">
+                        
+                        <div class="col-sm-2">
+                            <select class="form-control" id="HINHTHUC_THUCHIEN" name="HINHTHUC_THUCHIEN">
+                                <option value="0" )>Hôm nay</option>
+                                <option value="1">Ngày mai</option>
+                                <option value="2">Ngày mốt</option>
+                            </select>
+                        </div>
+                        
+                        <div class="col-sm-2">
+                            <button class="btn btn-primary" onclick="OnSubmit()">@Utility.ThucHien</button>
+                        </div>
+                    </div>
+                   
+                    
+                }
+            }
+        </div>
+    </div>
+</div>
+<div id="popupDeposit" class="popupDeposit">
+    <span class="closeDeposit" onclick="hidePopupDeposit()">×</span>
+    <div class="galleryDeposit" id="galleryDeposit">
+        <div class="galleryDeposit-item">
+            <img src="https://tranghiepphat.click/Images_Upload/Product/db40ef74-f79a-4efc-9721-fba2f6fa6099.jfif" alt="Image 1" onclick="openModalimgDeposit(0)">
+        </div>
+        <div class="galleryDeposit-item">
+            <img src="https://tranghiepphat.click/Images_Upload/Product/bbc33e53-b046-432a-9751-78febc4d4be7.jfif" alt="Image 2" onclick="openModalimgDeposit(1)">
+        </div>
+        <div class="galleryDeposit-item">
+            <img src="https://tranghiepphat.click/Images_Upload/Product/2bdd6c66-2bfe-4cd5-8872-10cd285c80e8.jfif" alt="Image 3" onclick="openModalimgDeposit(2)">
+        </div>
+        <!-- Add more images as needed -->
+    </div>
+
+    <div id="modalimgDeposit" class="modalimgDeposit">
+        <span class="closeDeposit" onclick="closeModalimgDeposit()">×</span>
+        @*<img class="modalimgDeposit-content" id="modalimgDeposit-image">*@
+        @*<a class="prevDeposit" onclick="changeImage(-1)">❮</a>
+        <a class="nextDeposit" onclick="changeImage(1)">❯</a>*@
+    </div>
+</div>
+@if (Utility.IntWidth == 1)
+{
+    if (ViewBag.PermissionCreate)
+    {
+        <button id="myBtnAdd" style="display:none"></button>
+        <div id="myModalAdd" class="modal" style="">
+            <div class="panel panel-default" style='width: 90%; margin-left: 5%;'>
+                <!-- The Modal -->
+
+                @{Html.RenderAction("Create", @API.ct_PhieuDatHang, new { type = 1 });}
+                <div id="myProduct">
+                </div>
+            </div>
+        </div>
+    }
+    if (ViewBag.PermissionEdit)
+    {
+        <button id="myBtnEdit" style="display:none"></button>
+        <div id="myModalEdit" class="modal" style="">
+            <div class="panel panel-default" style='width: 90%; margin-left: 5%;'>
+                <!-- The Modal -->
+                @{Html.RenderAction("Edit", @API.ct_PhieuDatHang, new { type = 1, id = "" });}
+
+                <div id="myProductEdit">
+                </div>
+            </div>
+        </div>
+    }
+
+    
+}
+
+<script type="text/javascript">
+    $(function () {
+        // delete extra hidden fields created by checkboxes as the grid links mess this up by doubling the querystring parameters
+        $("input[type='hidden'][name='item.CHON']").remove();
+    });
+
+
+</script>
+
+<script>
+    let currentImageIndex = 0;
+
+    function openModalimgDeposit(index) {
+        const images = document.querySelectorAll('.galleryDeposit-item img');
+        const modalimgDeposit = document.getElementById('modalimgDeposit');
+        const modalImage = document.getElementById('modalimgDeposit-image');
+        currentImageIndex = index;
+        modalimgDeposit.style.display = 'block';
+        modalImage.src = images[currentImageIndex].src;
+    }
+
+    function closeModalimgDeposit() {
+        modalimgDeposit.style.display = 'none';
+    }
+
+    function changeImage(direction) {
+        const images = document.querySelectorAll('.galleryDeposit-item img');
+        const modalImage = document.getElementById('modalimgDeposit-image');
+        currentImageIndex += direction;
+        if (currentImageIndex < 0) {
+            currentImageIndex = images.length - 1;
+        } else if (currentImageIndex >= images.length) {
+            currentImageIndex = 0;
+        }
+        modalImage.src = images[currentImageIndex].src;
+    }
+
+    //window.onclick = function (event) {
+    //    if (event.target == modal) {
+    //        closeModalDeposit();
+    //    }
+    //}
+
+    function showPopupDeposit(ID_HANGHOA) {
+        const galleryDeposit = document.getElementById('galleryDeposit');
+        galleryDeposit.innerHTML = "<div class='galleryDeposit-item'><img src='/Images_Upload/Product/" + ID_HANGHOA + "' alt='Image 1' onclick='openModalimgDeposit(0)'></div>";
+        event.stopPropagation();
+        document.getElementById('popupDeposit').style.display = 'block';
+        openModalimgDeposit(0);
+    }
+
+    function hidePopupDeposit() {
+        document.getElementById('popupDeposit').style.display = 'none';
+    }
+</script>

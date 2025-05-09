@@ -1,0 +1,182 @@
+﻿@model MVC_QuanLyTHP.Models.v_v_ThongKeTheoNhanVien
+@using DatabaseTHP;
+@using PagedList.Mvc;
+@using DatabaseTHP.Class;
+@using MVC_QuanLyTHP.Class;
+@using MVC_QuanLyTHP.Models;
+@using Newtonsoft.Json;
+@{
+    ViewBag.Title = API.ViewBagTitle;
+    Layout = "~/Views/Shared/Admin.cshtml";
+}
+@Html.Partial("LoadCssDanhMuc")
+<hr />
+<div class="panel-group" id="accordion">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h1 class="panel-title" style="text-align:center">
+                <a data-toggle="collapse" data-parent="#accordion" href="#collapseOneDebt">
+                    @Utility.GetTitleFrom(API.BaoCaoNhanVien)
+                </a>
+            </h1>
+        </div>
+
+
+        <div id="collapseOneDebt" class="panel-collapse collapse in">
+            <div class="panel-body panel-body-nopadding">
+                <div class="form-horizontal form-bordered">
+                    @using (Html.BeginForm("Index", API.BaoCaoNhanVien, FormMethod.Post, new AjaxOptions { OnBegin = "OnBegin", OnSuccess = "OnEnd" }))
+                    {
+                        <div class="form-group">
+                            <div class="col-sm-2">
+                                <div class="ckbox ckbox-primary">
+                                    @Html.CheckBoxFor(model => model.ISTHEOTHOIGIAN)
+                                    @Html.Label(@Utility.GetColumnName(@API.BaoCaoNhanVien, "ISTHEOTHOIGIAN"), htmlAttributes: new { @for = "ISTHEOTHOIGIAN" })
+                                </div>
+                            </div>
+                            <div class="col-sm-2">
+                                @Html.TextBoxFor(model => model.TUNGAY, (Model.TUNGAY).ToString("yyyy-MM-dd"), new { @class = "form-control hasDatepicker", @placeholder = "dd/MM/yyyy", @type = "date" })
+                                @Html.ValidationMessageFor(model => model.TUNGAY, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="col-sm-2">
+                                @Html.TextBoxFor(model => model.DENNGAY, (Model.DENNGAY).ToString("yyyy-MM-dd"), new { @class = "form-control hasDatepicker", @placeholder = "dd/MM/yyyy", @type = "date" })
+                                @Html.ValidationMessageFor(model => model.DENNGAY, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @Html.Label(@Utility.GetColumnName(@API.BaoCaoNhanVien, "ID_NHANVIEN"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                            <div class="col-sm-3">
+                                <div class="input-group mb15">
+                                    <span class="input-group-btn">
+                                        <button type="button" class="btn btn-default" onclick="myFunOpenSearch('collapseOneDebt', '@{@API.AspNetUser;}', '@API.Chon1', 'lstdm_NhanVien', '')"><span class="glyphicon glyphicon-search"></span></button>
+                                    </span>
+                                    @Html.DropDownListFor(model => model.ID_NHANVIEN, new SelectList(Model.lstdm_NhanVien, "ID", "NAME"), Utility.GetTitleChon(API.AspNetUser), htmlAttributes: new { @class = "form-control chosen-select", id = "lstdm_NhanVien" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="panel-footer">
+                            <div class="row">
+                                <div class="col-sm-5 col-sm-offset-2">
+                                    <button class="btn btn-primary">@Utility.TimKiem</button>
+                                    <a id="download-excel" style="background-color: #217346;" class="btn btn-success" onclick="ExportExcel('example-table')"><i class="fa fa-file-text-o" style="margin-right:10px"></i>@Utility.XuatExcel</a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+                
+                <div style="overflow-x: auto; Overflow-y: scroll; height: 500px;">
+                    <div class="panel-body panel-body-nopadding">
+                        <div class="form-horizontal form-bordered">
+                            <table class="table table-bordered mb30" id="example-table">
+                                <thead>
+                                    <tr>
+                                        <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KhachHang, "")</th>
+                                        <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KhachHang, "")</th>
+                                        <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.BaoCaoNhanVien, "TONGTIENNHAP")</th>
+                                        <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.BaoCaoNhanVien, "TONGTIENXUAT")</th>
+
+                                        <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.BaoCaoNhanVien, "TONGTIENTHU")</th>
+                                        <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.BaoCaoNhanVien, "TONGTIENCHI")</th>
+                                        <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.BaoCaoNhanVien, "CONLAI")</th>
+                                    </tr>
+                                </thead>
+
+                                @{
+                                    double TT_TONGTIENNHAP = 0, TT_TONGTIENXUAT = 0, TT_TONGTIENTHU = 0, TT_TONGTIENCHI = 0, TT_TONGTIENCONLAI = 0;
+                                    string NAME_NHANVIEN = "";
+                                    if (Model.IPagedList != null && Model.IPagedList.Count() > 0)
+                                    {
+                                                                <tbody id="tbodytmpitem">
+
+                                                                    @foreach (var item in Model.IPagedList)
+                                                                    {
+                                                                        string TONGTIENNHAP = item.TONGTIENNHAP.ToString("N0");
+                                                                        string TONGTIENXUAT = item.TONGTIENXUAT.ToString("N0");
+                                                                        string TONGTIENTHU = item.TONGTIENTHU.ToString("N0");
+                                                                        string TONGTIENCHI = item.TONGTIENCHI.ToString("N0");
+                                                                        string CONLAI = item.CONLAI.ToString("N0");
+                                                                        item.ID_NHANVIEN = item.ID_NGUOITAO;
+                                                                        item.ISTHEOTHOIGIAN = Model.ISTHEOTHOIGIAN;
+                                                                        item.TUNGAY = Model.TUNGAY;
+                                                                        item.DENNGAY = Model.DENNGAY;
+                                                                        string ShowSearchValue = "";
+                                                                        if (!string.IsNullOrEmpty(NAME_NHANVIEN) && NAME_NHANVIEN != item.NAME_NHANVIEN)
+                                                                        {
+                                                                            <tr style="font-weight: bold;">
+                                                                                <td style="white-space: nowrap; " colspan="2"></td>
+                                                                                <td style="white-space: nowrap; text-align: right;" id="TT_TONGTIENNHAP">  @TT_TONGTIENNHAP.ToString("N0") </td>
+                                                                                <td style="white-space: nowrap; text-align: right;" id="TT_TONGTIENXUAT"> @TT_TONGTIENXUAT.ToString("N0")</td>
+
+                                                                                <td style="white-space: nowrap; text-align: right;" id="TT_TONGTIENTHU"> @TT_TONGTIENTHU.ToString("N0")</td>
+                                                                                <td style="white-space: nowrap; text-align: right;" id="TT_TONGTIENCHI">@TT_TONGTIENCHI.ToString("N0")</td>
+                                                                                <td style="white-space: nowrap; text-align: right;" id="CONLAI">@TT_TONGTIENCONLAI.ToString("N0")</td>
+                                                                            </tr>
+                                                                        }
+                                                                        if (string.IsNullOrEmpty(NAME_NHANVIEN) || NAME_NHANVIEN != item.NAME_NHANVIEN)
+                                                                        {
+                                                                            int TYPE = item.TYPE;
+                                                                            string NAME_LOAIPHIEU = item.NAME_LOAIPHIEU;
+                                                                            item.TYPE = 0;
+                                                                            ShowSearchValue = clsMaHoa.Encrypt(JsonConvert.SerializeObject(item), clsMaHoa.PassMaHoa);
+                                                                            <tr id="@item.ID_NGUOITAO" ondblclick="myFunSuccessDebt('@API.BaoCaoNhanVien','@ShowSearchValue')">
+                                                                                <td style="white-space: nowrap; " id="MA" colspan="7"> @Html.DisplayFor(modelItem => item.NAME_NHANVIEN)</td>
+                                                                            </tr>
+                                                                            TT_TONGTIENNHAP = 0;
+                                                                            TT_TONGTIENXUAT = 0;
+                                                                            TT_TONGTIENTHU = 0;
+                                                                            TT_TONGTIENCHI = 0;
+                                                                            TT_TONGTIENCONLAI = 0;
+                                                                            item.TYPE = TYPE;
+                                                                            item.NAME_LOAIPHIEU = NAME_LOAIPHIEU;
+                                                                        }
+                                                                        TT_TONGTIENNHAP += item.TONGTIENNHAP;
+                                                                        TT_TONGTIENXUAT += item.TONGTIENXUAT;
+                                                                        TT_TONGTIENTHU += item.TONGTIENTHU;
+                                                                        TT_TONGTIENCHI += item.TONGTIENCHI;
+                                                                        TT_TONGTIENCONLAI = TT_TONGTIENNHAP - TT_TONGTIENXUAT + TT_TONGTIENTHU - TT_TONGTIENCHI;
+                                                                        ShowSearchValue = clsMaHoa.Encrypt(JsonConvert.SerializeObject(item), clsMaHoa.PassMaHoa);
+                                                                        <tr id="@item.ID_NGUOITAO" ondblclick="myFunSuccessDebt('@API.BaoCaoNhanVien','@ShowSearchValue')">
+                                                                            <td style="white-space: nowrap; " id="MA"></td>
+                                                                            <td style="white-space: nowrap; " id="NAME"> @Html.DisplayFor(modelItem => item.NAME_LOAIPHIEU)</td>
+                                                                            <td style="white-space: nowrap; text-align: right;" id="TONGTIENNHAP">  @TONGTIENNHAP </td>
+                                                                            <td style="white-space: nowrap; text-align: right;" id="TONGTIENXUAT"> @TONGTIENXUAT</td>
+                                                                            <td style="white-space: nowrap; text-align: right;" id="TONGTIENTHU"> @TONGTIENTHU</td>
+                                                                            <td style="white-space: nowrap; text-align: right;" id="TONGTIENCHI">@TONGTIENCHI</td>
+                                                                            <td style="white-space: nowrap; text-align: right;" id="CONLAI"></td>
+                                                                        </tr>
+
+
+                                                                        NAME_NHANVIEN = item.NAME_NHANVIEN;
+                                                                    }
+                                                                    <tr style="font-weight: bold;">
+                                                                        <td style="white-space: nowrap; " colspan="2"></td>
+                                                                        <td style="white-space: nowrap; text-align: right;" id="TT_TONGTIENNHAP">  @TT_TONGTIENNHAP.ToString("N0") </td>
+                                                                        <td style="white-space: nowrap; text-align: right;" id="TT_TONGTIENXUAT"> @TT_TONGTIENXUAT.ToString("N0")</td>
+
+                                                                        <td style="white-space: nowrap; text-align: right;" id="TT_TONGTIENTHU"> @TT_TONGTIENTHU.ToString("N0")</td>
+                                                                        <td style="white-space: nowrap; text-align: right;" id="TT_TONGTIENCHI">@TT_TONGTIENCHI.ToString("N0")</td>
+                                                                        <td style="white-space: nowrap; text-align: right;" id="CONLAI">@TT_TONGTIENCONLAI.ToString("N0")</td>
+                                                                    </tr>
+                                                                </tbody>
+                                    }
+                                }
+                            </table>
+                        </div>
+                    </div><!-- table-responsive -->
+                </div>
+
+                <div class="panel-footer">
+                </div>
+            </div>
+        </div>
+</div>
+<script type="text/javascript">
+    $(function () {
+        // delete extra hidden fields created by checkboxes as the grid links mess this up by doubling the querystring parameters
+        $("input[type='hidden'][name='ISTHEOTHOIGIAN']").remove();
+    });
+</script>

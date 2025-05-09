@@ -1,0 +1,12 @@
+﻿<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+    <a href="@Url.Action("Index", "Admin")"><img alt="" src="@Url.Content(ViewBag.Images)" style="width:26px; height:26px" ></a>
+    @Html.Raw(ViewBag.Fullname)
+    <span class="caret"></span>
+</button>
+<ul class="dropdown-menu dropdown-menu-usermenu pull-right">
+    <li><a href="@Url.Action("My_profile", "Admin")"><i class="glyphicon glyphicon-user"></i>Thông tin tài khoản</a></li>
+    <li><a href="@Url.Action("ChangePassword", "User")"><i class="glyphicon glyphicon-cog"></i>Đổi mật khẩu</a></li>
+    @*<li><a href="#"><i class="glyphicon glyphicon-question-sign"></i> Help</a></li>*@
+    <li><a href="@Url.Action("Logout", "Admin")"><i class="glyphicon glyphicon-log-out"></i>Thoát</a></li>
+    <li><a href="@Url.Action("Cache", "Admin")"><i class="glyphicon glyphicon-cloud-download"></i> <span>Nạp Cache</span></a></li>
+</ul>

@@ -1,0 +1,197 @@
+﻿@model MVC_QuanLyTHP.Models.v_v_dm_KPI_KinhDoanh
+@using MVC_QuanLyTHP.Class;
+@using DatabaseTHP.Class;
+@if (Utility.IntWidth == 1)
+{
+    using (Ajax.BeginForm("CreatePopup", API.dm_KPI_KinhDoanh, new AjaxOptions { HttpMethod = "POST", InsertionMode = InsertionMode.Replace, UpdateTargetId = "PartialViewPaymentHistory", OnSuccess = "OnSuccessCreate" }, new { id = "frmPayments", enctype = "multipart/form-data" }))
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="panel-heading" style="padding-top:15px;padding-right: 15px;">
+            <div class="panel-btns">
+                <a onclick='myFunClosed("myModalAdd")'>&times;</a>
+            </div>
+
+            <h1 class="panel-title" style="font-size: 20px;text-align: center "><label id="lblName" name="lblName">@Utility.GetTitleFrom(API.dm_KPI_KinhDoanh)</label></h1>
+            <div class="panel-body" style="padding:5px">
+            </div>
+        </div>
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div id="ValidationSummary" class="validation-summary-errors text-danger">
+        </div>
+        @Html.HiddenFor(model => model.LOC_ID)
+        @Html.HiddenFor(model => model.ID)
+        <div class="panel-body panel-body-nopadding">
+            <div class="form-horizontal form-bordered">
+                <div class="form-group">
+                    @Html.Label(@Utility.GetColumnName(@API.dm_KPI_KinhDoanh, "MA"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                    <div class="col-sm-5">
+                        @Html.EditorFor(model => model.MA, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.MA, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.Label(@Utility.GetColumnName(@API.dm_KPI_KinhDoanh, "NAME"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                    <div class="col-sm-5">
+                        @Html.EditorFor(model => model.NAME, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.NAME, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.Label(@Utility.GetColumnName(@API.dm_KPI_KinhDoanh, "TUNGAY"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                    <div class="col-sm-2">
+                        @Html.TextBoxFor(model => model.TUNGAY, (Model.TUNGAY).ToString("yyyy-MM-dd"), new { @class = "form-control hasDatepicker", @placeholder = "dd/MM/yyyy", @type = "date" })
+                        @Html.ValidationMessageFor(model => model.TUNGAY, "", new { @class = "text-danger" })
+                    </div>
+                    @Html.Label(@Utility.GetColumnName(@API.dm_KPI_KinhDoanh, "DENNGAY"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                    <div class="col-sm-2">
+                        @Html.TextBoxFor(model => model.DENNGAY, (Model.DENNGAY).ToString("yyyy-MM-dd"), new { @class = "form-control hasDatepicker", @placeholder = "dd/MM/yyyy", @type = "date" })
+                        @Html.ValidationMessageFor(model => model.DENNGAY, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.Label(@Utility.GetColumnName(@API.dm_KPI_KinhDoanh, "CHIETKHAU"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                    <div class="col-sm-2">
+                        @Html.EditorFor(model => model.CHIETKHAU, new { htmlAttributes = new { @class = "form-control mask", @type = "number", @max = 100, @min = 0, @step = 0.00001 } })
+                        @Html.ValidationMessageFor(model => model.CHIETKHAU, "", new { @class = "text-danger" })
+                    </div>
+                    @Html.Label(@Utility.GetColumnName(@API.dm_KPI_KinhDoanh, "TIENGIAM"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                    <div class="col-sm-2">
+                        @Html.EditorFor(model => model.TIENGIAM, new { htmlAttributes = new { @class = "form-control mask", @type = "number" } })
+                        @Html.ValidationMessageFor(model => model.TIENGIAM, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.Label(@Utility.GetColumnName(@API.dm_KPI_KinhDoanh, "IS_YEUCAUCHITIET"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                    <div class="col-sm-2">
+                        @Html.CheckBoxFor(model => model.IS_YEUCAUCHITIET)@*, htmlAttributes: new { @onchange = "callChangefuncPromotion(this,'divPromotion_Add', 'divPromotion_YCAdd')" }*@
+                    </div>
+                </div>
+
+                <div class="form-group" id="divPromotion_Add">
+                    @Html.Label(@Utility.GetColumnName(@API.dm_KPI_KinhDoanh, "TONGTIEN_DATKM"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                    <div class="col-md-2">
+                        @Html.EditorFor(model => model.TONGTIEN_DATKM, new { htmlAttributes = new { @class = "form-control mask", @type = "number" } })
+                        @Html.ValidationMessageFor(model => model.TONGTIEN_DATKM, "", new { @class = "text-danger" })
+                    </div>
+
+                    @Html.Label(@Utility.GetColumnName(@API.dm_KPI_KinhDoanh, "SOLUONG_DATKM"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                    <div class="col-md-2">
+                        @Html.EditorFor(model => model.SOLUONG_DATKM, new { htmlAttributes = new { @class = "form-control mask", @type = "number" } })
+                        @Html.ValidationMessageFor(model => model.SOLUONG_DATKM, "", new { @class = "text-danger" })
+                    </div>
+
+                    @Html.Label(@Utility.GetColumnName(@API.dm_KPI_KinhDoanh, "ID_DVT_DATKM"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                    <div class="col-md-2">
+                        @Html.DropDownListFor(model => model.ID_DVT_DATKM, new SelectList(Model.lstdm_DonViTinh, "ID", "NAME"), !string.IsNullOrEmpty(Model.ID_DVT_DATKM) ? "" : Utility.GetTitleChon(API.dm_DonViTinh), htmlAttributes: new { @class = "form-control chosen-select", id = "lstdm_DonViTinh" })
+                        @Html.ValidationMessageFor(model => model.ID_DVT_DATKM, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group" id="divPromotion_YCAdd">
+                    <div class="col-sm-5" style="width:100%">
+                        <h5 class="subtitle">Danh sách yêu cầu:  @Html.ValidationMessageFor(model => model.lstdm_KPI_KinhDoanh_YeuCau, "", new { @class = "text-danger" }) <a href="#" onclick="myFunOpenSearch('myModalAdd', '@{@API.dm_NhomHangHoa;}', '@API.ChonCTKM_YC_NHOMSANPHAM', 'tbodyTempItemdivPromotion_YC', '')">  + Thêm @Utility.GetTitleFrom(API.dm_NhomHangHoa)</a> | <a href="#" onclick="myFunOpenSearch('myModalAdd', '@{@API.dm_HangHoa;}', '@API.ChonCTKM_YC', 'tbodyTempItemdivPromotion_YC', '')">  + Thêm sản phẩm</a></h5>
+                        <div class="tablescroll" style="overflow-x:auto; Overflow-y:scroll; height: auto;">
+                            <div class="panel-body panel-body-nopadding">
+                                <div class="form-horizontal form-bordered">
+                                    <table class="table table-bordered mb30">
+                                        <thead>
+                                            <tr>
+                                                <th style="font-weight: bold; text-align: center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KPI_KinhDoanh, "HINHTHUC")</th>
+                                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KPI_KinhDoanh, "HINHTHUC")</th>
+                                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KPI_KinhDoanh, "MA")</th>
+                                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KPI_KinhDoanh, "NAME")</th>
+                                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KPI_KinhDoanh_YeuCau, "SOTIEN") </th>
+                                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KPI_KinhDoanh_YeuCau, "SOLUONG") </th>
+                                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KPI_KinhDoanh_YeuCau, "ID_DVT") </th>
+                                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KPI_KinhDoanh_YeuCau, "CHIETKHAU") </th>
+                                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KPI_KinhDoanh_YeuCau, "TIENGIAM") </th>
+                                                <th>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tbodyTempItemdivPromotion_YC">
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group" id="divPromotion_TangAdd">
+                    <div class="col-sm-5" style="width:100%">
+                        <h5 class="subtitle">Danh sách nhân viên tính KPI:  @Html.ValidationMessageFor(model => model.lstdm_KPI_KinhDoanh_YeuCau, "", new { @class = "text-danger" }) <a href="#" onclick="myFunOpenSearch('myModalAdd', '@{@API.web_NhomQuyen;}', '@API.Chon1_NhomQuyen', 'tbodyTempItemdivPromotion_NV', '')">  + Thêm @Utility.GetTitleFrom(API.web_NhomQuyen)</a> | <a href="#" onclick="myFunOpenSearch('myModalAdd', '@{@API.dm_NhanVien;}', '@API.Chon1_NhanVien', 'tbodyTempItemdivPromotion_NV', '')">  + Thêm  @Utility.GetTitleFrom(API.dm_NhanVien)</a></h5>
+                        <div class="tablescroll" style="overflow-x:auto; Overflow-y:scroll; height: auto;">
+                            <div class="panel-body panel-body-nopadding">
+                                <div class="form-horizontal form-bordered">
+                                    <table class="table table-bordered mb30">
+                                        <thead>
+                                            <tr>
+                                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KPI_KinhDoanh_NhanVien, "HINHTHUC")</th>
+                                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KPI_KinhDoanh_NhanVien, "MA")</th>
+                                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KPI_KinhDoanh_NhanVien, "NAME")</th>
+                                                <th>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tbodyTempItemdivPromotion_Tang">
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.Label(@Utility.GetColumnName(@API.dm_KPI_KinhDoanh, "CAPDO"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                    <div class="col-sm-5">
+                        @Html.EditorFor(model => model.CAPDO, new { htmlAttributes = new { @class = "form-control", @type = "number" } })
+                        @Html.ValidationMessageFor(model => model.CAPDO, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.Label(@Utility.GetColumnName(@API.dm_KPI_KinhDoanh, "ISACTIVE"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                    <div class="col-sm-5">
+                        @Html.CheckBoxFor(model => model.ISACTIVE, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.ISACTIVE, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel-footer">
+            <div class="row">
+                <div class="col-sm-5 col-sm-offset-3">
+                    <button class="btn btn-primary" onclick="validatetext()">@Utility.ThucHien</button>
+                    <a class="btn btn-danger" onclick='myFunClosed("myModalAdd")'>@Utility.Dong</a>
+                </div>
+            </div>
+        </div>
+
+    }
+}
+else
+{
+    {
+        ViewBag.Title = API.ViewBagTitle;
+        Layout = "~/Views/Shared/Admin.cshtml";
+    }
+    <hr />
+    using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+
+    }
+    if (ViewBag.ID != null && !string.IsNullOrEmpty(ViewBag.ID))
+    {
+        <script>
+      var x = document.getElementById("ID");
+      x.value = '@ViewBag.ID';
+        </script>
+    }
+}

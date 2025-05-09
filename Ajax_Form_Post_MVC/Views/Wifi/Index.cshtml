@@ -1,0 +1,39 @@
+﻿@model MVC_QuanLyTHP.Models.v_v_dm_ThueSuat
+@using DatabaseTHP;
+@using PagedList.Mvc;
+@using DatabaseTHP.Class;
+@using MVC_QuanLyTHP.Class;
+@using MVC_QuanLyTHP.Models;
+@{
+    ViewBag.Title = API.ViewBagTitle;
+    Layout = "~/Views/Shared/Admin.cshtml";
+}
+@Html.Partial("LoadCssDanhMuc")
+<hr />
+<h2>WiFi Information</h2>
+<button id="getWifiBtn">Get Current SSID</button>
+<p id="wifiSsid"></p>
+
+<script>
+    document.getElementById('getWifiBtn').onclick = function () {
+        alert("11111");
+        $.ajax({
+            type: "GET",
+            url: "/Wifi/GetCurrentSSID?",
+            data: "",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: OnSuccessLoadSSID,
+            error: OnErrorLoadEditSSID
+        });
+    };
+
+    function OnSuccessLoadSSID(data)
+    {
+        document.getElementById('wifiSsid').innerText = 'Current SSID: ' + data.ssid;
+    }
+
+    function OnErrorLoadEditSSID() {
+        document.getElementById('wifiSsid').innerText = 'No SSID found';
+    }
+</script>

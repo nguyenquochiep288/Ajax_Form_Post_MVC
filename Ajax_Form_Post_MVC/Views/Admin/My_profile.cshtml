@@ -1,0 +1,97 @@
+﻿@model MVC_QuanLyTHP.Models.v_v_AspNetUsers
+@{
+    ViewBag.Title = "My_profile";
+    Layout = "~/Views/Shared/Admin.cshtml";
+}
+@using (Html.BeginForm("My_profile", "Admin", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    <div class="contentpanel">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <div class="panel-btns">
+                    <a href="#" class="panel-close">&times;</a>
+                    <a href="#" class="minimize">&minus;</a>
+                </div>
+                <h4 class="panel-title" style="text-align:center;">Thông tin cá nhân</h4>
+            </div>
+            <div class="panel-body panel-body-nopadding">
+                <div class="form-horizontal form-bordered">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label"></label>
+                        <div class="col-sm-6">
+                            <img alt="" id="myimage" src="@Model.URL_IMAGE" style="width: 150px" /> <br />
+                            <div class="fileupload fileupload-new" data-provides="fileupload">
+                                <div class="input-append">
+                                    <div class="uneditable-input">
+                                        <i class="glyphicon glyphicon-file fileupload-exists"></i>
+                                        <span class="fileupload-preview"></span>
+                                    </div>
+                                    <span class="btn btn-default btn-file">
+                                        <span class="fileupload-new">Select file</span>
+                                        <span class="fileupload-exists">Change</span>
+                                        <input type="file" name="MaHinh" id="MaHinh" onchange="onFileSelected(event)" />
+                                    </span>
+                                    <a href="#" class="btn btn-default fileupload-exists" data-dismiss="fileupload">Remove</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Tên khách hàng</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" value="@Model.NAME" name="ten" />
+                            <span style="color:red"> @Html.ValidationMessageFor(m => m.NAME)</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label" for="disabledinput">Tên đăng nhập</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" value="@Model.UserName" name="user" />
+                            <span style="color:red">@Html.ValidationMessageFor(m => m.UserName)</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label" for="disabledinput">Email</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" value="@Model.Email" name="email" />
+                            <span style="color:red">@Html.ValidationMessageFor(m => m.Email)</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label" for="disabledinput">Số điện thoại</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" value="@Model.PhoneNumber" name="sdt" />
+                            <span style="color:red">@Html.ValidationMessageFor(m => m.PhoneNumber)</span>
+                        </div>
+                    </div>
+                </div><!-- panel-body -->
+
+                <div class="panel-footer">
+                    <div class="row">
+                        <div class="col-sm-6 col-sm-offset-3">
+                            <button class="btn btn-primary">Cập nhật</button>&nbsp;
+                            <button class="btn btn-default">Cancel</button>
+                        </div>
+                    </div>
+                </div><!-- panel-footer -->
+            </div><!-- panel -->
+        </div>
+    </div>
+}
+<script>
+    function onFileSelected(event) {
+        var selectedFile = event.target.files[0];
+        var reader = new FileReader();
+
+        var imgtag = document.getElementById("myimage");
+        imgtag.title = selectedFile.name;
+
+        reader.onload = function (event) {
+            imgtag.src = event.target.result;
+        };
+
+        reader.readAsDataURL(selectedFile);
+    }
+</script>

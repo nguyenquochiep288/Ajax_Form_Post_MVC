@@ -1,0 +1,147 @@
+﻿@model MVC_QuanLyTHP.Models.v_v_ct_PhieuGiaoHang
+@using MVC_QuanLyTHP.Class;
+@using DatabaseTHP.Class;
+@if (Utility.IntWidth == 1)
+{
+    using (Ajax.BeginForm("EditPopup", API.ct_PhieuGiaoHang, new AjaxOptions { OnBegin = "OnBegin", OnSuccess = "OnSuccessEdit" }))
+    {
+
+        @Html.AntiForgeryToken()
+
+        <div class="panel-heading" style="padding-bottom:5px">
+            <div class="panel-btns">
+                <a onclick='myFunClosed("myModalEdit")'>&times;</a>
+            </div>
+            <input type="hidden" name="idProduct" id="idProduct" />
+            <h1 class="panel-title" style="font-size: 20px;text-align: center "><label id="lblName" name="lblName">@Utility.GetTitleFrom(API.ct_PhieuGiaoHang)</label></h1>
+            <div class="panel-body" style="padding:5px">
+            </div>
+        </div>
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div id="ValidationSummary" class="validation-summary-errors text-danger">
+        </div>
+        @Html.HiddenFor(model => model.LOC_ID)
+        @Html.HiddenFor(model => model.ID)
+        @Html.HiddenFor(model => model.SOPHIEU)
+        @Html.HiddenFor(model => model.ID_NGUOITAO)
+        @Html.HiddenFor(model => model.THOIGIANTHEM)
+        <div class="panel-body panel-body-nopadding">
+            <div class="form-horizontal form-bordered">
+
+                <div class="form-group">
+                    @Html.Label(@Utility.GetColumnName(@API.ct_PhieuGiaoHang, "MAPHIEU"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                    <div class="col-sm-2">
+                        @Html.EditorFor(model => model.MAPHIEU, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                        @Html.ValidationMessageFor(model => model.MAPHIEU, "", new { @class = "text-danger" })
+                    </div>
+                    @Html.Label(@Utility.GetColumnName(@API.ct_PhieuGiaoHang, "NGAYLAP"), htmlAttributes: new { @class = "col-sm-1 control-label" })
+                    <div class="col-sm-2">
+                        @Html.TextBoxFor(model => model.NGAYLAP, (Model.NGAYLAP).ToString("yyyy-MM-dd"), new { @class = "form-control hasDatepicker", @placeholder = "dd/MM/yyyy", @type = "date", @readonly = "readonly" })
+                        @Html.ValidationMessageFor(model => model.NGAYLAP, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.Label(@Utility.GetColumnName(@API.ct_PhieuGiaoHang, "ID_XEGIAOHANG"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                    <div class="col-sm-5">
+                        <div class="input-group mb15">
+                            <span class="input-group-btn">
+                                <button type="button" class="btn btn-default" onclick="myFunOpenSearch('myModalEdit', '@{@API.dm_Xe;}', '@API.Chon1', 'lstdm_XeEdit', '')"><span class="glyphicon glyphicon-search"></span></button>
+                            </span>
+                            @Html.DropDownListFor(model => model.ID_XEGIAOHANG, new SelectList(Model.lstdm_Xe, "ID", "NAME"), !string.IsNullOrEmpty(Model.ID_XEGIAOHANG) ? "" : Utility.GetTitleChon(API.dm_Xe), htmlAttributes: new { @class = "form-control chosen-select", id = "lstdm_XeEdit" })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.ID_XEGIAOHANG, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.Label(@Utility.GetColumnName(@API.ct_PhieuGiaoHang, "GHICHU"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                    <div class="col-sm-5">
+                        @Html.TextAreaFor(model => model.GHICHU, new { @class = "form-control", @rows = "3" })
+                        @Html.ValidationMessageFor(model => model.GHICHU, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-sm-5" style="width:100%">
+                        <h5 class="subtitle">Danh sách nhân viên giao hàng:  @Html.ValidationMessageFor(model => model.lstct_PhieuGiaoHang_NhanVienGiao, "", new { @class = "text-danger" }) <a href="#" class="pull-right" onclick="myFunOpenSearch('myModalEdit', '@{@API.dm_NhanVien;}', '@API.Chon1_GiaoHang', 'lstct_PhieuGiaoHang_NhanVienGiaoEdit', '')">+ Thêm sản phẩm</a></h5>
+                        <div class="tablescroll" style="overflow-x:auto; Overflow-y:scroll; height: auto;">
+                            <div class="panel-body panel-body-nopadding">
+                                <div class="form-horizontal form-bordered">
+                                    <table id="tree-table" class="table table-bordered mb30">
+                                        <thead>
+                                            <tr>
+                                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuGiaoHang_NhanVienGiao, "MA_NHANVIEN")</th>
+                                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuGiaoHang_NhanVienGiao, "NAME_NHANVIEN")</th>
+                                                <th>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="lstct_PhieuGiaoHang_NhanVienGiaoEdit">
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-sm-5" style="width:100%">
+                        <h5 class="subtitle">Danh sách phiếu xuất:  @Html.ValidationMessageFor(model => model.lstct_PhieuGiaoHang_ChiTiet, "", new { @class = "text-danger" }) <a href="#" class="pull-right" onclick="myFunOpenSearchDelivery()">+ Thêm phiếu xuất</a></h5>
+                        <div class="tablescroll" style="overflow-x:auto; Overflow-y:scroll; height: auto;">
+                            <div class="panel-body panel-body-nopadding">
+                                <div class="form-horizontal form-bordered">
+                                    <table class="table table-bordered mb30">
+                                        <thead>
+                                            <tr>
+                                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuGiaoHang_ChiTiet, "NGAYLAP")</th>
+                                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuGiaoHang_ChiTiet, "MAPHIEU")</th>
+                                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuGiaoHang_ChiTiet, "NAME_KHACHHANG_NCC")</th>
+                                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuGiaoHang_ChiTiet, "TONGSOLUONG")</th>
+                                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuGiaoHang_ChiTiet, "TONGKHOILUONG")</th>
+                                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuGiaoHang_ChiTiet, "SOTIENGIAOHANG")</th>
+                                                <th colspan="2">
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="lstct_PhieuGiaoHang_ChiTietEdit">
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel-footer">
+            <div class="row">
+                <div class="col-sm-5 col-sm-offset-3">
+                    <button class="btn btn-primary">@Utility.ThucHien</button>
+                    <a class="btn btn-danger" onclick='myFunClosed("myModalEdit")'>@Utility.Dong</a>
+                </div>
+            </div>
+        </div>
+    }
+}
+else
+{
+    {
+        ViewBag.Title = API.ViewBagTitle;
+        Layout = "~/Views/Shared/Admin.cshtml";
+    }
+    <hr />
+    using (Html.BeginForm())
+    {
+
+    }
+    if (ViewBag.ID != null && !string.IsNullOrEmpty(ViewBag.ID))
+    {
+        <script>
+          var x = document.getElementById("ID");
+          x.value = '@ViewBag.ID';
+        </script>
+    }
+}

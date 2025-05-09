@@ -1,0 +1,205 @@
+﻿@model MVC_QuanLyTHP.Models.v_v_BaoCaoGiaoHang
+@using DatabaseTHP;
+@using PagedList.Mvc;
+@using DatabaseTHP.Class;
+@using MVC_QuanLyTHP.Class;
+@using MVC_QuanLyTHP.Models;
+@using Newtonsoft.Json;
+@{
+    ViewBag.Title = API.ViewBagTitle;
+    Layout = "~/Views/Shared/Admin.cshtml";
+}
+@Html.Partial("LoadCssDanhMuc")
+<hr />
+<div class="panel-group" id="accordion">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h1 class="panel-title" style="text-align:center">
+                <a data-toggle="collapse" data-parent="#accordion" href="#collapseOneDebt">
+                    @Utility.GetTitleFrom(API.BaoCaoGiaoHang)
+                </a>
+            </h1>
+        </div>
+
+
+        <div id="collapseOneDebt" class="panel-collapse collapse in">
+            <div class="panel-body panel-body-nopadding">
+                <div class="form-horizontal form-bordered">
+                    @using (Html.BeginForm("Index", API.BaoCaoGiaoHang, FormMethod.Post, new AjaxOptions { OnBegin = "OnBegin", OnSuccess = "OnEnd" }))
+                    {
+                        <div class="form-group">
+                            @Html.Label(Utility.GetColumnName(API.BaoCaoGiaoHang, "TUNGAY"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                            <div class="col-sm-2">
+                                @Html.TextBoxFor(model => model.TUNGAY, (Model.TUNGAY).ToString("yyyy-MM-dd"), new { @class = "form-control hasDatepicker", @placeholder = "dd/MM/yyyy", @type = "date" })
+                                @Html.ValidationMessageFor(model => model.TUNGAY, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="col-sm-2">
+                                @Html.TextBoxFor(model => model.DENNGAY, (Model.DENNGAY).ToString("yyyy-MM-dd"), new { @class = "form-control hasDatepicker", @placeholder = "dd/MM/yyyy", @type = "date" })
+                                @Html.ValidationMessageFor(model => model.DENNGAY, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @Html.Label(Utility.GetColumnName(API.BaoCaoGiaoHang, "ID_XE"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                            <div class="col-sm-3">
+                                <div class="input-group mb15">
+                                    <span class="input-group-btn">
+                                        <button type="button" class="btn btn-default" onclick="myFunOpenSearch('collapseOneDebt', '@{@API.dm_Xe;}', '@API.Chon1', 'lstdm_Xe', '')"><span class="glyphicon glyphicon-search"></span></button>
+                                    </span>
+                                    @Html.DropDownListFor(model => model.ID_XE, new SelectList(Model.lstdm_Xe, "ID", "NAME"), Utility.GetTitleChon(API.dm_Xe), htmlAttributes: new { @class = "form-control chosen-select", id = "lstdm_Xe" })
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="panel-footer">
+                            <div class="row">
+                                <div class="col-sm-5 col-sm-offset-2">
+                                    <button class="btn btn-primary">@Utility.TimKiem</button>
+                                    <a id="download-excel" style="background-color: #217346;" class="btn btn-success" onclick="ExportExcel('example-table')"><i class="fa fa-file-text-o" style="margin-right:10px"></i>@Utility.XuatExcel</a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+
+
+            <div class="tablescroll" style="overflow-x: auto; Overflow-y: scroll; height: 500px;">
+                <div class="panel-body panel-body-nopadding">
+                    <div class="form-horizontal form-bordered">
+                        <table class="table table-bordered mb30" id="example-table">
+                            <thead>
+                                <tr>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.BaoCaoGiaoHang, "NGAYLAP")</th>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.BaoCaoGiaoHang, "MAPHIEU")</th>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.BaoCaoGiaoHang, "SOLUONG_DONHANG")</th>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.BaoCaoGiaoHang, "SOTIENGIAOHANG")</th>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.BaoCaoGiaoHang, "MA_XE")</th>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.BaoCaoGiaoHang, "NAME_XE")</th>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap; color:red"> @Utility.GetColumnName(@API.BaoCaoGiaoHang, "TONGTIENPHIEUXUAT")</th>
+                                    <th style="font-weight: bold; text-align: center; white-space: nowrap; color: red"> @Utility.GetColumnName(@API.BaoCaoGiaoHang, "TONGTIENPHIEUXUATKHAC")</th>
+                                    <th style="font-weight: bold; text-align: center; white-space: nowrap; color: red"> @Utility.GetColumnName(@API.BaoCaoGiaoHang, "TONGTIENPHIEUNHAP")</th>
+                                    <th style="font-weight: bold; text-align: center; white-space: nowrap; color: red"> @Utility.GetColumnName(@API.BaoCaoGiaoHang, "TONGTIENPHIEUNHAPKHAC")</th>
+                                    <th style="font-weight: bold; text-align: center; white-space: nowrap; "> @Utility.GetColumnName(@API.BaoCaoGiaoHang, "TONG")</th>
+                                    <th style="font-weight: bold; text-align: center; white-space: nowrap; color:#428bca"> @Utility.GetColumnName(@API.BaoCaoGiaoHang, "TONGTIENPHIEUTHU")</th>
+                                    <th style="font-weight: bold; text-align: center; white-space: nowrap; color: #428bca"> @Utility.GetColumnName(@API.BaoCaoGiaoHang, "TONGTIENPHIEUTHUGANNO")</th>
+                                    <th style="font-weight: bold; text-align: center; white-space: nowrap; color: #428bca"> @Utility.GetColumnName(@API.BaoCaoGiaoHang, "TONGTIENPHIEUTHUNGANHANG")</th>
+                                    <th style="font-weight: bold; text-align: center; white-space: nowrap;"> @Utility.GetColumnName(@API.BaoCaoGiaoHang, "TONGTIENTHU")</th>
+
+                                    <th style="font-weight: bold; text-align: center; white-space: nowrap; color: #428bca"> @Utility.GetColumnName(@API.BaoCaoGiaoHang, "TONGTIENPHIEUTHUKHAC")</th>
+
+                                    <th style="font-weight: bold; text-align: center; white-space: nowrap; color: #428bca"> @Utility.GetColumnName(@API.BaoCaoGiaoHang, "TONGTIENPHIEUCHI")</th>
+                                    <th style="font-weight: bold; text-align: center; white-space: nowrap; color: #428bca"> @Utility.GetColumnName(@API.BaoCaoGiaoHang, "TONGTIENPHIEUCHIKHAC")</th>
+                                    <th style="font-weight: bold; text-align: center; white-space: nowrap; "> @Utility.GetColumnName(@API.BaoCaoGiaoHang, "TONG")</th>
+                                </tr>
+                            </thead>
+
+                            @{
+                                double TT_TONGTIENPHIEUXUAT = 0, TT_TONGTIENPHIEUNHAP = 0, TT_TONGTIENPHIEUTHU = 0, TT_TONGTIENPHIEUCHI = 0, TT_TONGTIENTHU = 0;
+                                double TT_TONGTIENPHIEUXUATKHAC = 0, TT_TONGTIENPHIEUNHAPKHAC = 0, TT_TONGTIENPHIEUTHUKHAC = 0, TT_TONGTIENPHIEUCHIKHAC = 0;
+                                double TT_NHAPXUAT = 0, TT_THUCHI = 0;
+                                double TT_TONGTIENPHIEUTHUNGANHANG = 0;
+                                double TT_TONGTIENPHIEUTHUGANNO = 0;
+                                if (Model.IPagedList != null && Model.IPagedList.Count() > 0)
+                                {
+                                    <tbody id="tbodytmpitem">
+
+                                        @foreach (var item in Model.IPagedList)
+                                        {
+                                            TT_TONGTIENPHIEUXUAT += item.TONGTIENPHIEUXUAT;
+                                            TT_TONGTIENPHIEUNHAP += item.TONGTIENPHIEUNHAP;
+                                            TT_TONGTIENPHIEUTHU += item.TONGTIENPHIEUTHU;
+                                            TT_TONGTIENPHIEUCHI += item.TONGTIENPHIEUCHI;
+                                            TT_TONGTIENPHIEUTHUNGANHANG += item.TONGTIENPHIEUTHUNGANHANG;
+                                            TT_TONGTIENPHIEUTHUGANNO += item.TONGTIENPHIEUTHUGANNO;
+
+                                            TT_TONGTIENPHIEUXUATKHAC += item.TONGTIENPHIEUXUATKHAC;
+                                            TT_TONGTIENPHIEUNHAPKHAC += item.TONGTIENPHIEUNHAPKHAC;
+                                            TT_TONGTIENPHIEUTHUKHAC += item.TONGTIENPHIEUTHUKHAC;
+                                            TT_TONGTIENPHIEUCHIKHAC += item.TONGTIENPHIEUCHIKHAC;
+                                            TT_TONGTIENTHU += (item.TONGTIENPHIEUTHU + item.TONGTIENPHIEUTHUNGANHANG + item.TONGTIENPHIEUTHUGANNO);
+                                            TT_NHAPXUAT += item.NHAPXUAT;
+                                            TT_THUCHI += item.THUCHI;
+
+                                            string SOLUONG_DONHANG = item.SOLUONG_DONHANG.ToString("N0");
+                                            string SOTIENGIAOHANG = item.SOTIENGIAOHANG.ToString("N0");
+                                            string NGAYLAP = item.NGAYLAP.ToString("dd/MM/yyyy");
+
+                                            string TONGTIENPHIEUXUAT = item.TONGTIENPHIEUXUAT.ToString("N0");
+                                            string TONGTIENPHIEUNHAP = item.TONGTIENPHIEUNHAP.ToString("N0");
+                                            string TONGTIENPHIEUTHU = item.TONGTIENPHIEUTHU.ToString("N0");
+                                            string TONGTIENPHIEUCHI = item.TONGTIENPHIEUCHI.ToString("N0");
+                                            string TONGTIENPHIEUTHUNGANHANG = item.TONGTIENPHIEUTHUNGANHANG.ToString("N0");
+                                            string TONGTIENPHIEUTHUGANNO = item.TONGTIENPHIEUTHUGANNO.ToString("N0");
+
+                                            string TONGTIENTHU = (item.TONGTIENPHIEUTHU + item.TONGTIENPHIEUTHUGANNO + item.TONGTIENPHIEUTHUNGANHANG).ToString("N0");
+
+                                            string TONGTIENPHIEUXUATKHAC = item.TONGTIENPHIEUXUATKHAC.ToString("N0");
+                                            string TONGTIENPHIEUNHAPKHAC = item.TONGTIENPHIEUNHAPKHAC.ToString("N0");
+                                            string TONGTIENPHIEUTHUKHAC = item.TONGTIENPHIEUTHUKHAC.ToString("N0");
+                                            string TONGTIENPHIEUCHIKHAC = item.TONGTIENPHIEUCHIKHAC.ToString("N0");
+
+                                            string THUCHI = item.THUCHI.ToString("N0");
+                                            string NHAPXUAT = item.NHAPXUAT.ToString("N0");
+                                            item.TUNGAY = Model.TUNGAY;
+                                            item.DENNGAY = Model.DENNGAY;
+                                            item.ID_XE = Model.ID_XE;
+                                            string ShowSearchValue = clsMaHoa.Encrypt(JsonConvert.SerializeObject(item), clsMaHoa.PassMaHoa);
+                                            <tr id="@item.ID_PHIEUGIAOHANG" ondblclick="myFunSuccessDebt('@API.BaoCaoGiaoHang','@ShowSearchValue')">
+                                                <td style="white-space: nowrap; " id="NGAYLAP"> @NGAYLAP</td>
+                                                <td style="white-space: nowrap; " id="MAPHIEU"> @Html.DisplayFor(modelItem => item.MAPHIEU)</td>
+                                                <td style="white-space: nowrap; text-align: right;" id="SOLUONG_DONHANG"> @SOLUONG_DONHANG</td>
+                                                <td style="white-space: nowrap; text-align: right;" id="SOTIENGIAOHANG"> @SOTIENGIAOHANG</td>
+                                                <td style="white-space: nowrap; " id="MA_XE"> @Html.DisplayFor(modelItem => item.MA_XE)</td>
+                                                <td style="white-space: nowrap; " id="NAME_XE"> @Html.DisplayFor(modelItem => item.NAME_XE)</td>
+                                                <td style="white-space: nowrap; text-align: right; color: red" id="TONGTIENPHIEUXUAT"> @TONGTIENPHIEUXUAT</td>
+                                                <td style="white-space: nowrap; text-align: right; color: red" id="TONGTIENPHIEUXUATKHAC"> @TONGTIENPHIEUXUATKHAC</td>
+                                                <td style="white-space: nowrap; text-align: right; color: red" id="TONGTIENPHIEUNHAP"> @TONGTIENPHIEUNHAP</td>
+                                                <td style="white-space: nowrap; text-align: right; color: red" id="TONGTIENPHIEUNHAPKHAC"> @TONGTIENPHIEUNHAPKHAC</td>
+                                                <td style="white-space: nowrap; text-align: right;" id="NHAPXUAT"> @NHAPXUAT</td>
+                                                <td style="white-space: nowrap; text-align: right; color: #428bca" id="TONGTIENPHIEUTHU"> @TONGTIENPHIEUTHU</td>
+                                                <td style="white-space: nowrap; text-align: right; color: #428bca" id="TONGTIENPHIEUTHUGANNO"> @TONGTIENPHIEUTHUGANNO</td>
+                                                <td style="white-space: nowrap; text-align: right; color: #428bca" id="TONGTIENPHIEUTHUNGANHANG"> @TONGTIENPHIEUTHUNGANHANG</td>
+                                                <td style="white-space: nowrap; text-align: right;" id="TONGTIENTHU"> @TONGTIENTHU</td>
+
+                                                <td style="white-space: nowrap; text-align: right; color: #428bca" id="TONGTIENPHIEUTHUKHAC"> @TONGTIENPHIEUTHUKHAC</td>
+
+                                                <td style="white-space: nowrap; text-align: right; color: #428bca" id="TONGTIENPHIEUCHI"> @TONGTIENPHIEUCHI</td>
+                                                <td style="white-space: nowrap; text-align: right; color: #428bca" id="TONGTIENPHIEUCHIKHAC"> @TONGTIENPHIEUCHIKHAC</td>
+                                                <td style="white-space: nowrap; text-align: right;" id="THUCHI"> @THUCHI</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                }
+                                <thead>
+                                    <tr style="font-weight: bold;">
+                                        <td style="white-space: nowrap; text-align: right;" colspan="6">TỔNG:</td>
+                                        <td style="white-space: nowrap; text-align: right; color: red" id="TT_TONGTIENPHIEUXUAT"> @TT_TONGTIENPHIEUXUAT.ToString("N0")</td>
+                                        <td style="white-space: nowrap; text-align: right; color: red" id="TT_TONGTIENPHIEUXUATKHAC"> @TT_TONGTIENPHIEUXUATKHAC.ToString("N0")</td>
+                                        <td style="white-space: nowrap; text-align: right; color: red" id="TT_TONGTIENPHIEUNHAP"> @TT_TONGTIENPHIEUNHAP.ToString("N0")</td>
+                                        <td style="white-space: nowrap; text-align: right; color: red" id="TT_TONGTIENPHIEUNHAPKHAC"> @TT_TONGTIENPHIEUNHAPKHAC.ToString("N0")</td>
+                                        <td style="white-space: nowrap; text-align: right; " id="TT_NHAPXUAT"> @TT_NHAPXUAT.ToString("N0")</td>
+                                        <td style="white-space: nowrap; text-align: right; color: #428bca " id="TT_TONGTIENPHIEUTHU"> @TT_TONGTIENPHIEUTHU.ToString("N0")</td>
+                                        <td style="white-space: nowrap; text-align: right; " id="TT_TONGTIENPHIEUTHUNGANHANG"> @TT_TONGTIENPHIEUTHUGANNO.ToString("N0")</td>
+                                        <td style="white-space: nowrap; text-align: right; color: #428bca " id="TT_TONGTIENPHIEUTHUNGANHANG"> @TT_TONGTIENPHIEUTHUNGANHANG.ToString("N0")</td>
+                                        <td style="white-space: nowrap; text-align: right; " id="TT_TONGTIENPHIEUTHUNGANHANG"> @TT_TONGTIENTHU.ToString("N0")</td>
+
+                                        <td style="white-space: nowrap; text-align: right; color: #428bca" id="TT_TONGTIENPHIEUTHUKHAC"> @TT_TONGTIENPHIEUTHUKHAC.ToString("N0")</td>
+
+                                        <td style="white-space: nowrap; text-align: right; color: #428bca" id="TT_TONGTIENPHIEUCHI"> @TT_TONGTIENPHIEUCHI.ToString("N0")</td>
+                                        <td style="white-space: nowrap; text-align: right; color: #428bca" id="TT_TONGTIENPHIEUCHIKHAC"> @TT_TONGTIENPHIEUCHIKHAC.ToString("N0")</td>
+                                        <td style="white-space: nowrap; text-align: right; " id="TT_THUCHI"> @TT_THUCHI.ToString("N0")</td>
+                                    </tr>
+                                </thead>
+                            }
+                        </table>
+                    </div>
+                </div><!-- table-responsive -->
+            </div>
+
+            <div class="panel-footer">
+            </div>
+        </div>
+    </div>
+</div>

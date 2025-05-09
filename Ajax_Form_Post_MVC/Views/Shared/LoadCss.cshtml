@@ -1,0 +1,155 @@
+﻿<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="@Url.Content("~/Content/js/jquery-1.10.2.min.js")"></script>
+<script src="@Url.Content("~/Content/js/jquery.unobtrusive-ajax.min.js")"></script>
+
+<style>
+    .tableFixHead {
+        overflow-y: auto;
+        height: 100px;
+    }
+
+    /* Just common table stuff. */
+    table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    th, td {
+        padding: 8px 16px;
+    }
+
+    th {
+        background: #eee;
+    }
+
+    .chosen-container-single .chosen-single div b {
+        background: url(../images/dropdown-arrow.png) no-repeat 8px 15px;
+    }
+
+    table {
+        border-collapse: collapse;
+        border-spacing: 0;
+        width: 100%;
+        border: 1px solid #ddd;
+    }
+
+    th, td {
+        text-align: left;
+        padding: 8px;
+    }
+
+    tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+
+    thead th {
+        background-color: #428bca;
+        color: #fff;
+    }
+
+    tfoot th {
+        background-color: #1CAF9A;
+        color: #fff;
+    }
+</style>
+
+<script src="@Url.Content("~/Content/js/jquery-1.10.2.min.js")"></script>
+<script src="@Url.Content("~/Content/js/jquery-ui-1.10.3.min.js")"></script>
+
+<style>
+    .dropbtn {
+        background-color: #4CAF50;
+        color: white;
+        padding: 16px;
+        font-size: 16px;
+        border: none;
+        cursor: pointer;
+    }
+
+        .dropbtn:hover, .dropbtn:focus {
+            background-color: #3e8e41;
+        }
+
+    #myInput {
+        box-sizing: border-box;
+        background-image: url('searchicon.png');
+        background-position: 14px 12px;
+        background-repeat: no-repeat;
+        font-size: 16px;
+        padding: 14px 20px 12px 45px;
+        border: none;
+        border-bottom: 1px solid #ddd;
+    }
+
+        #myInput:focus {
+            outline: 3px solid #ddd;
+        }
+
+    .dropdown {
+        position: relative;
+        display: inline-block;
+    }
+
+    .dropdown-content {
+        display: none;
+        position: absolute;
+        background-color: #f6f6f6;
+        min-width: 230px;
+        overflow: auto;
+        border: 1px solid #ddd;
+        z-index: 1;
+    }
+
+        .dropdown-content a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+
+    .dropdown a:hover {
+        background-color: #ddd;
+    }
+
+    .show {
+        display: block;
+    }
+</style>
+<script>
+    function myFunction(Controller, id) {
+        if (confirm("Bạn muốn thực hiện xóa!")) {
+
+            $.post("/" + Controller + "/Delete?id=" + id + "", null,
+                function (data) {
+                    location.reload();
+                });
+        }
+    }
+</script>
+<script>
+    function show(Controller) {
+        var e = document.getElementById("Show");
+        var value = e.options[e.selectedIndex].value;
+/*        var text = e.options[e.selectedIndex].text;*/
+        $.post("/" + "Admin/show", { "Show": value, "Controller": Controller }, function (data) {
+            location.replace("/" + Controller + "?Page=" + 1);
+        });
+    }
+</script>
+<script>
+    function funSearchItem(Controller) {
+        var x = document.getElementById("Show");
+        var value = x.options[x.selectedIndex].value;
+        var x1 = document.getElementById("ShowSearchValue");
+        var value1 = x1.options[x1.selectedIndex].value;
+        var z = document.getElementById("SearchString").value;
+        //$.post("/Admin/Search", { "Page": 1, "SearchString": z, "ShowSearchValue": value1, "Show": value }, function (data) {
+            //alert("/" + Controller + "?Page=" + 1 + "&SearchString=" + z + "&ShowSearchValue=" + value1 + " &Show" + value);
+        location.replace("/" + Controller + "?Page=" + 1 + "&ShowSearchValue=" + value1 + "&SearchString=" + z);
+        //});
+        //$.post(Controller + "?Page=" + y, null,
+        //    function (data) {
+        //        location.replace(Controller + "?Page=" + y);
+        //    });
+    }
+</script>

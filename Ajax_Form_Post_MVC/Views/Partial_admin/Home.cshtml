@@ -1,0 +1,15 @@
+﻿<div class="media userlogged">
+    <img alt="" src="@Url.Content(ViewBag.Images)" class="media-object" style="width:26px; height:26px" >
+    <div class="media-body">
+        <h4>@Html.Raw(ViewBag.Fullname)</h4>
+        <span>@Html.Raw(ViewBag.Username)</span>
+    </div>
+</div>
+<h5 class="sidebartitle actitle"></h5>
+<ul class="nav nav-pills nav-stacked nav-bracket mb30">
+    <li><a href="@Url.Action("My_profile", "Admin")"><i class="fa fa-user"></i> <span>Thông tin tài khoản</span></a></li>
+    <li><a href="@Url.Action("ChangePassword", "User")"><i class="fa fa-cog"></i> <span></span>Đổi mật khẩu</a></li>
+    @*<li><a href="#"><i class="fa fa-question-circle"></i> <span>Help</span></a></li>*@
+    <li><a href="@Url.Action("Logout", "Admin")"><i class="fa fa-sign-out"></i> <span>Thoát</span></a></li>
+    <li><a href="@Url.Action("Cache", "Admin")"><i class="fa fa-cloud-download"></i> <span>Nạp Cache</span></a></li>
+</ul>

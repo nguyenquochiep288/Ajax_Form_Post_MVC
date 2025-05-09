@@ -1,0 +1,245 @@
+@model MVC_QuanLyTHP.Models.v_v_dm_TaiKhoanNganHang
+@using MVC_QuanLyTHP.Class;
+@using DatabaseTHP.Class;
+@if (Utility.IntWidth == 1)
+{
+    using (Ajax.BeginForm("EditPopup", API.dm_TaiKhoanNganHang, new AjaxOptions { OnBegin = "OnBegin", OnSuccess = "OnSuccessEdit" }))
+    {
+        @Html.AntiForgeryToken()
+        <div class="panel-heading" style="padding-top:15px;padding-right: 15px;">
+            <div class="panel-btns">
+                <a onclick='myFunClosed("myModalEdit")'>&times;</a>
+            </div>
+            
+            <h1 class="panel-title" style="font-size: 20px;text-align: center "><label id="lblName" name="lblName">@Utility.GetTitleFrom(API.dm_TaiKhoanNganHang)</label></h1>
+            <div class="panel-body" style="padding:5px">
+
+            </div>
+        </div>
+
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div id="ValidationSummary" class="validation-summary-errors text-danger">
+        </div>
+        @Html.HiddenFor(model => model.ID)
+        @Html.HiddenFor(model => model.LOC_ID)@Html.HiddenFor(model => model.ID_NGUOITAO)@Html.HiddenFor(model => model.THOIGIANTHEM)
+
+        <div class="panel-body panel-body-nopadding">
+            <div class="form-horizontal form-bordered">
+                <div class="form-group">
+                    @Html.Label(@Utility.GetColumnName(@API.dm_TaiKhoanNganHang, "MA"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                    <div class="col-sm-5">
+                        @Html.EditorFor(model => model.MA, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.MA, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.Label(@Utility.GetColumnName(@API.dm_TaiKhoanNganHang, "NAME"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                    <div class="col-sm-5">
+                        @Html.EditorFor(model => model.NAME, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.NAME, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.Label(@Utility.GetColumnName(@API.dm_TaiKhoanNganHang, "SOTAIKHOAN"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                    <div class="col-sm-5">
+                        @Html.EditorFor(model => model.SOTAIKHOAN, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.SOTAIKHOAN, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.Label(@Utility.GetColumnName(@API.dm_TaiKhoanNganHang, "MANGANHANG"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                    <div class="col-sm-5">
+                        @Html.EditorFor(model => model.MANGANHANG, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.MANGANHANG, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.Label(@Utility.GetColumnName(@API.dm_TaiKhoanNganHang, "TENNGANHANG"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                    <div class="col-sm-5">
+                        @Html.TextAreaFor(model => model.TENNGANHANG, new { @class = "form-control", @rows = "3" })
+                        @Html.ValidationMessageFor(model => model.TENNGANHANG, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.Label(@Utility.GetColumnName(@API.dm_TaiKhoanNganHang, "CHINHANH"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                    <div class="col-sm-5">
+                        @Html.TextAreaFor(model => model.CHINHANH, new { @class = "form-control", @rows = "3" })
+                        @Html.ValidationMessageFor(model => model.CHINHANH, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.Label(@Utility.GetColumnName(@API.dm_TaiKhoanNganHang, "TINHTP"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                    <div class="col-sm-5">
+                        @Html.EditorFor(model => model.TINHTP, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.TINHTP, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.Label(@Utility.GetColumnName(@API.dm_TaiKhoanNganHang, "CHUTAIKHOAN"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                    <div class="col-sm-5">
+                        @Html.EditorFor(model => model.CHUTAIKHOAN, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.CHUTAIKHOAN, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.Label(@Utility.GetColumnName(@API.dm_TaiKhoanNganHang, "CONGNODAUKY"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                    <div class="col-sm-5">
+                        @Html.EditorFor(model => model.CONGNODAUKY, new { htmlAttributes = new { @class = "form-control", @type = "number" } })
+                        @Html.ValidationMessageFor(model => model.CONGNODAUKY, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.Label(@Utility.GetColumnName(@API.dm_TaiKhoanNganHang, "ISDEFAULT"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                    <div class="col-sm-5">
+                        @Html.CheckBoxFor(model => model.ISDEFAULT, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.ISDEFAULT, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.Label(@Utility.GetColumnName(@API.dm_TaiKhoanNganHang, "ISACTIVE"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                    <div class="col-sm-5">
+                        @Html.CheckBoxFor(model => model.ISACTIVE, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.ISACTIVE, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel-footer">
+            <div class="row">
+                <div class="col-sm-5 col-sm-offset-3">
+                    <button class="btn btn-primary">@Utility.ThucHien</button>
+                    <a class="btn btn-danger" onclick='myFunClosed("myModalEdit")'>@Utility.Dong</a>
+                </div>
+            </div>
+        </div>
+
+    }
+}
+else
+{
+    {
+        ViewBag.Title = API.ViewBagTitle;
+        Layout = "~/Views/Shared/Admin.cshtml";
+    }
+    <hr />
+    using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="panel-group" id="accordion">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h1 class="panel-title" style="text-align:center">
+                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+                            @Utility.GetTitleFrom(API.dm_TaiKhoanNganHang)
+                        </a>
+                    </h1>
+                </div>
+                <hr />
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                @Html.HiddenFor(model => model.ID)
+                @Html.HiddenFor(model => model.LOC_ID)@Html.HiddenFor(model => model.ID_NGUOITAO)@Html.HiddenFor(model => model.THOIGIANTHEM)
+
+                <div id="collapseOne" class="panel-collapse collapse in">
+                    <div class="form-horizontal form-bordered">
+                            <div class="form-group">
+                                @Html.Label(@Utility.GetColumnName(@API.dm_TaiKhoanNganHang, "MA"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                                <div class="col-sm-5">
+                                    @Html.EditorFor(model => model.MA, new { htmlAttributes = new { @class = "form-control" } })
+                                    @Html.ValidationMessageFor(model => model.MA, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                @Html.Label(@Utility.GetColumnName(@API.dm_TaiKhoanNganHang, "NAME"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                                <div class="col-sm-5">
+                                    @Html.EditorFor(model => model.NAME, new { htmlAttributes = new { @class = "form-control" } })
+                                    @Html.ValidationMessageFor(model => model.NAME, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                @Html.Label(@Utility.GetColumnName(@API.dm_TaiKhoanNganHang, "SOTAIKHOAN"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                                <div class="col-sm-5">
+                                    @Html.EditorFor(model => model.SOTAIKHOAN, new { htmlAttributes = new { @class = "form-control" } })
+                                    @Html.ValidationMessageFor(model => model.SOTAIKHOAN, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                @Html.Label(@Utility.GetColumnName(@API.dm_TaiKhoanNganHang, "MANGANHANG"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                                <div class="col-sm-5">
+                                    @Html.EditorFor(model => model.MANGANHANG, new { htmlAttributes = new { @class = "form-control" } })
+                                    @Html.ValidationMessageFor(model => model.MANGANHANG, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                @Html.Label(@Utility.GetColumnName(@API.dm_TaiKhoanNganHang, "TENNGANHANG"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                                <div class="col-sm-5">
+                                    @Html.TextAreaFor(model => model.TENNGANHANG, new { @class = "form-control", @rows = "3" })
+                                    @Html.ValidationMessageFor(model => model.TENNGANHANG, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                @Html.Label(@Utility.GetColumnName(@API.dm_TaiKhoanNganHang, "CHINHANH"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                                <div class="col-sm-5">
+                                    @Html.TextAreaFor(model => model.CHINHANH, new { @class = "form-control", @rows = "3" })
+                                    @Html.ValidationMessageFor(model => model.CHINHANH, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                @Html.Label(@Utility.GetColumnName(@API.dm_TaiKhoanNganHang, "TINHTP"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                                <div class="col-sm-5">
+                                    @Html.EditorFor(model => model.TINHTP, new { htmlAttributes = new { @class = "form-control" } })
+                                    @Html.ValidationMessageFor(model => model.TINHTP, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                @Html.Label(@Utility.GetColumnName(@API.dm_TaiKhoanNganHang, "CHUTAIKHOAN"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                                <div class="col-sm-5">
+                                    @Html.EditorFor(model => model.CHUTAIKHOAN, new { htmlAttributes = new { @class = "form-control" } })
+                                    @Html.ValidationMessageFor(model => model.CHUTAIKHOAN, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                @Html.Label(@Utility.GetColumnName(@API.dm_TaiKhoanNganHang, "ISDEFAULT"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                                <div class="col-sm-5">
+                                    @Html.CheckBoxFor(model => model.ISDEFAULT, new { htmlAttributes = new { @class = "form-control" } })
+                                    @Html.ValidationMessageFor(model => model.ISDEFAULT, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                @Html.Label(@Utility.GetColumnName(@API.dm_TaiKhoanNganHang, "ISACTIVE"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                                <div class="col-sm-5">
+                                    @Html.CheckBoxFor(model => model.ISACTIVE, new { htmlAttributes = new { @class = "form-control" } })
+                                    @Html.ValidationMessageFor(model => model.ISACTIVE, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="panel-footer">
+                        <div class="row">
+                            <div class="col-sm-5 col-sm-offset-2">
+                                <button class="btn btn-primary">@Utility.ThucHien</button>
+                                @if (Request.UrlReferrer != null)
+                                {
+                                    <a href="@Request.UrlReferrer.ToString()" class="btn btn-danger">@Utility.QuayLai</a>
+                                }
+                                else
+                                {
+
+                                    @Html.ActionLink(Utility.QuayLai, "Index", null, new { @class = "btn btn-danger" })
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    }
+}
+<script type="text/javascript">
+    $(function () {
+        // delete extra hidden fields created by checkboxes as the grid links mess this up by doubling the querystring parameters
+        $("input[type='hidden'][name='ISACTIVE']").remove();
+        $("input[type='hidden'][name='ISDEFAULT']").remove();
+    });
+</script>

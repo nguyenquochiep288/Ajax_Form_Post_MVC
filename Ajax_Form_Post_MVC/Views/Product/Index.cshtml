@@ -1,0 +1,304 @@
+﻿@model MVC_QuanLyTHP.Models.v_v_dm_HangHoa
+@using PagedList.Mvc;
+@using DatabaseTHP;
+@using DatabaseTHP.Class;
+@using MVC_QuanLyTHP.Class;
+@using MVC_QuanLyTHP.Models;
+@{
+    ViewBag.Title = API.ViewBagTitle;
+    Layout = "~/Views/Shared/Admin.cshtml";
+}
+@Html.Partial("LoadCssDanhMuc")
+<hr />
+<script>
+    jQuery(document).ready(function () {
+        //Replaces data-rel attribute to rel.
+        //We use data-rel because of w3c validation issue
+        jQuery('a[data-rel]').each(function () {
+            jQuery(this).attr('rel', jQuery(this).data('rel'));
+        });
+
+        jQuery("a[rel^='prettyPhoto']").prettyPhoto();
+
+    });
+
+</script>
+<script>
+
+    function onFileSelected(event, name) {
+        var selectedFile = event.target.files[0];
+        var reader = new FileReader();
+
+        var imgtag = document.getElementById(name);
+        imgtag.title = selectedFile.name;
+
+        reader.onload = function (event) {
+            imgtag.src = event.target.result;
+        };
+
+        reader.readAsDataURL(selectedFile);
+    }
+    function callChangefunc(val, nameDVT, nameCombo) {
+        if (val != null) {
+            var imgtag = document.getElementById(nameDVT);
+            var imgtagCombo = document.getElementById(nameCombo);
+            if (val == 2) {
+                // hide
+                imgtag.style.visibility = 'block';
+                // OR
+                imgtag.style.display = 'visible';
+
+                imgtagCombo.style.visibility = 'hidden';
+                // OR
+                imgtagCombo.style.display = 'none';
+            }
+            else if (val != 0) {
+                // hide
+                imgtag.style.visibility = 'hidden';
+                // OR
+                imgtag.style.display = 'none';
+
+                imgtagCombo.style.visibility = 'visible';
+                // OR
+                imgtagCombo.style.display = 'block';
+            }
+            else {
+                imgtag.style.visibility = 'visible';
+                // OR
+                imgtag.style.display = 'block';
+
+                // hide
+                imgtagCombo.style.visibility = 'hidden';
+                // OR
+                imgtagCombo.style.display = 'none';
+            }
+        }
+    }
+    function RemoveFile(nameID, name) {
+        var input = document.querySelector('#' + nameID);
+        input.outerHTML = input.outerHTML;
+        var imgtag = document.getElementsByName(name);
+        if (imgtag != null && imgtag.length > 0) {
+            for (var i = 0; i < imgtag.length; i++) {
+                if (imgtag[i].localName == "img") {
+                    imgtag[i].title = "";
+                    imgtag[i].src = "";
+                }
+                else {
+                    imgtag[i].value = "";
+                }
+            }
+        }
+    }
+</script>
+<div class="panel-group" id="accordion">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h1 class="panel-title" style="text-align:center">
+                <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+                    @Utility.GetTitleFrom(API.dm_HangHoa)
+                </a>
+            </h1>
+        </div>
+
+
+        <div id="collapseOne" class="panel-collapse collapse in">
+            <div class="form-group">
+                <div class="col-sm-3" style="padding-bottom: 5px;">
+                    <button id="download-excel" style="background-color: #217346;" class="btn btn-success" onclick="ExportExcel('example-table')"><i class="fa fa-file-text-o" style="margin-right:10px"></i>@Utility.XuatExcel</button>
+                    @if (ViewBag.PermissionCreate)
+                    {
+                        if (Utility.IntWidth == 1)
+                        {
+                            <button class="btn btn-success" onclick="myFunctionCreate('@{@API.dm_HangHoa;}')"><i class="fa fa-pencil-square-o" style="margin-right:20px"></i>@Utility.Them</button>
+                        }
+                        else
+                        {
+                            <a class="btn btn-success" href="@Url.Action("Create", @API.dm_HangHoa)"><i class="fa fa-pencil-square-o" style="margin-right:20px"></i>@Utility.Them</a>
+                        }
+                    }
+                </div>
+                <div class="col-sm-2" style="padding-bottom: 5px;">
+                    <select class="form-control chosen-select" onchange="show('@{@API.dm_HangHoa;}')" id="Show" name="Show">
+                        @for (int show = 0; show < Utility.arrShow.Length; show++)
+                        {
+                            if (Utility.GetPageSize() == @Utility.arrShow[show])
+                            {
+                                <option value="@Utility.arrShow[show]" selected>@Utility.arrShow[show]</option>
+                            }
+                            else
+                            {
+                                <option value="@Utility.arrShow[show]">@Utility.arrShow[show]</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="col-sm-2" style="padding-bottom: 5px;">
+                    <select class="form-control chosen-select" id="ShowSearchValue" name="ShowSearchValue">
+                        @for (int show = 0; show < Utility.listSearch.Count; show++)
+                        {
+                            if (ViewBag.showsearchValue == Utility.listSearch[show].Item1)
+                            {
+                                <option value="@Utility.listSearch[show].Item1" selected>@Utility.listSearch[show].Item2</option>
+                            }
+                            else
+                            {
+                                <option value="@Utility.listSearch[show].Item1">@Utility.listSearch[show].Item2</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="col-sm-4">
+                    @Html.TextBox("SearchString", (string)ViewBag.searchValue, htmlAttributes: new { @class = "form-control", @style = "width:80%;display:inline-block", @placeholder = Utility.TimKiem })
+                    <button class="btn btn-default" onclick="funSearchItem('@{@API.dm_HangHoa;}')"><span class='glyphicon glyphicon-search'></span></button>
+                </div>
+            </div>
+
+
+
+            <div class="tablescroll" style="overflow-x:auto; Overflow-y:scroll; height: auto;">
+                <div class="panel-body panel-body-nopadding">
+                    <div class="form-horizontal form-bordered">
+                        <table class="table table-bordered mb30" id="example-table">
+                            <thead>
+                                <tr>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;left:0"> @Utility.GetColumnName(@API.dm_HangHoa, "MA")</th>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_HangHoa, "NAME")</th>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_HangHoa, "BARCODE")</th>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_HangHoa, "PICTURE")</th>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_HangHoa, "ID_NHOMHANGHOA")</th>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_HangHoa, "LOAIHANGHOA")</th>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_HangHoa, "ID_DVT")</th>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_HangHoa, "GIA01")</th>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_HangHoa, "GIA02")</th>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_HangHoa, "GIA03")</th>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_HangHoa, "GIAMUA")</th>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_HangHoa, "STATUS_QD")</th>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_HangHoa, "TYLE_QD")</th>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_HangHoa, "ID_DVT_QD")</th>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_HangHoa, "GIA01_QD")</th>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_HangHoa, "GIA02_QD")</th>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_HangHoa, "GIA03_QD")</th>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_HangHoa, "GIAMUA_QD")</th>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_HangHoa, "TRONGLUONG")</th>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_HangHoa, "ID_NCC")</th>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_HangHoa, "STATUS_HIENTHI")</th>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_HangHoa, "ISACTIVE")</th>
+
+                                    <th>
+
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbodytmpitem">
+                                @foreach (var item in Model.IPagedList)
+                                {
+                                    string n1 = item.GIA01 > 0 ? item.GIA01.ToString("N0") : "";
+                                    string n2 = item.GIA02 > 0 ? item.GIA02.ToString("N0") : "";
+                                    string n3 = item.GIA03 > 0 ? item.GIA03.ToString("N0") : "";
+                                    string n4 = item.GIA01_QD > 0 ? item.GIA01_QD.ToString("N0") : "";
+                                    string n5 = item.GIA02_QD > 0 ? item.GIA02_QD.ToString("N0") : "";
+                                    string n6 = item.GIA03_QD > 0 ? item.GIA03_QD.ToString("N0") : "";
+                                    string nGiaMua = item.GIAMUA > 0 ? item.GIAMUA.ToString("N0") : "";
+                                    string nGiaMua_QD = item.GIAMUA_QD > 0 ? item.GIAMUA_QD.ToString("N0") : "";
+                                    string TRONGLUONG = item.TRONGLUONG > 0 ? item.TRONGLUONG.ToString("N0") + " g" : "";
+                                    <tr id="@item.ID">
+                                        <td style="white-space: nowrap; " id="MA"> @Html.DisplayFor(modelItem => item.MA)</td>
+                                        <td style="white-space: nowrap; " id="NAME"> @Html.DisplayFor(modelItem => item.NAME)</td>
+                                        <td style="white-space: nowrap; " id="BARCODE"> @Html.DisplayFor(modelItem => item.BARCODE)</td>
+                                        <td style="white-space: nowrap; " id="PICTURE">
+                                            <div class="thmb-prev">
+                                                @if (!string.IsNullOrEmpty(item.PICTURE))
+                                                {
+                                                    <a href="@API.PathProduct@Html.DisplayFor(modelItem => item.PICTURE)?v=@DateTime.Now.Ticks" data-rel="prettyPhoto" rel="prettyPhoto">
+                                                        <img src="@API.PathProduct@Html.DisplayFor(modelItem => item.PICTURE)?v=@DateTime.Now.Ticks" class="img-responsive" alt="">
+                                                    </a>
+                                                }
+                                            </div>
+                                        </td>
+
+
+
+
+                                        <td style="white-space: nowrap; " id="NAME_NHOMHANGHOA"> @Html.DisplayFor(modelItem => item.NAME_NHOMHANGHOA)</td>
+                                        <td style="white-space: nowrap; " id="NAME_LOAIHANGHOA"> @Html.DisplayFor(modelItem => item.NAME_LOAIHANGHOA)</td>
+                                        <td style="white-space: nowrap; " id="NAME_DVT"> @Html.DisplayFor(modelItem => item.NAME_DVT)</td>
+                                        <td style="white-space: nowrap; " id="GIA01">@n1</td>
+                                        <td style="white-space: nowrap; " id="GIA02">@n2</td>
+                                        <td style="white-space: nowrap; " id="GIA03">@n3</td>
+                                        <td style="white-space: nowrap; " id="GIAMUA">@nGiaMua</td>
+                                        <td style="white-space: nowrap; " id="STATUS_QD"> @Html.DisplayFor(modelItem => item.STATUS_QD)</td>
+                                        <td style="white-space: nowrap; " id="TYLE_QD"> @Html.DisplayFor(modelItem => item.TYLE_QD)</td>
+                                        <td style="white-space: nowrap; " id="NAME_DVT_QD"> @Html.DisplayFor(modelItem => item.NAME_DVT_QD)</td>
+                                        <td style="white-space: nowrap; " id="GIA01_QD">@n4</td>
+                                        <td style="white-space: nowrap; " id="GIA02_QD">@n5</td>
+                                        <td style="white-space: nowrap; " id="GIA03_QD">@n6</td>
+                                        <td style="white-space: nowrap; " id="GIAMUA_QD">@nGiaMua_QD</td>
+                                        <td style="white-space: nowrap; " id="TRONGLUONG"> @TRONGLUONG</td>
+                                        <td style="white-space: nowrap; " id="NAME_NCC"> @Html.DisplayFor(modelItem => item.NAME_NCC)</td>
+                                        <td style="white-space: nowrap; " id="STATUS_HIENTHI"> @Html.DisplayFor(modelItem => item.STATUS_HIENTHI)</td>
+                                        <td style="white-space: nowrap; " id="ISACTIVE"> @Html.DisplayFor(modelItem => item.ISACTIVE)</td>
+
+                                        <td style="white-space: nowrap; " class="fix">
+                                            @if (ViewBag.PermissionEdit)
+                                            {
+                                                if (Utility.IntWidth == 1)
+                                                {
+                                                    <a class="label label-primary" onclick="myFunctionEdit('@{@API.dm_HangHoa;}','@item.ID')" href="#"><i class="fa fa-edit" style="margin-right:5px"></i>@Utility.Sua</a>
+                                                }
+                                                else
+                                                {
+                                                    @Html.ActionLink(Utility.Sua, "Edit", new { id = item.ID }, htmlAttributes: new { @class = "label label-primary" });
+                                                }
+                                            }
+                                            @if (ViewBag.PermissionDelete)
+                                            {
+                                                if (Utility.IntWidth == 1)
+                                                {
+                                                    <a class="label label-danger" onclick="myFunctionPopup('@{@API.dm_HangHoa;}','@item.ID')" href="#"><i class="glyphicon glyphicon-trash" style="margin-right:5px"></i>@Utility.Xoa</a>
+                                                }
+                                                else
+                                                {
+                                                    <a class="label label-danger" onclick="myFunction('@{@API.dm_HangHoa;}','@item.ID')" href="#"><i class="glyphicon glyphicon-trash" style="margin-right:5px"></i>@Utility.Xoa</a>
+                                                }
+
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div><!-- table-responsive -->
+            </div>
+
+            <div class="panel-footer">
+                @Html.PagedListPager((PagedList.IPagedList<v_dm_HangHoa>)Model.IPagedList, page => Url.Action("Index", new { Page = page, ShowSearchValue = ViewBag.showsearchValue, SearchString = ViewBag.searchValue }))
+            </div>
+        </div>
+    </div>
+</div>
+@if (Utility.IntWidth == 1)
+{
+    if (ViewBag.PermissionCreate)
+    {
+        <button id="myBtnAdd" style="display:none"></button>
+        <div id="myModalAdd" class="modal">
+            <div class="panel panel-default" @Html.Raw(Utility.StypeWidth_Level1)>
+                <!-- The Modal -->
+                @{Html.RenderAction("Create", @API.dm_HangHoa, new { type = 1 });}
+            </div>
+        </div>
+    }
+    if (ViewBag.PermissionEdit)
+    {
+        <button id="myBtnEdit" style="display:none"></button>
+        <div id="myModalEdit" class="modal">
+            <div class="panel panel-default" @Html.Raw(Utility.StypeWidth_Level1)>
+                <!-- The Modal -->
+                @{Html.RenderAction("Edit", @API.dm_HangHoa, new { type = 1, id = "" });}
+            </div>
+        </div>
+    }
+}
+@{Html.RenderAction("Image_Input", "FileManager");}

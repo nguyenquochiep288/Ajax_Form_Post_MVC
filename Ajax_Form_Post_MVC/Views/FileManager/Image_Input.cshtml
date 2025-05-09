@@ -1,0 +1,204 @@
+﻿@using MVC_QuanLyTHP.Class;
+@using DatabaseTHP.Class;
+<style>
+    .qrcode-text-btn {
+        display: inline-block;
+        background: url('@Utility.UrlWebsite/images/photo-camera-svgrepo-com.svg') 50% 50% no-repeat;
+        height: 2em;
+        width: 2.7em;
+        margin-left: 40%;
+        cursor: pointer;
+    }
+
+        .qrcode-text-btn > input[type=file] {
+            position: absolute;
+            overflow: hidden;
+            width: 1px;
+            height: 1px;
+            opacity: 0;
+        }
+</style>
+<button id="myBtnViewFilemanager" style="display:none"></button>
+<div id="myModalViewFilemanager" class="modal">
+    <div class="panel panel-default" @Html.Raw(Utility.StypeWidth_Level2)>
+        <!-- The Modal -->
+        <div class="panel-heading" style="padding-top:15px;padding-right: 15px;">
+            <div class="panel-btns">
+                <a onclick='myFunClosed("myModalViewFilemanager")'>&times;</a>
+            </div>
+
+            <h1 class="panel-title" style="font-size: 20px;text-align: center "><label id="lblNameViewFilemanager" name="lblNameViewFilemanager">HÌNH ẢNH</label></h1>
+            <div class="panel-body" style="padding:5px">
+            </div>
+
+        </div>
+
+        <div class="panel-body panel-body-nopadding">
+            <div class="form-horizontal form-bordered">
+                <section>
+                    <div class="mainpanel" style="margin-left: 0px; min-height: 0px;">
+                        <div class="contentpanel">
+                            <div class="row">
+                                <div class="col-sm-9">
+                                    <div class="row filemanager" id="idFilemanager">
+
+                                        <!--<div class="col-xs-6 col-sm-4 col-md-3 image">
+                                        <div class="thmb">
+                                            <div class="ckbox ckbox-default">
+                                                <input type="checkbox" id="check2" value="1" />
+                                                <label for="check2"></label>
+                                            </div>
+                                            <div class="btn-group fm-group">
+                                            </div>-->
+                                        <!-- btn-group -->
+                                        <!--<div class="thmb-prev">
+                                                <a href="/Images_sp/hinh@2x.jpg" data-rel="prettyPhoto">
+                                                    <img src="/Images_sp/hinh@2x.jpg" class="img-responsive" alt="" />
+                                                </a>
+                                            </div>
+                                            <h5 class="fm-title"><a href="#">Vegetarian.png</a></h5>
+                                            <small class="text-muted">Added: Jan 02, 2014</small>
+                                        </div>-->
+                                        <!-- thmb -->
+                                        <!--</div>--><!-- col-xs-6 -->
+
+                                    </div><!-- row -->
+                                </div><!-- col-sm-9 -->
+                                <div class="col-sm-3">
+                                    <div class="fm-sidebar">
+
+                                        @using (Ajax.BeginForm("AddFileManager_Image", "FileManager", new AjaxOptions { OnBegin = "OnBegin", OnSuccess = "OnSuccessAddFileManager_Image" }, new { id = "frmPayments", enctype = "multipart/form-data" }))
+                                        {
+                                            <input type="text" hidden id="ID_HANGHOA" name="ID_HANGHOA" />
+                                            <input type="text" hidden id="ID_PHIEUGIAOHANG" name="ID_PHIEUGIAOHANG" />
+                                            <input type="text" hidden id="ID_PHIEUXUAT" name="ID_PHIEUXUAT" />
+                                            <input type="datetime-local" hidden id="NGAYTAO" name="NGAYTAO" />
+                                            <label class="qrcode-text-btn">
+                                                <input type="file" accept="image/*" capture="enviroment" onchange="openQRCamera(this);" tabindex="-1" id="MaHinh" name="MaHinh" />
+                                            </label>
+
+                                            <div class="mb30"></div>
+                                            <div id="idFilemanagerAdd">
+                                                <div class="col-xs-6 col-sm-4 col-md-12 image">
+                                                    <div class="thmb">
+                                                        <div class="ckbox ckbox-default">
+
+                                                        </div>
+                                                        <div class="btn-group fm-group">
+                                                        </div>
+                                                        @*btn-group*@
+                                                        <div class="thmb-prev">
+                                                            <a href="/Images_sp/hinh@2x.jpg" data-rel="prettyPhoto" id="txthrefUrl">
+                                                                <img src="/Images_sp/hinh@2x.jpg" class="img-responsive" alt="" id="txtsrcUrl" max-width="100%" style="width:100%" />
+                                                            </a>
+                                                        </div>
+                                                        <h5 class="fm-title"><a href="#" id="txtNameFile">Vegetarian.png</a></h5>
+                                                        <small class="text-muted" id="txtCreateFile">Added: Jan 02, 2014</small>
+                                                    </div>
+                                                    <!-- thmb -->
+                                                </div><!-- col-xs-6 -->
+                                                <button class="btn btn-primary btn-block">Upload Files</button>
+                                            </div>
+
+                                        }
+                                    </div>
+                                </div><!-- col-sm-3 -->
+
+                            </div>
+                        </div>
+
+                    </div><!-- mainpanel -->
+
+                </section>
+            </div>
+        </div>
+
+        <div class="panel-footer">
+            <div class="row">
+                <div class="col-sm-5 col-sm-offset-3">
+                    <a class="btn btn-danger" onclick='myFunClosed("myModalViewFilemanager")'>@Utility.Dong</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    jQuery(document).ready(function () {
+        //Replaces data-rel attribute to rel.
+        //We use data-rel because of w3c validation issue
+        jQuery('a[data-rel]').each(function () {
+            jQuery(this).attr('rel', jQuery(this).data('rel'));
+        });
+
+        jQuery("a[rel^='prettyPhoto']").prettyPhoto();
+
+    });
+
+    function openQRCamera(node) {
+        var reader = new FileReader();
+        reader.onloadend = function (e) {
+            //alert(node.files[0].name);
+            //alert(node.files[0].lastModifiedDate);
+            var date = new Date(node.files[0].lastModified);
+            var dataUrl = reader.result;
+            document.getElementById("txtNameFile").innerHTML = node.files[0].name;
+            document.getElementById("txthrefUrl").href = e.target.result;
+            document.getElementById("txtsrcUrl").src = e.target.result;;
+            document.getElementById("txtCreateFile").innerHTML = format_time(date);
+            // Paint image, as a proof of concept
+            //var img = document.createElement('img');
+            //img.src = dataUrl;
+            //document.body.appendChild(img);
+            var elem = document.getElementById("NGAYTAO");
+            elem.value = date.toISOString().slice(0, 16);
+            //elem = document.getElementById("URL_IMAGE");
+            //elem.value = dataUrl;
+
+            var imgtagNV = document.getElementById("idFilemanagerAdd");
+            imgtagNV.style.visibility = 'visible';
+            imgtagNV.style.display = 'block';
+        };
+        reader.readAsDataURL(node.files[0]);
+    }
+
+    function format_time(t) {
+        try {
+            var Day = t.getDay();
+            var Date = t.getDate();
+            var Month = t.getMonth();
+            var Year = getFullYear(t);
+            var Hour = t.getHours();
+            var Minutes = t.getMinutes();
+            var Seconds = t.getSeconds();
+            var timeString = "";
+            timeString += addZero(Date);
+            timeString += "/";
+            timeString += addZero(Month + 1);
+            timeString += "/";
+            timeString += Year;
+            timeString += " ";
+            timeString += addZero(Hour);
+            timeString += ":";
+            timeString += addZero(Minutes);
+            timeString += ":";
+            timeString += addZero(Seconds);
+            return timeString;
+        } catch (ex) {
+            alert(ex.Message);
+            alert(ex);
+        }
+    }
+
+    function addZero(i) {
+        if (i < 10) { i = "0" + i }
+        return i;
+    }
+    function getFullYear(d) {
+        var y = d.getYear();
+        if (y < 1000) {
+            y += 1900
+        };
+        return y;
+    }
+</script>

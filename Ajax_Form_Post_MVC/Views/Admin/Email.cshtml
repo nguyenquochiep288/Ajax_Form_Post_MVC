@@ -1,0 +1,67 @@
+﻿@model IList<MVC_QuanLyTHP.Models.NGUOIDUNG>
+@{
+    ViewBag.Title = "Email";
+    Layout = "~/Views/Shared/Admin.cshtml";
+}
+<script>
+function show() {
+    var x = document.getElementById("show").selectedIndex;
+    var y = document.getElementsByTagName("option")[x].value;
+    $.post("/Admin/show", { "show": y, "trang": "Email" },
+            function (data) {
+                location.replace('/Admin/Email/1');
+            }
+    );
+}
+</script>
+ <div style="margin-top:20px;margin-left:20px">
+<div class="row">
+        <div class="col-md-6" style="width:auto;">
+          <h3 style="text-align:center;">DANH SÁCH EMAIL</h3>
+             <hr />
+          <p class="mb20"><a class="btn btn-success" href="@Url.Action("Send_Email", "Admin")"><i class="fa fa-envelope-o" style="margin-right:20px"></i>Gởi email</a></p>
+            <hr />
+                    <div class="row mb10">
+                        <div class="col-sm-5">
+                            <select class="form-control chosen-select" onchange="show()" id="show">
+                                @for (int show = 10; show <= 40; show += 10)
+                                {
+                                    if(ViewBag.show == show){
+                                    <option value="@show" selected>@show</option>}else{
+                                        <option value="@show">@show</option>
+                                    }
+                                }                                
+                            </select>
+                        </div>
+                    </div>
+          <div class="table-responsive">
+          <table class="table table-bordered mb30">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Tên khách hàng</th>
+                <th>Email</th>
+              </tr>
+            </thead>
+            <tbody>
+                 @{int ix = (ViewBag.stt * ViewBag.show) - (ViewBag.show - 1);} 
+        @for(int i=0;i < Model.Count;i++)
+        {
+              <tr>
+                <td>@ix</td>
+                <td>@Model[i].TenKH</td>
+                <td>@Model[i].EMAIL</td>
+              </tr>
+            ix++;
+        }
+            </tbody>
+          </table>
+          </div><!-- table-responsive -->
+        </div><!-- col-md-6 -->
+    </div>
+      <ul class="pagination pagination-split">
+      @Html.Raw(ViewBag.viewphantrang)
+      @Html.Raw(ViewBag.chuoi_ptkitu)
+      </ul>
+     </div>
+

@@ -1,0 +1,184 @@
+﻿@using MVC_QuanLyTHP.Class;
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Vị trí trên bản đồ</title>
+    <meta name="viewport" content="initial-scale=1.0">
+    <meta charset="utf-8">
+    <style>
+        /* Always set the map height explicitly to define the size of the div
+        * element that contains the map. */
+        #map {
+            height: 100%;
+        }
+        /* Optional: Makes the sample page fill the window. */
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCvd_f7yHnqrxDVlweE8OxftE1-gwV9T9M&sensor=false"></script>
+    <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyCvd_f7yHnqrxDVlweE8OxftE1-gwV9T9M&sensor=false&libraries=places"></script>
+    <p id="demo">Kích vào button để lấy vị trí hiện tại.</p>
+    <button onclick="getLocation()">Lấy vị trí hiện tại</button>
+    <div id="map"></div>
+    @*<iframe src="https://maps.google.com/maps?q=13.096087899701693,109.31921388138764&hl=es;z=14&amp;output=embed" id="Pencere"></iframe>
+        <script type="text/javascript">
+            function jump() {
+                var url = "https://maps.google.com/maps?key=AIzaSyCvd_f7yHnqrxDVlweE8OxftE1-gwV9T9M&q=13.096324351441032,109.30549761198417&hl=es;z=14&amp;output=embed";
+                document.getElementById("Pencere").src = url;
+            }
+        </script>*@
+    <script>
+        var x = document.getElementById("demo");
+        function getLocation() {
+            try {
+                $.ajax({
+                    type: "POST",
+                    url: "/Map/GetListMap" + window.location.search,
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: OnSubmitGetListMap,
+                    error: myFunClosedGetListMap
+                });
+            }
+            catch (ex) {
+                alert(ex);
+            }
+        }
+        function myFunClosedGetListMap() {
+            alert("Lỗi");
+        }
+        function OnSubmitGetListMap(data) {
+            try {
+                if (data != null) {
+                    for (var i = 0; i < data.length; i++) {
+                        locations.push([data[i].Text, data[i].Latitude, data[i].Longitude]);
+                    }
+                }
+
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(showPosition, showError);
+                } else {
+                    x.innerHTML = "Geolocation không được hỗ trợ bởi trình duyệt này.";
+                }
+            }
+            catch
+            {
+            }
+        }
+        var locations = [];
+        function showPosition(position) {
+            x.innerHTML = "Vĩ độ: " + position.coords.latitude +
+                "<br>Kinh độ: " + position.coords.longitude;
+            var latlon = position.coords.latitude + "," + position.coords.longitude;
+            var latitude = position.coords.latitude;
+            var longitude = position.coords.longitude;
+
+            var myLatlng = new google.maps.LatLng(latitude, longitude);
+            map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 10,
+                center: new google.maps.LatLng(latitude, longitude),
+                mapTypeId: google.maps.MapTypeId.ROADMAP
+            });
+
+
+            var infowindow = new google.maps.InfoWindow();
+
+            var marker, i;
+            locations.push(["Vị trí hiện tại", latitude, longitude]);
+            for (i = 0; i < locations.length; i++) {
+                marker = new google.maps.Marker({
+                    position: new google.maps.LatLng(locations[i][1], locations[i][2]),
+                    map: map
+                });
+
+                google.maps.event.addListener(marker, 'click', (function (marker, i) {
+                    return function () {
+                        infowindow.setContent(locations[i][0]);
+                        infowindow.open(map, marker);
+                    }
+                })(marker, i));
+            }
+        }
+        function showError(error) {
+            switch (error.code) {
+                case error.PERMISSION_DENIED:
+                    x.innerHTML = "Người sử dụng từ chối cho xác định vị trí."
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    x.innerHTML = "Thông tin vị trí không có sẵn."
+                    break;
+                case error.TIMEOUT:
+                    x.innerHTML = "Yêu cầu vị trí người dùng vượt quá thời gian quy định."
+                    break;
+                case error.UNKNOWN_ERROR:
+                    x.innerHTML = "Một lỗi xảy ra không rõ nguyên nhân."
+                    break;
+            }
+        }
+
+        var map;
+        function initMap() {
+            $.ajax({
+                type: "POST",
+                url: "/Map/GetListMap" + window.location.search,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: OnSubmitLoadListMap,
+                error: myFunClosedGetListMap
+            });
+        }
+
+        function OnSubmitLoadListMap(data) {
+            try {
+                var latitude = 0;
+                var longitude = 0;
+                if (data != null) {
+                    for (var i = 0; i < data.length; i++) {
+                        locations.push([data[i].Text, data[i].Latitude, data[i].Longitude]);
+                        latitude = data[i].Latitude;
+                        longitude = data[i].Longitude;
+                    }
+                }
+
+
+                var myLatlng = new google.maps.LatLng(latitude, longitude);
+                map = new google.maps.Map(document.getElementById('map'), {
+                    zoom: 10,
+                    center: new google.maps.LatLng(latitude, longitude),
+                    mapTypeId: google.maps.MapTypeId.ROADMAP
+                });
+
+
+                var infowindow = new google.maps.InfoWindow();
+                var marker, i;
+
+                for (i = 0; i < locations.length; i++) {
+                    marker = new google.maps.Marker({
+                        position: new google.maps.LatLng(locations[i][1], locations[i][2]),
+                        map: map
+                    });
+
+                    google.maps.event.addListener(marker, 'click', (function (marker, i) {
+                        return function () {
+                            infowindow.setContent(locations[i][0]);
+                            infowindow.open(map, marker);
+                        }
+                    })(marker, i));
+                }
+            }
+            catch
+            {
+            }
+        }
+
+
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCvd_f7yHnqrxDVlweE8OxftE1-gwV9T9M&callback=initMap"></script>
+</body>
+</html>

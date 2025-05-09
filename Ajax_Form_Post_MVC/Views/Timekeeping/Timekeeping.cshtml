@@ -1,0 +1,185 @@
+﻿@model DatabaseTHP.v_nv_ChamCong
+@using PagedList.Mvc;
+@using DatabaseTHP.Class;
+@using MVC_QuanLyTHP.Class;
+@using MVC_QuanLyTHP.Models;
+@{
+    ViewBag.Title = API.ViewBagTitle;
+    Layout = "~/Views/Shared/Admin.cshtml";
+}
+@Html.Partial("LoadCssDanhMuc")
+<head>
+    <style>
+        .container {
+            max-width: 400px;
+            margin-top: 50px;
+            text-align: center;
+            border: 1px solid #e3e3e3;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            font-family: "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica Neue,Arial,Noto Sans,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji";
+        }
+
+        .header {
+            background: linear-gradient(90deg, #76c7c0, #ffafbd);
+            padding: 20px;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+        }
+
+        .avatar {
+            background-color: gold;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+            margin: 0 auto;
+        }
+
+        .content {
+            padding: 20px;
+        }
+        .content:hover {
+                box-shadow: 0px 0px 59px #c0bfbf !important;
+                transition: box-shadow 0.5s ease-in-out;
+            }
+        .btn-logout {
+            background-color: #f8f9fa;
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 20px;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+            .btn-logout:hover {
+                background-color: #ffc107;
+                transform: scale(1.1);
+            }
+
+            .btn-logout:focus {
+                outline: none;
+            }
+
+            .btn-logout img {
+                width: 100px;
+            }
+
+        .time {
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 10px;
+            font-family: "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica Neue,Arial,Noto Sans,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji";
+        }
+
+        .h2 {
+            font-family: "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica Neue,Arial,Noto Sans,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji";
+        }
+    </style>
+</head>
+@*@using (Ajax.BeginForm(ViewData["TYPEFORM"].ToString(), API.nv_ChamCong, new AjaxOptions { OnBegin = "OnBegin", OnSuccess = "OnSuccessCreateTimekeeping" }))
+    {*@
+
+@Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+@*string NGAYCONG = Model.NGAYCONG.ToString("o");
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.ID)
+    @Html.HiddenFor(model => model.LOC_ID)
+    @Html.HiddenFor(model => model.ID_NHANVIEN)
+    @Html.Hidden(NGAYCONG)*@
+@{
+    @Html.HiddenFor(model => model.LATITUDELONGITUDE)
+    @Html.HiddenFor(model => model.MYPUBLICIPV4)
+}
+<div id="myModalAdd" class="validation-summary-errors text-danger"></div>
+<div class="container">
+    <div class="header">
+        <div class="avatar">@Html.Raw(ViewData["AVATAR"])</div>
+    </div>
+    <div class="content" style="box-shadow: 0px -11px 25px #c4c4c4;">
+        <h2 class="h2">@Html.Raw(ViewData["NAME_NHANVIEN"])</h2>
+        <p class="time">Bạn muốn @Html.Raw(ViewData["TYPE"])?</p>
+        @Html.Raw(ViewData["TIMERTEXT"])
+        <div class="time" id="currentTime">00:00:00</div>
+        <button class="btn btn-logout" onclick="Timekeeping()">
+            <img src="/Images_sp/@Html.Raw(ViewData["LOGO"])" alt="">
+        </button>
+        <p class="text-muted mt-3" style="margin-top: 10px;">Bấm vào @Html.Raw(ViewData["TYPE"])</p>
+    </div>
+</div>
+@* } *@
+<script>
+    const now = new Date('@(((DateTime) ViewData["TIMER"]).ToString("o"))');
+    function updateTime() {
+        const currentTimeElement = document.getElementById('currentTime');
+        now.setSeconds(now.getSeconds() + 1);
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const seconds = String(now.getSeconds()).padStart(2, '0');
+        currentTimeElement.textContent = `Giờ làm việc hôm nay: ${hours}:${minutes}:${seconds}`;
+    }
+
+    setInterval(updateTime, 1000);
+    updateTime();
+
+
+    function getIpaddress()
+    {
+        fetch('https://api.ipify.org/?format=json').then(res => {
+            return res.json()
+        }).then(data => {
+            document.getElementById("MYPUBLICIPV4").value = data.ip;
+            /*ipElem.innerHTML += ('<br>My Public IPv4:' + data.ip);*/
+        }).catch(err => {
+            console.log(`There was an error ${err}`)
+        })
+    }
+    getIpaddress();
+
+    function Timekeeping()
+    {
+        if (navigator.geolocation)
+        {
+            navigator.geolocation.getCurrentPosition(showPosition);
+        } else {
+            document.getElementById("myModalAdd").innerHTML =
+                "Geolocation is not supported by this browser.";
+        }
+    }
+    function showPosition(position)
+    {
+        const userAgent = navigator.userAgent;
+        let deviceName = 'Unknown Device';
+
+        // Phân tích userAgent
+        if (/iPad|iPhone|iPod/.test(userAgent)) {
+            deviceName = 'Apple iOS Device';
+        } else if (/Android/.test(userAgent)) {
+            deviceName = 'Android Device';
+        } else if (/Windows/.test(userAgent)) {
+            deviceName = 'Windows Device';
+        } else if (/Macintosh/.test(userAgent)) {
+            deviceName = 'Mac Device';
+        } else if (/Linux/.test(userAgent)) {
+            deviceName = 'Linux Device';
+        }
+        if (deviceName == 'Apple iOS Device' || deviceName == 'Android Device')
+        {
+
+        }
+        else
+        {
+            alert("Vui lòng truy cập trên điện thoại!" + deviceName);
+            return;
+        }
+
+        document.getElementById("myModalAdd").innerHTML = position.coords.latitude + "-" + position.coords.longitude;
+        document.getElementById("LATITUDELONGITUDE").value = position.coords.latitude + "-" + position.coords.longitude;
+        @Html.Raw(@ViewData["TYPEFORM"].ToString())
+    }
+</script>

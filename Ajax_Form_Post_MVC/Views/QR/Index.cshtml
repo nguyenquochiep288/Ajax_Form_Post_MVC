@@ -1,0 +1,154 @@
+﻿@using DatabaseTHP;
+@using PagedList.Mvc;
+@using DatabaseTHP.Class;
+@using MVC_QuanLyTHP.Class;
+@using MVC_QuanLyTHP.Models;
+@{
+    ViewBag.Title = API.ViewBagTitle;
+    Layout = "~/Views/Shared/Admin.cshtml";
+}
+
+
+<style>
+    body, input {
+        font-size: 14pt;
+    }
+
+    input, label {
+        vertical-align: middle;
+    }
+
+    .qrcode-text {
+        padding-right: 1.7em;
+        margin-right: 0;
+    }
+
+    .qrcode-text-btn {
+        display: inline-block;
+        background: url(images/1499401426qr_icon.svg) 50% 50% no-repeat;
+        height: 1em;
+        width: 2.7em;
+        margin-left: -2.7em;
+        cursor: pointer;
+    }
+
+        .qrcode-text-btn > input[type=file] {
+            position: absolute;
+            overflow: hidden;
+            width: 1px;
+            height: 1px;
+            opacity: 0;
+        }
+
+    #QRTextbox {
+        display: block;
+        margin: 0 auto;
+        width: 100%;
+        text-align: center;
+    }
+</style>
+<script src="@Url.Content("~/Content/js/html5-qrcode.min.js")"></script>
+<script src="@Url.Content("~/Content/js/qr_packed.js")"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.4/html5-qrcode.min.js" integrity="sha512-k/KAe4Yff9EUdYI5/IAHlwUswqeipP+Cp5qnrsUjTPCgl51La2/JhyyjNciztD7mWNKLSXci48m7cctATKfLlQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script type="text/javascript">
+    function openQRCamera(node) {
+        var reader = new FileReader();
+        reader.onloadend = function () {
+            var dataUrl = reader.result;
+            // Paint image, as a proof of concept
+            var img = document.createElement('img');
+            img.src = dataUrl;
+            document.body.appendChild(img);
+        };
+
+        reader.onload = function () {
+            node.value = "";
+            qrcode.callback = function (res) {
+                if (res instanceof Error) {
+                    alert("Không tìm thấy mã QR. Vui lòng đảm bảo mã QR nằm trong khung của máy ảnh và thử lại.");
+                } else {
+                    node.parentNode.previousElementSibling.value = res;
+                }
+            };
+            qrcode.decode(reader.result);
+        };
+        reader.readAsDataURL(node.files[0]);
+    }
+</script>
+@Html.Partial("LoadCssDanhMuc")
+<hr />
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.4/html5-qrcode.min.js" integrity="sha512-k/KAe4Yff9EUdYI5/IAHlwUswqeipP+Cp5qnrsUjTPCgl51La2/JhyyjNciztD7mWNKLSXci48m7cctATKfLlQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<style>
+    main {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    #reader {
+        width: 250px;
+    }
+
+    #result {
+        text-align: center;
+        font-size: 1.5rem;
+    }
+</style>
+<main>
+    <div id="reader"></div>
+    <div id="result"></div>
+</main>
+<script>
+    const scanner = new Html5QrcodeScanner('reader', {
+        qrbox: {
+            width: 250,
+            height: 250,
+        },
+        fps: 20,
+    });
+    scanner.render(success, error);
+    function success(result) {
+        document.getElementById('result').innerHTML = `
+<h2>Success!</h2>
+<p><a href="${result}">${result}</a></p>
+`;
+        scanner.clear();
+        //document.getElementById('reader').remove();
+    }
+    function error(err) {
+        console.error(err);
+    }
+</script>
+
+<div class="panel-group" id="accordion">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h1 class="panel-title" style="text-align:center">
+                <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+                    @Utility.GetTitleFrom(API.web_Quyen)
+                </a>
+            </h1>
+        </div>
+
+
+        <div id="collapseOne" class="panel-collapse collapse in">
+            <div class="form-group">
+                <form id="form1" runat="server">
+                    <div id="QRTextbox">
+                        <input type="text" size="16" placeholder="Quét QR code" class="qrcode-text" autocomplete="off" />
+                        <label class="qrcode-text-btn">
+                            <input type="file" accept="image/*" onchange="openQRCamera(this);" tabindex="-1" />
+                        </label>
+                    </div>
+                </form>
+            </div>
+            <div class="panel-footer">
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+

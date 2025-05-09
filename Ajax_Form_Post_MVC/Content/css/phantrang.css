@@ -1,0 +1,11 @@
+﻿@import url('bootstrap.phantrang.css');
+@import url('bootstrap-override.css');
+
+
+a:focus, a:active {  }
+@media screen and (max-width: 360px) {
+   .pagination {
+      margin-bottom: 20px;
+   }
+   
+}

@@ -1,0 +1,163 @@
+﻿@model MVC_QuanLyTHP.Models.v_v_dm_DonViTinh
+@using DatabaseTHP;
+@using PagedList.Mvc;
+@using DatabaseTHP.Class;
+@using MVC_QuanLyTHP.Class;
+@using MVC_QuanLyTHP.Models;
+@{
+    ViewBag.Title = API.ViewBagTitle;
+    Layout = "~/Views/Shared/Admin.cshtml";
+}
+@Html.Partial("LoadCssDanhMuc")
+<hr />
+<div class="panel-group" id="accordion">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h1 class="panel-title" style="text-align:center">
+                <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+                    @Utility.GetTitleFrom(API.dm_DonViTinh)
+                </a>
+            </h1>
+        </div>
+
+
+        <div id="collapseOne" class="panel-collapse collapse in">
+            <div class="form-group">
+                <div class="col-sm-3" style="padding-bottom: 5px;">
+                    <button id="download-excel" style="background-color: #217346;" class="btn btn-success" onclick="ExportExcel('example-table')"><i class="fa fa-file-text-o" style="margin-right:10px"></i>@Utility.XuatExcel</button>
+                    @if (ViewBag.PermissionCreate)
+                    {
+                        if (Utility.IntWidth == 1)
+                        {
+                            <button class="btn btn-success" onclick="myFunctionCreate('@{@API.dm_DonViTinh;}')"><i class="fa fa-pencil-square-o" style="margin-right:20px"></i>@Utility.Them</button>
+                        }
+                        else
+                        {
+                            <a class="btn btn-success" href="@Url.Action("Create", @API.dm_DonViTinh)"><i class="fa fa-pencil-square-o" style="margin-right:20px"></i>@Utility.Them</a>
+                        }
+                    }
+                </div>
+                <div class="col-sm-2" style="padding-bottom: 5px;">
+                    <select class="form-control chosen-select" onchange="show('@{@API.dm_DonViTinh;}')" id="Show" name="Show">
+                        @for (int show = 0; show < Utility.arrShow.Length; show++)
+                        {
+                            if (Utility.GetPageSize() == @Utility.arrShow[show])
+                            {
+                                <option value="@Utility.arrShow[show]" selected>@Utility.arrShow[show]</option>
+                            }
+                            else
+                            {
+                                <option value="@Utility.arrShow[show]">@Utility.arrShow[show]</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="col-sm-2" style="padding-bottom: 5px;">
+                    <select class="form-control chosen-select" id="ShowSearchValue" name="ShowSearchValue">
+                        @for (int show = 0; show < Utility.listSearch.Count; show++)
+                        {
+                            if (ViewBag.showsearchValue == Utility.listSearch[show].Item1)
+                            {
+                                <option value="@Utility.listSearch[show].Item1" selected>@Utility.listSearch[show].Item2</option>
+                            }
+                            else
+                            {
+                                <option value="@Utility.listSearch[show].Item1">@Utility.listSearch[show].Item2</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="col-sm-4">
+                    @Html.TextBox("SearchString", (string)ViewBag.searchValue, htmlAttributes: new { @class = "form-control", @style = "width:80%;display:inline-block", @placeholder = Utility.TimKiem })
+                    <button class="btn btn-default" onclick="funSearchItem('@{@API.dm_DonViTinh;}')"><span class='glyphicon glyphicon-search'></span></button>
+                </div>
+            </div>
+
+
+
+            <div class="tablescroll" style="overflow-x:auto; Overflow-y:scroll; height: auto;">
+                <div class="panel-body panel-body-nopadding">
+                    <div class="form-horizontal form-bordered">
+                        <table class="table table-bordered mb30" id="example-table">
+                            <thead>
+                                <tr>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_DonViTinh, "MA")</th>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_DonViTinh, "NAME")</th>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_DonViTinh, "ISACTIVE")</th>
+
+                                    <th>
+
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbodytmpitem">
+                                @foreach (var item in Model.IPagedList)
+                                {
+                                    <tr id="@item.ID">
+                                        <td style="white-space: nowrap; " id="MA"> @Html.DisplayFor(modelItem => item.MA)</td>
+                                        <td style="white-space: nowrap; " id="NAME"> @Html.DisplayFor(modelItem => item.NAME)</td>
+                                        <td style="white-space: nowrap; " id="ISACTIVE"> @Html.DisplayFor(modelItem => item.ISACTIVE)</td>
+
+                                        <td style="white-space: nowrap; " class="fix">
+                                            @if (ViewBag.PermissionEdit)
+                                            {
+                                                if (Utility.IntWidth == 1)
+                                                {
+                                                    <a class="label label-primary" onclick="myFunctionEdit('@{@API.dm_DonViTinh;}','@item.ID')" href="#"><i class="fa fa-edit" style="margin-right:5px"></i>@Utility.Sua</a>
+                                                }
+                                                else
+                                                {
+                                                    @Html.ActionLink(Utility.Sua, "Edit", new { id = item.ID }, htmlAttributes: new { @class = "label label-primary" });
+                                                }
+                                            }
+                                            @if (ViewBag.PermissionDelete)
+                                            {
+                                                if (Utility.IntWidth == 1)
+                                                {
+                                                    <a class="label label-danger" onclick="myFunctionPopup('@{@API.dm_DonViTinh;}','@item.ID')" href="#"><i class="glyphicon glyphicon-trash" style="margin-right:5px" ></i>@Utility.Xoa</a>
+                                                }
+                                                else
+                                                {
+                                                    <a class="label label-danger" onclick="myFunction('@{@API.dm_DonViTinh;}','@item.ID')" href="#"><i class="glyphicon glyphicon-trash" style="margin-right:5px" ></i>@Utility.Xoa</a>
+                                                }
+
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div><!-- table-responsive -->
+            </div>
+
+            <div class="panel-footer">
+                @Html.PagedListPager((PagedList.IPagedList<v_dm_DonViTinh>)Model.IPagedList, page => Url.Action("Index", new { Page = page, ShowSearchValue = ViewBag.showsearchValue, SearchString = ViewBag.searchValue }))
+            </div>
+        </div>
+    </div>
+</div>
+@if (Utility.IntWidth == 1)
+{
+    if (ViewBag.PermissionCreate)
+    {
+        <button id="myBtnAdd" style="display:none"></button>
+        <div id="myModalAdd" class="modal">
+            <div class="panel panel-default" @Html.Raw(Utility.StypeWidth_Level1)>
+                <!-- The Modal -->
+                @{Html.RenderAction("Create", @API.dm_DonViTinh, new { type = 1 });}
+            </div>
+        </div>
+    }
+    if (ViewBag.PermissionEdit)
+    {
+        <button id="myBtnEdit" style="display:none"></button>
+        <div id="myModalEdit" class="modal">
+            <div class="panel panel-default" @Html.Raw(Utility.StypeWidth_Level1)>
+                <!-- The Modal -->
+                @{Html.RenderAction("Edit", @API.dm_DonViTinh, new { type = 1, id = "" });}
+            </div>
+        </div>
+    }
+}
+

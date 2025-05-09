@@ -1,0 +1,479 @@
+﻿@model MVC_QuanLyTHP.Models.v_v_nv_ChamCong
+@using DatabaseTHP;
+@using PagedList.Mvc;
+@using DatabaseTHP.Class;
+@using MVC_QuanLyTHP.Class;
+@using MVC_QuanLyTHP.Models;
+@using Newtonsoft.Json;
+@{
+    ViewBag.Title = API.ViewBagTitle;
+    Layout = "~/Views/Shared/Admin.cshtml";
+}
+<script src="@Url.Content("~/Scripts/Payroll.js")"></script>
+@Html.Partial("LoadCssDanhMuc")
+<hr />
+<div class="panel-group" id="accordion">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h1 class="panel-title" style="text-align:center">
+                <a data-toggle="collapse" data-parent="#accordion" href="#collapseOneDebt">
+                    @Utility.GetTitleFrom(API.nv_ChamCong)
+                </a>
+            </h1>
+        </div>
+        @{ 
+            string MauVang = "#FFFF00";//Màu vàng(Đi trễ, về sớm)
+            string MauXanh = "#0033FF;color: white;";//Màu xanh(Done)
+            string MauCam = "#FFA500";//Màu cam(Chưa có thực hiện chấm công)
+            string MauDo = "red";//Màu đỏ(Chưa cài đặt tháng lương)
+            string MauHong = "#FFCCFF";
+        }
+       
+        <div id="collapseOneDebt" class="panel-collapse collapse in">
+            <div class="panel-body panel-body-nopadding">
+                <div class="form-horizontal form-bordered">
+                    @using (Html.BeginForm("TableTimekeeping", API.nv_ChamCong, FormMethod.Post, new AjaxOptions { OnBegin = "OnBegin", OnSuccess = "OnEnd" }))
+                    {
+                        <div class="form-group">
+                            @Html.Label(@Utility.GetColumnName(@API.nv_NghiPhep, "Thời gian"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                            <div class="col-sm-2">
+                                @Html.TextBoxFor(model => model.TUNGAY, (Model.TUNGAY).ToString("yyyy-MM-dd"), new { @class = "form-control hasDatepicker", @placeholder = "dd/MM/yyyy", @type = "date" })
+                                @Html.ValidationMessageFor(model => model.TUNGAY, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="col-sm-2">
+                                @Html.TextBoxFor(model => model.DENNGAY, (Model.DENNGAY).ToString("yyyy-MM-dd"), new { @class = "form-control hasDatepicker", @placeholder = "dd/MM/yyyy", @type = "date" })
+                                @Html.ValidationMessageFor(model => model.DENNGAY, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.Label(@Utility.GetColumnName(@API.nv_ChamCong, "ID_PHONGBAN"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                            <div class="col-sm-3">
+                                <div class="input-group mb15">
+                                    <span class="input-group-btn">
+                                        <button type="button" class="btn btn-default" onclick="myFunOpenSearch('collapseOneDebt', '@{@API.dm_PhongBan;}', '@API.Chon1', 'lstdm_PhongBan', '')"><span class="glyphicon glyphicon-search"></span></button>
+                                    </span>
+                                    @Html.DropDownListFor(model => model.ID_PHONGBAN, new SelectList(Model.lstdm_PhongBan, "ID", "NAME"), !string.IsNullOrEmpty(Model.ID_PHONGBAN) ? "" : Utility.GetTitleChon(API.dm_PhongBan), htmlAttributes: new { @class = "form-control chosen-select", id = "lstdm_PhongBan" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.Label(@Utility.GetColumnName(@API.nv_ChamCong, "ID_NHANVIEN"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                            <div class="col-sm-3">
+                                <div class="input-group mb15">
+                                    <span class="input-group-btn">
+                                        <button type="button" class="btn btn-default" onclick="myFunOpenSearch('collapseOneDebt', '@{@API.dm_NhanVien;}', '@API.Chon1', 'lstdm_NhanVien', '')"><span class="glyphicon glyphicon-search"></span></button>
+                                    </span>
+                                    @Html.DropDownListFor(model => model.ID_NHANVIEN, new SelectList(Model.lstdm_NhanVien, "ID", "NAME"), !string.IsNullOrEmpty(Model.ID_NHANVIEN) ? "" : Utility.GetTitleChon(API.dm_NhanVien), htmlAttributes: new { @class = "form-control chosen-select", id = "lstdm_NhanVien" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.Label(@Utility.GetColumnName(@API.nv_NghiPhep, "Ghi chú"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                            <div class="col-sm-2">
+                                <button style="background-color:@MauXanh;width: 20px;height: 20px;"> </button> Thành công
+                            </div>
+                            <div class="col-sm-2">
+                                <button style="background-color:@MauVang;width: 20px;height: 20px;"> </button> Đi trễ, về sớm
+                            </div>
+                            <div class="col-sm-2">
+                                <button style="background-color:@MauCam;width: 20px;height: 20px;"> </button> Chưa chấm công
+                            </div>
+                            <div class="col-sm-2">
+                                <button style="background-color:@MauHong;width: 20px;height: 20px;"> </button> Có nghỉ phép
+                            </div>
+                            <div class="col-sm-2">
+                                <button style="background-color:@MauDo;width: 20px;height: 20px;"> </button> (404!!!) Chưa cài đặt tháng lương
+                            </div>
+                            @*<div class="col-sm-2">
+            v1: Đi trễ
+            <br />
+            v2: Về sớm
+            <br />
+            v1v2: Đi trễ, về sớm
+        </div>*@
+                        </div>
+                        <div class="panel-footer">
+                            <div class="row">
+                                <div class="col-sm-5 col-sm-offset-2">
+                                    <button class="btn btn-primary">@Utility.TimKiem</button>
+                                    <a id="download-excel" style="background-color: #217346;" class="btn btn-success" onclick="ExportExcel('example-table')"><i class="fa fa-file-text-o" style="margin-right:10px"></i>@Utility.XuatExcel</a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                </div>
+            </div>
+
+
+
+            <div class="tablescroll" style="overflow-x:auto; Overflow-y:scroll; height: auto;">
+                <div class="panel-body panel-body-nopadding">
+                    <div class="form-horizontal form-bordered">
+                        <table class="table table-bordered mb30" id="example-table">
+                            <thead>
+                                <tr>
+                                    @*<th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KhachHang, "MA")</th>*@
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KhachHang, "NAME")</th>
+                                    @for (DateTime date = Model.TUNGAY; date <= Model.DENNGAY; date = date.AddDays(1))
+                                    {
+                                        string Thu = Utility.GetDayOfWeekInVietnamese(date);
+                                        string NgayThang = date.ToString("dd/MM");
+                                        <th style="font-weight: bold; text-align:center; white-space: nowrap;">@NgayThang <br /> @Thu </th>
+                                    }
+                                    <th>
+
+                                    </th>
+                                </tr>
+                            </thead>
+
+                            @{
+                                if (Model.lstdm_NhanVien_Table != null && Model.lstdm_NhanVien_Table.Count() > 0)
+                                {
+                                    <tbody id="tbodytmpitem">
+
+                                        @foreach (var item in Model.lstdm_NhanVien_Table)
+                                        {
+                                            if (string.IsNullOrEmpty(item.ID_TAIKHOAN))
+                                            {
+                                                continue;
+                                            }
+                                            <tr id="@item.ID_TAIKHOAN">
+                                                @*<td style="white-space: nowrap; " id="MA"> @Html.DisplayFor(modelItem => item.MA)</td>*@
+                                                <td style="white-space: nowrap;" id="NAME"> @Html.DisplayFor(modelItem => item.MA) - @Html.DisplayFor(modelItem => item.NAME)</td>
+                                                @for (DateTime date = Model.TUNGAY; date <= Model.DENNGAY; date = date.AddDays(1))
+                                                {
+                                                    dm_ThangLuong v_dm_ThangLuong = Model.lstdm_ThangLuong_Table.Where(s => s.THANG == date.Month && s.NAM == date.Year && s.NGAYBATDAU <= date && s.NGAYKETTHUC >= date && s.ISACTIVE).FirstOrDefault();
+                                                    v_nv_ChamCong nv_ChamCong = Model.lstnv_ChamCong_Table.Where(s => s.ID_NHANVIEN == item.ID_TAIKHOAN && s.NGAYCONG.Date == date.Date).FirstOrDefault();
+                                                    string ThoiGianVao = "";
+                                                    string ThoiGianRa = "";
+                                                    string Mau = "";
+                                                    string Style = "";
+
+                                                    string Crossedbutton = "background-image:url('/Images_sp/gachcheo.png');background-size: cover;background-position: center;background-repeat: no-repeat; ";//(Ngày nghỉ trong tháng)
+                                                    string ID_ChamCong = nv_ChamCong != null ? nv_ChamCong.ID : "";
+
+                                                    if (nv_ChamCong != null)
+                                                    {
+                                                        ThoiGianVao = nv_ChamCong.THOIGIANVAO != null ? nv_ChamCong.THOIGIANVAO.Value.ToString("HH:mm") : "";
+                                                        ThoiGianRa = nv_ChamCong.THOIGIANRA != null ? nv_ChamCong.THOIGIANRA.Value.ToString("HH:mm") : "";
+                                                        if (!string.IsNullOrEmpty(ThoiGianVao) && !string.IsNullOrEmpty(ThoiGianRa))
+                                                        {
+                                                            if (v_dm_ThangLuong != null)
+                                                            {
+                                                                if (!string.IsNullOrEmpty(ThoiGianVao) && nv_ChamCong.THOIGIANVAO.Value.TimeOfDay > v_dm_ThangLuong.GIOBATDAU)
+                                                                {
+                                                                    Mau = MauVang;
+                                                                }
+
+                                                                if (string.IsNullOrEmpty(Mau) && !string.IsNullOrEmpty(ThoiGianRa) && nv_ChamCong.THOIGIANRA.Value.TimeOfDay < v_dm_ThangLuong.GIOKETTHUC)
+                                                                {
+                                                                    Mau = MauVang;
+                                                                }
+
+                                                                if (string.IsNullOrEmpty(Mau))
+                                                                {
+                                                                    Mau = MauXanh;
+                                                                }
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            Mau = MauCam;
+                                                        }
+
+                                                        if (v_dm_ThangLuong == null)
+                                                        {
+                                                            ThoiGianVao = "404!!!";
+                                                            Mau = MauDo;
+                                                        }
+                                                        else
+                                                        {
+                                                            if (!string.IsNullOrEmpty(v_dm_ThangLuong.DANHSACHNGAYNGHI) && ("," + v_dm_ThangLuong.DANHSACHNGAYNGHI).Contains("," + date.Day))
+                                                            {
+                                                                Style = Crossedbutton;
+                                                            }
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        if (v_dm_ThangLuong != null)
+                                                        {
+                                                            if (!string.IsNullOrEmpty(v_dm_ThangLuong.DANHSACHNGAYNGHI) && ("," + v_dm_ThangLuong.DANHSACHNGAYNGHI).Contains("," + date.Day))
+                                                            {
+                                                                Style = Crossedbutton;
+                                                            }
+                                                            else
+                                                            {
+                                                                if (date.Date < Utility.CurrentTime.Date)
+                                                                {
+                                                                    Mau = MauCam;
+                                                                }
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            ThoiGianVao = "404!!!";
+                                                            Mau = MauDo;
+                                                        }
+                                                    }
+
+                                                    v_nv_NghiPhep nv_NghiPhep = Model.lstnv_NghiPhep_Table.Where(s => s.ID_NHANVIEN == item.ID_TAIKHOAN && s.THOIGIANVAO.Date <= date.Date && s.THOIGIANRA >= date.Date).FirstOrDefault();
+
+                                                    if (nv_NghiPhep != null)
+                                                    {
+                                                        Mau = MauHong;
+                                                    }
+
+
+                                                    if (string.IsNullOrEmpty(Mau))
+                                                    {
+                                                        Mau = "white";
+                                                    }
+                                                    if (string.IsNullOrEmpty(Style))
+                                                    {
+                                                        if (nv_ChamCong != null)
+                                                        {
+                                                            if (ViewBag.PermissionCreate)
+                                                            {
+                                                                <td style="white-space: nowrap; text-align: center; " id="NAME"><button style="width:70px;height:50px;background-color:@Mau;@Style" id="@item.ID_TAIKHOAN-@date.ToString("dd/MM/yyy")" ondblclick="myFunctionEdit('@{@API.nv_ChamCong;}','@ID_ChamCong')">@(string.IsNullOrEmpty(ThoiGianVao)  ? (!string.IsNullOrEmpty(Style) ? "" : "--:--") : ThoiGianVao)  <br />@(string.IsNullOrEmpty(ThoiGianRa)  ? (!string.IsNullOrEmpty(Style) ? "" : "--:--") : ThoiGianRa)</button></td>
+                                                                }
+                                                            else
+                                                            {
+                                                                <td style="white-space: nowrap; text-align: center; " id="NAME"><button style="width:70px;height:50px;background-color:@Mau;@Style">@(string.IsNullOrEmpty(ThoiGianVao)  ? (!string.IsNullOrEmpty(Style) ? "" : "--:--") : ThoiGianVao)  <br />@(string.IsNullOrEmpty(ThoiGianRa)  ? (!string.IsNullOrEmpty(Style) ? "" : "--:--") : ThoiGianRa)</button></td>
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            if (ViewBag.PermissionEdit)
+                                                            {
+                                                                <td style="white-space: nowrap; text-align: center; " id="NAME"><button style="width:70px;height:50px;background-color:@Mau;@Style" id="@item.ID_TAIKHOAN-@date.ToString("dd/MM/yyy")" ondblclick="myFunctionCreateTimekeeping('@{@API.nv_ChamCong;}','@date', '@item.ID_TAIKHOAN')">@(string.IsNullOrEmpty(ThoiGianVao)  ? (!string.IsNullOrEmpty(Style) ? "" : "--:--") : ThoiGianVao)  <br />@(string.IsNullOrEmpty(ThoiGianRa)  ? (!string.IsNullOrEmpty(Style) ? "" : "--:--") : ThoiGianRa)</button></td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td style="white-space: nowrap; text-align: center; " id="NAME"><button style="width:70px;height:50px;background-color:@Mau;@Style">@(string.IsNullOrEmpty(ThoiGianVao)  ? (!string.IsNullOrEmpty(Style) ? "" : "--:--") : ThoiGianVao)  <br />@(string.IsNullOrEmpty(ThoiGianRa)  ? (!string.IsNullOrEmpty(Style) ? "" : "--:--") : ThoiGianRa)</button></td>
+                                                            }
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        <td style="white-space: nowrap; text-align: center; " id="NAME"><button style="width:70px;height:50px;background-color:@Mau;@Style">@(string.IsNullOrEmpty(ThoiGianVao)  ? (!string.IsNullOrEmpty(Style) ? "" : "--:--") : ThoiGianVao)  <br />@(string.IsNullOrEmpty(ThoiGianRa)  ? (!string.IsNullOrEmpty(Style) ? "" : "--:--") : ThoiGianRa)</button></td>
+                                                    }
+
+                                                }
+                                            </tr>
+                                        }
+                                    </tbody>
+                                }
+                            }
+                        </table>
+                    </div>
+                </div><!-- table-responsive -->
+            </div>
+
+            <div class="panel-footer">
+            </div>
+        </div>
+    </div>
+</div>
+@if (Utility.IntWidth == 1)
+{
+    if (ViewBag.PermissionCreate)
+    {
+        <button id="myBtnAdd" style="display:none"></button>
+        <div id="myModalAdd" class="modal">
+            <div class="panel panel-default" @Html.Raw(Utility.StypeWidth_Level1)>
+                <!-- The Modal -->
+                @using (Ajax.BeginForm("CreatePopup", API.nv_ChamCong, new AjaxOptions { OnSuccess = "OnSuccessCreatePayroll" }))
+                {
+                    //@Html.AntiForgeryToken()
+
+                    <div class="panel-heading" style="padding-bottom:5px">
+                        <div class="panel-btns">
+                            <a onclick='myFunClosed("myModalAdd")'>&times;</a>
+                        </div>
+                        <input type="hidden" name="idProduct" id="idProduct" />
+                        <h1 class="panel-title" style="font-size: 20px;text-align: center "><label id="lblName" name="lblName">@Utility.GetTitleFrom(API.nv_ChamCong)</label></h1>
+                        <div class="panel-body" style="padding:5px">
+                        </div>
+                    </div>
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                    <div id="ValidationSummary" class="validation-summary-errors text-danger">
+                    </div>
+                    @Html.HiddenFor(model => model.LOC_ID)
+                    @Html.HiddenFor(model => model.ID)
+                    <div class="panel-body panel-body-nopadding">
+                        <div class="form-horizontal form-bordered">
+                            <div class="form-group">
+                                @Html.Label(@Utility.GetColumnName(@API.nv_ChamCong, "ID_NHANVIEN"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                                <div class="col-md-5">
+                                    @Html.DropDownListFor(model => model.ID_NHANVIEN, new SelectList(Model.lstdm_NhanVien, "ID", "NAME"), !string.IsNullOrEmpty(Model.ID_NHANVIEN) ? "" : Utility.GetTitleChon(API.dm_NhanVien), htmlAttributes: new { @class = "form-control chosen-select", id = "lstdm_NhanVien" })
+                                    @Html.ValidationMessageFor(model => model.ID_NHANVIEN, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            @*<div class="form-group">
+                        @Html.Label(@Utility.GetColumnName(@API.nv_ChamCong, "ID_THANGLUONG"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                        <div class="col-sm-5">
+                            @Html.EditorFor(model => model.ID_THANGLUONG, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.ID_THANGLUONG, "", new { @class = "text-danger" })
+                        </div>
+                    </div>*@
+                            <div class="form-group">
+                                @Html.Label(@Utility.GetColumnName(@API.nv_ChamCong, "NGAYCONG"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                                <div class="col-sm-5">
+                                    @Html.TextBoxFor(model => model.NGAYCONG, (Model.NGAYCONG).ToString("yyyy-MM-dd"), new { @class = "form-control hasDatepicker", @placeholder = "dd/MM/yyyy", @type = "date" })
+                                    @Html.ValidationMessageFor(model => model.NGAYCONG, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                @Html.Label(@Utility.GetColumnName(@API.nv_ChamCong, "THOIGIANVAO"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                                <div class="col-sm-5">
+                                    @Html.TextBoxFor(model => model.THOIGIANVAO, Model.THOIGIANVAO != null ? (Model.THOIGIANVAO).Value.ToString("yyyy-MM-dd") : "", new { @class = "form-control hasDatepicker", @placeholder = "dd/MM/yyyy", @type = "datetime-local" })
+                                    @Html.ValidationMessageFor(model => model.THOIGIANVAO, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                @Html.Label(@Utility.GetColumnName(@API.nv_ChamCong, "THOIGIANRA"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                                <div class="col-sm-5">
+                                    @Html.TextBoxFor(model => model.THOIGIANRA, Model.THOIGIANRA != null ? (Model.THOIGIANRA).Value.ToString("yyyy-MM-dd") : "", new { @class = "form-control hasDatepicker", @placeholder = "dd/MM/yyyy", @type = "datetime-local" })
+                                    @Html.ValidationMessageFor(model => model.THOIGIANRA, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                @Html.Label(@Utility.GetColumnName(@API.nv_ChamCong, "SOTIENGLAMVIEC"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                                <div class="col-sm-5">
+                                    @Html.EditorFor(model => model.SOTIENGLAMVIEC, new { htmlAttributes = new { @class = "form-control", @type = "number" } })
+                                    @Html.ValidationMessageFor(model => model.SOTIENGLAMVIEC, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                @Html.Label(@Utility.GetColumnName(@API.nv_ChamCong, "GHICHU"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                                <div class="col-sm-5">
+                                    @Html.EditorFor(model => model.GHICHU, new { htmlAttributes = new { @class = "form-control" } })
+                                    @Html.ValidationMessageFor(model => model.GHICHU, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            @*<div class="form-group">
+                                @Html.Label(@Utility.GetColumnName(@API.nv_ChamCong, "ISNGHIPHEP"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                                <div class="col-sm-5">
+                                    @Html.CheckBoxFor(model => model.ISNGHIPHEP, new { htmlAttributes = new { @class = "form-control" } })
+                                    @Html.ValidationMessageFor(model => model.ISNGHIPHEP, "", new { @class = "text-danger" })
+                                </div>
+                            </div>*@
+
+                        </div>
+                    </div>
+                    <div class="panel-footer">
+                        <div class="row">
+                            <div class="col-sm-5 col-sm-offset-3">
+                                <button class="btn btn-primary" value="TABLETIME" name="BUTTONTYPE" id="BUTTONTYPE">@Utility.ThucHien</button>
+                                <a class="btn btn-danger" onclick='myFunClosed("myModalAdd")'>@Utility.Dong</a>
+                            </div>
+                        </div>
+                    </div>
+
+                }
+            </div>
+        </div>
+    }
+    if (ViewBag.PermissionEdit)
+    {
+        <button id="myBtnEdit" style="display:none"></button>
+        <div id="myModalEdit" class="modal">
+            <div class="panel panel-default" @Html.Raw(Utility.StypeWidth_Level1)>
+                <!-- The Modal -->
+                @using (Ajax.BeginForm("EditPopup", API.nv_ChamCong, new AjaxOptions { OnSuccess = "OnSuccessEditPayroll" }))
+                {
+                    //@Html.AntiForgeryToken()
+                    <div class="panel-heading" style="padding-bottom:5px">
+                        <div class="panel-btns">
+                            <a onclick='myFunClosed("myModalEdit")'>&times;</a>
+                        </div>
+                        <input type="hidden" name="idProduct" id="idProduct" />
+                        <h1 class="panel-title" style="font-size: 20px;text-align: center "><label id="lblName" name="lblName">@Utility.GetTitleFrom(API.nv_ChamCong)</label></h1>
+                        <div class="panel-body" style="padding:5px">
+
+                        </div>
+                    </div>
+
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                    <div id="ValidationSummary" class="validation-summary-errors text-danger">
+                    </div>
+                    @Html.HiddenFor(model => model.LOC_ID)
+                    @Html.HiddenFor(model => model.ID)
+                    <div class="panel-body panel-body-nopadding">
+                        <div class="form-horizontal form-bordered">
+                            <div class="form-group">
+                                @Html.Label(@Utility.GetColumnName(@API.nv_ChamCong, "ID_NHANVIEN"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                                <div class="col-md-5">
+                                    @Html.DropDownListFor(model => model.ID_NHANVIEN, new SelectList(Model.lstdm_NhanVien, "ID", "NAME"), !string.IsNullOrEmpty(Model.ID_NHANVIEN) ? "" : Utility.GetTitleChon(API.dm_NhanVien), htmlAttributes: new { @class = "form-control chosen-select", id = "lstdm_NhanVienEdit" })
+                                    @Html.ValidationMessageFor(model => model.ID_NHANVIEN, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            @*<div class="form-group">
+                        @Html.Label(@Utility.GetColumnName(@API.nv_ChamCong, "ID_THANGLUONG"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                        <div class="col-sm-5">
+                            @Html.EditorFor(model => model.ID_THANGLUONG, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.ID_THANGLUONG, "", new { @class = "text-danger" })
+                        </div>
+                    </div>*@
+                            <div class="form-group">
+                                @Html.Label(@Utility.GetColumnName(@API.nv_ChamCong, "NGAYCONG"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                                <div class="col-sm-5">
+                                    @Html.TextBoxFor(model => model.NGAYCONG, (Model.NGAYCONG).ToString("yyyy-MM-dd"), new { @class = "form-control hasDatepicker", @placeholder = "dd/MM/yyyy", @type = "date" })
+                                    @Html.ValidationMessageFor(model => model.NGAYCONG, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                @Html.Label(@Utility.GetColumnName(@API.nv_ChamCong, "THOIGIANVAO"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                                <div class="col-sm-5">
+                                    @Html.TextBoxFor(model => model.THOIGIANVAO, Model.THOIGIANVAO != null ? (Model.THOIGIANVAO).Value.ToString("yyyy-MM-dd") : "", new { @class = "form-control hasDatepicker", @placeholder = "dd/MM/yyyy", @type = "datetime-local" })
+                                    @Html.ValidationMessageFor(model => model.THOIGIANVAO, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                @Html.Label(@Utility.GetColumnName(@API.nv_ChamCong, "THOIGIANRA"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                                <div class="col-sm-5">
+                                    @Html.TextBoxFor(model => model.THOIGIANRA, Model.THOIGIANRA != null ? (Model.THOIGIANRA).Value.ToString("yyyy-MM-dd") : "", new { @class = "form-control hasDatepicker", @placeholder = "dd/MM/yyyy", @type = "datetime-local" })
+                                    @Html.ValidationMessageFor(model => model.THOIGIANRA, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                @Html.Label(@Utility.GetColumnName(@API.nv_ChamCong, "SOTIENGLAMVIEC"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                                <div class="col-sm-5">
+                                    @Html.EditorFor(model => model.SOTIENGLAMVIEC, new { htmlAttributes = new { @class = "form-control", @type = "number" } })
+                                    @Html.ValidationMessageFor(model => model.SOTIENGLAMVIEC, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                @Html.Label(@Utility.GetColumnName(@API.nv_ChamCong, "GHICHU"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                                <div class="col-sm-5">
+                                    @Html.EditorFor(model => model.GHICHU, new { htmlAttributes = new { @class = "form-control" } })
+                                    @Html.ValidationMessageFor(model => model.GHICHU, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            @*<div class="form-group">
+                                @Html.Label(@Utility.GetColumnName(@API.nv_ChamCong, "ISNGHIPHEP"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                                <div class="col-sm-5">
+                                    @Html.CheckBoxFor(model => model.ISNGHIPHEP, new { htmlAttributes = new { @class = "form-control" } })
+                                    @Html.ValidationMessageFor(model => model.ISNGHIPHEP, "", new { @class = "text-danger" })
+                                </div>
+                            </div>*@
+
+                        </div>
+                    </div>
+                    <div class="panel-footer">
+                        <div class="row">
+                            <div class="col-sm-5 col-sm-offset-3">
+                                <button class="btn btn-primary" value="TABLETIME" name="BUTTONTYPE" id="BUTTONTYPE">@Utility.ThucHien</button>
+                                <a class="btn btn-danger" onclick='myFunClosed("myModalEdit")'>@Utility.Dong</a>
+                            </div>
+                        </div>
+                    </div>
+
+                }
+            </div>
+        </div>
+    }
+
+}

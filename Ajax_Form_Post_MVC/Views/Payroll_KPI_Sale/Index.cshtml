@@ -1,0 +1,194 @@
+﻿@model MVC_QuanLyTHP.Models.v_v_Tinh_KPI_KinhDoanh
+@using PagedList.Mvc;
+@using DatabaseTHP.Class;
+@using MVC_QuanLyTHP.Class;
+@using DatabaseTHP;
+@{
+    ViewBag.Title = API.ViewBagTitle;
+    Layout = "~/Views/Shared/Admin.cshtml";
+}
+<style>
+    .treegrid-indent {
+        width: 0px;
+        height: 16px;
+        display: inline-block;
+        position: relative;
+    }
+
+    .treegrid-expander {
+        width: 0px;
+        height: 16px;
+        display: inline-block;
+        position: relative;
+        left: -17px;
+        cursor: pointer;
+    }
+</style>
+@Html.Partial("LoadCssDanhMuc")
+<div class="panel-group" id="accordion">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h1 class="panel-title" style="text-align:center">
+                <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+                    @Utility.GetTitleFrom(API.Tinh_KPI_KinhDoanh)
+                </a>
+            </h1>
+        </div>
+
+
+        <div id="collapseOneDebt" class="panel-collapse collapse in">
+            <div class="panel-body panel-body-nopadding">
+                <div class="form-horizontal form-bordered">
+                    @using (Html.BeginForm("Index", API.Tinh_KPI_KinhDoanh, FormMethod.Post, new AjaxOptions { OnBegin = "OnBegin", OnSuccess = "OnEnd" }))
+                    {
+                        <div class="form-group">
+                            <div class="col-sm-2">
+
+                            </div>
+                            <div class="col-sm-2">
+                                @Html.TextBoxFor(model => model.TUNGAY, (Model.TUNGAY).ToString("yyyy-MM-dd"), new { @class = "form-control hasDatepicker", @placeholder = "dd/MM/yyyy", @type = "date" })
+                                @Html.ValidationMessageFor(model => model.TUNGAY, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="col-sm-2">
+                                @Html.TextBoxFor(model => model.DENNGAY, (Model.DENNGAY).ToString("yyyy-MM-dd"), new { @class = "form-control hasDatepicker", @placeholder = "dd/MM/yyyy", @type = "date" })
+                                @Html.ValidationMessageFor(model => model.DENNGAY, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @Html.Label(@Utility.GetColumnName(@API.Tinh_KPI_KinhDoanh, "ID_NHOMQUYEN"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                            <div class="col-sm-3">
+                                <div class="input-group mb15">
+                                    <span class="input-group-btn">
+                                        <button type="button" class="btn btn-default" onclick="myFunOpenSearch('collapseOneDebt', '@{@API.web_NhomQuyen;}', '@API.Chon1', 'lstweb_NhomQuyen', '')"><span class="glyphicon glyphicon-search"></span></button>
+                                    </span>
+                                    @Html.DropDownListFor(model => model.ID_NHOMQUYEN, new SelectList(Model.lstweb_NhomQuyen, "ID", "NAME"), !string.IsNullOrEmpty(Model.ID_NHOMQUYEN) ? "" : Utility.GetTitleChon(API.web_NhomQuyen), htmlAttributes: new { @class = "form-control chosen-select", id = "lstweb_NhomQuyen" })
+                                </div>
+
+                            </div>
+
+                            @Html.Label(@Utility.GetColumnName(@API.Tinh_KPI_KinhDoanh, "ID_NHANVIEN"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                            <div class="col-sm-3">
+                                <div class="input-group mb15">
+                                    <span class="input-group-btn">
+                                        <button type="button" class="btn btn-default" onclick="myFunOpenSearch('collapseOneDebt', '@{@API.dm_NhanVien;}', '@API.Chon1', 'lstdm_NhanVien', '')"><span class="glyphicon glyphicon-search"></span></button>
+                                    </span>
+                                    @Html.DropDownListFor(model => model.ID_NHANVIEN, new SelectList(Model.lstdm_NhanVien, "ID", "NAME"), !string.IsNullOrEmpty(Model.ID_NHANVIEN) ? "" : Utility.GetTitleChon(API.dm_NhanVien), htmlAttributes: new { @class = "form-control chosen-select", id = "lstdm_NhanVien" })
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="panel-footer">
+                            <div class="row">
+                                <div class="col-sm-5 col-sm-offset-2">
+                                    <button class="btn btn-primary">@Utility.TimKiem</button>
+                                    <a id="download-excel" style="background-color: #217346;" class="btn btn-success" onclick="ExportExcel('tree-table')"><i class="fa fa-file-text-o" style="margin-right:10px"></i>@Utility.XuatExcel</a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+            
+            <div class="tablescroll" style="overflow-x:auto; Overflow-y:scroll; height: auto;">
+                <div class="panel-body panel-body-nopadding">
+                    <table id="tree-table" class="table table-hover table-bordered">
+                        <thead>
+                            <tr>
+                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuDatHang, "NAME")</th>
+                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuDatHang, "Tổng SL")</th>
+                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuDatHang, "Tổng tiền")</th>
+                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuDatHang, "Tổng SL trả hàng")</th>
+                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuDatHang, "TT trả hàng")</th>
+                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuDatHang, "Tổng SL KPI")</th>
+                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuDatHang, "TT KPI")</th>
+                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuDatHang, "Thưởng")</th>
+                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuDatHang, "Tiền KPI")</th>
+                                <th>
+                                    @*@if (ViewBag.PermissionCreate)
+                                {
+                                <a class="btn btn-success" href="@Url.Action("Create", "Order")"><i class="fa fa-pencil-square-o" style="margin-right:10px"></i>@Utility.Them</a>
+                                }*@
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbodytmpitem">
+                            @if (Model.IPagedList != null)
+                            {
+                                foreach (var item in Model.IPagedList)
+                                {
+                                    <tr data-id="@item.ID_NHANVIEN" data-parent="0" data-level="1" id="@item.ID_NHANVIEN" style="color: #428bca">
+                                        <td data-column="name">@item.NAME_NHANVIEN</td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td>@item.SOTIEN_KPI.ToString("N0")</td>
+                                    </tr>
+                                    string ID_KPI_KINHDOANH = "";
+                                    foreach (var itemKPI in item.lstTinh_KPI_KinhDoanh_ChiTiet)
+                                    {
+                                        if (item.lstTinh_KPI_KinhDoanh_ChiTiet.Count > 1 && string.IsNullOrEmpty(ID_KPI_KINHDOANH) || ID_KPI_KINHDOANH != itemKPI.ID_KPI_KINHDOANH)
+                                        {
+                                            <tr data-id="@itemKPI.ID_KPI_KINHDOANH" data-parent="@item.ID_NHANVIEN" data-level="2" id="@itemKPI.ID_KPI_KINHDOANH" style="color: #428bca">
+                                                <td data-column="name">@itemKPI.NAME_KPI_KINHDOANH</td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td>@item.lstTinh_KPI_KinhDoanh_ChiTiet.Where(e => e.ID_KPI_KINHDOANH == itemKPI.ID_KPI_KINHDOANH).Sum(e => e.SOTIEN_KPI).ToString("N0")</td>
+                                            </tr>
+                                        }
+                                        string TONGSOLUONG_KPI_TRAHANG = string.IsNullOrEmpty(itemKPI.TONGSOLUONG_KPI) ? "" : "(" + itemKPI.TONGSOLUONG_KPI + ")";
+                                        string TONGSOLUONG_KPI = string.IsNullOrEmpty(itemKPI.TONGSOLUONG_KPI) ? "" : "(" + itemKPI.TONGSOLUONG_KPI + ")";
+                                        string TONGTIEN_KPI = itemKPI.TONGTIEN_KPI == 0 ? "" : "(" + itemKPI.TONGTIEN_KPI.ToString("N0") + "đ)";
+                                        string n = (itemKPI.CHIETKHAU.ToString().Split(',')).Count() > 1 ? itemKPI.CHIETKHAU.ToString().Split(',')[1].Length.ToString() : "0";
+                                        string TIENTHUONG = itemKPI.CHIETKHAU != 0 ? itemKPI.CHIETKHAU.ToString("N" + n) + "%" : "";
+                                        TIENTHUONG += itemKPI.TIENTHUONG != 0 ? (string.IsNullOrEmpty(TIENTHUONG) ? "" : " - ") + itemKPI.TIENTHUONG.ToString("N0") + "đ" : "";
+                                        double TT_TRAHANG = itemKPI.TONGTIEN - itemKPI.TONGTIEN_TRAHANG;
+                                        double SL_TRAHANG = itemKPI.TONGSOLUONG - itemKPI.TONGSOLUONG_TRAHANG;
+                                        int PhanNguyen = Convert.ToInt32(itemKPI.TONGSOLUONG) / Convert.ToInt32(itemKPI.TYLE_QD > 0 ? itemKPI.TYLE_QD : 1);
+                                        string TONGSOLUONG_TRING = PhanNguyen > 0 ? PhanNguyen.ToString("N0") + " " + itemKPI.NAME_DVT + ((itemKPI.TONGSOLUONG - (PhanNguyen * itemKPI.TYLE_QD) > 0 ? ((itemKPI.TONGSOLUONG - (PhanNguyen * itemKPI.TYLE_QD)).ToString("N0") + " " + itemKPI.NAME_DVT_QD) : "")) : "";
+                                        PhanNguyen = Convert.ToInt32(itemKPI.TONGSOLUONG_TRAHANG) / Convert.ToInt32(itemKPI.TYLE_QD > 0 ? itemKPI.TYLE_QD : 1);
+                                        string TONGSOLUONG_TRAHANG_TRING = PhanNguyen > 0 ? PhanNguyen.ToString("N0") + " " + itemKPI.NAME_DVT + ((itemKPI.TONGSOLUONG_TRAHANG - (PhanNguyen * itemKPI.TYLE_QD) > 0 ? ((itemKPI.TONGSOLUONG_TRAHANG - (PhanNguyen * itemKPI.TYLE_QD)).ToString("N0") + " " + itemKPI.NAME_DVT_QD) : "")) : "";
+                                        PhanNguyen = Convert.ToInt32(itemKPI.TONGSOLUONG - itemKPI.TONGSOLUONG_TRAHANG) / Convert.ToInt32(itemKPI.TYLE_QD > 0 ? itemKPI.TYLE_QD : 1);
+                                        string TONGSOLUONG_TONG_TRING = PhanNguyen > 0 ? PhanNguyen.ToString("N0") + " " + itemKPI.NAME_DVT + (((itemKPI.TONGSOLUONG - itemKPI.TONGSOLUONG_TRAHANG) - (PhanNguyen * itemKPI.TYLE_QD) > 0 ? (((itemKPI.TONGSOLUONG - itemKPI.TONGSOLUONG_TRAHANG) - (PhanNguyen * itemKPI.TYLE_QD)).ToString("N0") + " " + itemKPI.NAME_DVT_QD) : "")) : "";
+                                        string TONGTIEN = itemKPI.TONGTIEN > 0 ? itemKPI.TONGTIEN.ToString("N0") + "đ" : "";
+                                        string TONGTIEN_TRAHANG = itemKPI.TONGTIEN_TRAHANG > 0 ? itemKPI.TONGTIEN_TRAHANG.ToString("N0") + "đ" : "";
+                                        string TT_TRAHANG1 = TT_TRAHANG > 0 ? TT_TRAHANG.ToString("N0") + "đ" : "";
+                                        <tr data-id="@itemKPI.ID_HANGHOA" data-parent="@itemKPI.ID_KPI_KINHDOANH" data-level="3" id="@itemKPI.ID_HANGHOA">
+                                            <td data-column="name">@itemKPI.NAME_HANGHOA</td>
+                                            <td>@TONGSOLUONG_TRING</td>
+                                            <td>@TONGTIEN</td>
+                                            <td>@TONGSOLUONG_TRAHANG_TRING</td>
+                                            <td>@TONGTIEN_TRAHANG</td>
+                                            <td>@TONGSOLUONG_TONG_TRING @TONGSOLUONG_KPI</td>
+                                            <td>@TT_TRAHANG1 @TONGTIEN_KPI</td>
+                                            <td>@TIENTHUONG</td>
+                                            <td>@itemKPI.SOTIEN_KPI.ToString("N0")</td>
+                                        </tr>
+                                        ID_KPI_KINHDOANH = itemKPI.ID_KPI_KINHDOANH;
+                                    }
+                                }
+                            }
+                    </table>
+                </div>
+            </div><!-- table-responsive -->
+        </div>
+
+        <div class="panel-footer">
+            @if (Model.IPagedList != null)
+            {
+                @Html.PagedListPager((PagedList.IPagedList<v_Tinh_KPI_KinhDoanh>)Model.IPagedList, page => Url.Action("Index", new { Page = page, ShowSearchValue = ViewBag.showsearchValue, SearchString = ViewBag.searchValue }))
+            }
+        </div>
+    </div>
+</div>
+<script src="@Url.Content("~/Content/js/javascript.js")"></script>

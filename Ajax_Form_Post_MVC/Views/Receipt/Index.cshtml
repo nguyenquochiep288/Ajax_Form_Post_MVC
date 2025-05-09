@@ -1,0 +1,215 @@
+﻿@model MVC_QuanLyTHP.Models.v_v_ct_PhieuThu
+@using PagedList.Mvc;
+@using DatabaseTHP.Class;
+@using MVC_QuanLyTHP.Class;
+@using MVC_QuanLyTHP.Models;
+@using DatabaseTHP;
+@{
+    ViewBag.Title = API.ViewBagTitle;
+    Layout = "~/Views/Shared/Admin.cshtml";
+}
+@Html.Partial("LoadCssDanhMuc")
+<script src="@Url.Content("~/Scripts/InputOutput.js")"></script>
+<script>
+    //vn
+    $("input.form-control.mask").each((i, ele) => {
+        let clone = $(ele).clone(false)
+        clone.attr("type", "text")
+        let ele1 = $(ele)
+        clone.val(Number(ele1.val()).toLocaleString("vn"))
+
+        $(ele).after(clone)
+        $(ele).hide()
+        clone.mouseenter(() => {
+
+            ele1.show()
+            clone.hide()
+        })
+        setInterval(() => {
+            var newv = Number(ele1.val()).toLocaleString("vn");
+            if (clone.val() != newv) {
+                clone.val(newv)
+            }
+        }, 10)
+
+        $(ele).mouseleave(() => {
+            $(clone).show()
+            $(ele1).hide()
+        })
+
+
+    })
+</script>
+<hr />
+<div class="panel-group" id="accordion">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h1 class="panel-title" style="text-align:center">
+                <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+                    @Utility.GetTitleFrom(API.ct_PhieuThu)
+                </a>
+            </h1>
+        </div>
+
+
+        <div id="collapseOne" class="panel-collapse collapse in">
+            <div class="form-group">
+                @if (ViewBag.PermissionCreate)
+                {
+                    int TYPE = 0;
+                    <div class="col-sm-3" style="padding-bottom: 5px;">
+                        <button id="download-excel" style="background-color: #217346; margin-bottom: 10px;" class="btn btn-success" onclick="ExportExcel('example-table')" style="margin-bottom:10px"><i class="fa fa-file-text-o" style="margin-right:10px"></i>@Utility.XuatExcel</button>
+                        <div class="btn-group mr5">
+                            <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown">
+                                <i class="fa fa-pencil-square-o" style="margin-right:5px"></i>  @Utility.Them <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" role="menu">
+                                @foreach (var itm in Model.lstdm_LoaiPhieuThu)
+                                {
+                                    if (TYPE != 0 && TYPE != itm.TYPE)
+                                    {
+                                        <li class="divider"></li>
+                                    }
+                                    <li><a href="#" onclick="myFunctionCreateInputOutput('@{@API.ct_PhieuThu;}', '@itm.ID')">@itm.NAME</a></li>
+                                    TYPE = itm.TYPE;
+                                }
+                            </ul>
+                        </div><!-- btn-group -->
+                    </div>
+                }
+
+                <div class="col-sm-2" style="padding-bottom: 5px;">
+                    <select class="form-control chosen-select" onchange="show('@{@API.dm_NhomNhaCungCap;}')" id="Show" name="Show">
+                        @for (int show = 0; show < Utility.arrShow.Length; show++)
+                        {
+                            if (Utility.GetPageSize() == @Utility.arrShow[show])
+                            {
+                                <option value="@Utility.arrShow[show]" selected>@Utility.arrShow[show]</option>
+                            }
+                            else
+                            {
+                                <option value="@Utility.arrShow[show]">@Utility.arrShow[show]</option>
+                            }
+                        }
+                    </select>
+                </div>
+
+
+            </div>
+            <div class="form-group">
+                <div class="col-sm-2" style="padding-bottom: 5px;">
+                    <input type="date" class="form-control" name="fromdate" id="fromdate" value="@ViewBag.fromdate" />
+
+                </div>
+                <div class="col-sm-2">
+                    <input type="date" class="form-control" name="todate" id="todate" value="@ViewBag.todate" />
+                </div>
+                <div class="col-sm-4">
+                    @Html.TextBox("SearchString", (string)ViewBag.searchValue, htmlAttributes: new { @class = "form-control", @style = "width:80%;display:inline-block", @placeholder = Utility.TimKiem })
+                    <button class="btn btn-default" onclick="funSearchInputOutput('@{@API.ct_PhieuThu;}')"><span class='glyphicon glyphicon-search'></span></button>
+                </div>
+            </div>
+        </div>
+
+        <div class="tablescroll" style="overflow-x:auto; Overflow-y:scroll; height: auto;">
+            <div class="panel-body panel-body-nopadding">
+                <table class="table table-bordered mb30" id="example-table">
+                    <thead>
+                        <tr>
+                            <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuThu, "NAME_LOAIPHIEUTHU")</th>
+                            <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuThu, "MAPHIEU")</th>
+                            <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuThu, "NGAYLAP")</th>
+                            <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuThu, "NAME_KHACHHANG_NCC_NHANVIEN")</th>
+                            <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuThu, "NAME_TAIKHOANNGANHANG")</th>
+                            <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuThu, "TENNGUOINOPTIEN")</th>
+                            <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuThu, "NGUOINHANTIEN")</th>
+                            <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuThu, "SOTIEN")</th>
+                            <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuThu, "CHUNGTUKEMTHEO")</th>
+                            <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuThu, "LYDO")</th>
+                            <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuThu, "NGUOITAO")</th>
+                            <th>
+
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbodytmpitem">
+                       
+                        @foreach (var item in Model.IPagedList)
+                        {
+                            string NGAYLAP = item.NGAYLAP.ToString("dd/MM/yyyy");
+                            string SOTIEN = item.SOTIEN.ToString("N0");
+                            <tr id="@item.ID">
+                                <td style="white-space: nowrap; " id="NAME_LOAIPHIEUTHU"> @Html.DisplayFor(modelItem => item.NAME_LOAIPHIEUTHU)</td>
+                                <td style="white-space: nowrap; " id="MAPHIEU"> @Html.DisplayFor(modelItem => item.MAPHIEU)</td>
+                                <td style="white-space: nowrap; " id="NGAYLAP"> @NGAYLAP </td>
+                                <td style="white-space: nowrap; " id="NAME_KHACHHANG_NCC_NHANVIEN"> @Html.DisplayFor(modelItem => item.NAME_KHACHHANG_NCC_NHANVIEN)</td>
+                                <td style="white-space: nowrap; " id="NAME_TAIKHOANNGANHANG"> @Html.DisplayFor(modelItem => item.NAME_TAIKHOANNGANHANG)</td>
+                                <td style="white-space: nowrap; " id="TENNGUOINOPTIEN"> @Html.DisplayFor(modelItem => item.TENNGUOINOPTIEN)</td>
+                                <td style="white-space: nowrap; " id="NGUOINHANTIEN"> @Html.DisplayFor(modelItem => item.NGUOINHANTIEN)</td>
+                                <td style="white-space: nowrap; " id="SOTIEN"> @SOTIEN</td>
+                                <td style="white-space: nowrap; " id="CHUNGTUKEMTHEO"> @Html.DisplayFor(modelItem => item.CHUNGTUKEMTHEO)</td>
+                                <td style="white-space: nowrap; " id="LYDO"> @Html.DisplayFor(modelItem => item.LYDO)</td>
+                                <td style="white-space: nowrap; " id="NAME_NGUOITAO"> @Html.DisplayFor(modelItem => item.NAME_NGUOITAO)</td>
+                                <td style="white-space: nowrap; " class="fix">
+                                    <a class="label label-default" onclick="myFunctionViewReport('@{@API.ct_PhieuThu;}','@item.ID')" href="#"><i class="fa fa-print" style="margin-right:5px"></i>@Utility.In</a>
+                                    @if (ViewBag.PermissionEdit)
+                                    {
+                                        if (Utility.IntWidth == 1)
+                                        {
+                                            <a class="label label-primary" onclick="myFunctionEdit('@{@API.ct_PhieuThu;}','@item.ID')" href="#"><i class="fa fa-edit" style="margin-right:5px"></i>@Utility.Sua</a>
+                                        }
+                                        else
+                                        {
+                                            @Html.ActionLink(Utility.Sua, "Edit", new { id = item.ID }, htmlAttributes: new { @class = "label label-primary" });
+                                        }
+                                    }
+                                    @if (ViewBag.PermissionDelete)
+                                    {
+                                        if (Utility.IntWidth == 1)
+                                        {
+                                            <a class="label label-danger" onclick="myFunctionPopup('@{@API.ct_PhieuThu;}','@item.ID')" href="#"><i class="glyphicon glyphicon-trash" style="margin-right:5px"></i>@Utility.Xoa</a>
+                                        }
+                                        else
+                                        {
+                                            <a class="label label-danger" onclick="myFunction('@{@API.ct_PhieuThu;}','@item.ID')" href="#"><i class="glyphicon glyphicon-trash" style="margin-right:5px"></i>@Utility.Xoa</a>
+                                        }
+                                    }
+                                </td>
+                            </tr>
+                        }
+</table>
+            </div>
+        </div><!-- table-responsive -->
+    </div>
+
+    <div class="panel-footer">
+        @ViewBag.TotalSum
+        @Html.PagedListPager((PagedList.IPagedList<v_ct_PhieuThu>)Model.IPagedList, page => Url.Action("Index", new { Page = page, ShowSearchValue = ViewBag.showsearchValue, SearchString = ViewBag.searchValue, FromDate = ViewBag.fromdate, ToDate = ViewBag.todate }))
+    </div>
+</div>
+
+@if (Utility.IntWidth == 1)
+{
+    if (ViewBag.PermissionCreate)
+    {
+        <button id="myBtnAdd" style="display:none"></button>
+        <div id="myModalAdd" class="modal">
+            <div class="panel panel-default" @Html.Raw(Utility.StypeWidth_Level1)>
+                <!-- The Modal -->
+                @{Html.RenderAction("Create", @API.ct_PhieuThu, new { type = 1 });}
+            </div>
+        </div>
+    }
+    if (ViewBag.PermissionEdit)
+    {
+        <button id="myBtnEdit" style="display:none"></button>
+        <div id="myModalEdit" class="modal">
+            <div class="panel panel-default" @Html.Raw(Utility.StypeWidth_Level1)>
+                <!-- The Modal -->
+                @{Html.RenderAction("Edit", @API.ct_PhieuThu, new { type = 1, id = "" });}
+            </div>
+        </div>
+    }
+}
+
+

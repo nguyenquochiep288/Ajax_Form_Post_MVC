@@ -1,0 +1,82 @@
+﻿@model MVC_QuanLyTHP.Models.v_v_web_Report
+@using MVC_QuanLyTHP.Class;
+@using DatabaseTHP.Class;
+@{
+    ViewBag.Title = API.ViewBagTitle;
+    Layout = "~/Views/Shared/Admin.cshtml";
+}
+@Html.Partial("LoadCssDanhMuc")
+<script src="@Url.Content("~/Scripts/Report.js")"></script>
+<script src="@Url.Content("~/Content/static/js/shieldui-all.min.js")"></script>
+<link href="@Url.Content("~/Content/static/css/all.min.css")" rel="stylesheet">
+<div class="panel-group" id="accordion">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h1 class="panel-title" style="text-align:center">
+                <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+                    @Utility.GetTitleFrom(API.BaoCao)
+                </a>
+            </h1>
+        </div>
+
+
+
+        <!-- you need to include the ShieldUI CSS and JS assets in order for the TreeView widget to work -->
+
+        <script type="text/javascript">
+            jQuery(function ($) {
+                $("#treeview").shieldTreeView();
+            });
+        </script>
+
+        <div id="collapseOne" class="panel-collapse collapse in">
+            <!-- Nav tabs -->
+            <ul class="nav nav-tabs">
+                <li class="active" name="home" id="tabhome"><a href="#contenthome" data-toggle="tab"><strong> @Utility.GetTitleFrom(API.BaoCao)</strong></a></li>
+            </ul>
+
+            <!-- Tab panes -->
+            <div class="tab-content">
+
+                <div class="tab-pane active" id="contenthome" name="home">
+                    <div class="container">
+                        <div class="row">
+                            @*<input type="text" id="myInputReport" onkeyup="myFunctionReport()" placeholder="Search for names.." title="Type in a name">*@
+                            <div class="col-md-12 col-md-offset-12" style="margin-left:0%">
+                                @Html.Raw(ViewBag.ViewMenu)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-pane" id="contenthome1" name="home1" style="visibility: hidden; display:none">
+                    @using (Ajax.BeginForm("VerReporte", API.BaoCao, new AjaxOptions { OnBegin = "OnBegin", OnSuccess = "OnSuccessReport", OnFailure = "CloseLoaderReport" }))
+                    {
+
+                        <div class="panel-body panel-body-nopadding">
+                            <div class="form-horizontal form-bordered" id="parameter_">
+
+                            </div>
+                        </div>
+                        <div class="panel-footer">
+                            <div class="row">
+                                <div class="col-sm-5 col-sm-offset-3">
+                                    <button class="btn btn-primary" id="btnThucHien">@Utility.ThucHien</button>
+                                    <a class="btn btn-danger" onclick='myFunClosed("myModalAdd")'>@Utility.Dong</a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    <iframe id="reportView1" style="width:100%; height:600px">
+                    </iframe>
+                </div>
+
+
+            </div>
+        </div>
+
+        <div class="panel-footer">
+
+        </div>
+    </div>
+</div>

@@ -1,0 +1,426 @@
+﻿@model MVC_QuanLyTHP.Models.v_v_nv_NghiPhep
+@using DatabaseTHP;
+@using PagedList.Mvc;
+@using DatabaseTHP.Class;
+@using MVC_QuanLyTHP.Class;
+@using MVC_QuanLyTHP.Models;
+@using Newtonsoft.Json;
+@{
+    ViewBag.Title = API.ViewBagTitle;
+    Layout = "~/Views/Shared/Admin.cshtml";
+}
+@Html.Partial("LoadCssDanhMuc")
+<script>
+    function callChangefuncType(val, nameDVT) {
+        if (val != null) {
+            var imgtag = document.getElementById(nameDVT);
+            if (val > 2) {
+                // hide
+                imgtag.style.visibility = 'block';
+                // OR
+                imgtag.style.display = 'visible';
+            }
+            else {
+                imgtag.style.visibility = 'visible';
+                // OR
+                imgtag.style.display = 'block';
+
+            }
+        }
+    }
+</script>
+<hr />
+<div class="panel-group" id="accordion">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h1 class="panel-title" style="text-align:center">
+                <a data-toggle="collapse" data-parent="#accordion" href="#collapseOneDebt">
+                    @Utility.GetTitleFrom(API.nv_NghiPhep)
+                </a>
+            </h1>
+        </div>
+
+
+        <div id="collapseOneDebt" class="panel-collapse collapse in">
+            <div class="panel-body panel-body-nopadding">
+                <div class="form-horizontal form-bordered">
+                    <div class="form-group">
+                        <div class="col-sm-3" style="padding-bottom: 5px;">
+                            <button id="download-excel" style="background-color: #217346;" class="btn btn-success" onclick="ExportExcel('example-table')"><i class="fa fa-file-text-o" style="margin-right:10px"></i>@Utility.XuatExcel</button>
+                            @if (ViewBag.PermissionCreate)
+                            {
+                                if (Utility.IntWidth == 1)
+                                {
+                                    <button class="btn btn-success" onclick="myFunctionCreate('@{@API.nv_NghiPhep;}')"><i class="fa fa-pencil-square-o" style="margin-right:10px"></i>@Utility.Them</button>
+                                }
+                                else
+                                {
+                                    <a class="btn btn-success" href="@Url.Action("Create", API.nv_NghiPhep)"><i class="fa fa-pencil-square-o" style="margin-right:20px"></i>@Utility.Them</a>
+                                }
+                            }
+                        </div>
+                    </div>
+                    @using (Html.BeginForm("Index", API.nv_NghiPhep, FormMethod.Post, new AjaxOptions { OnBegin = "OnBegin", OnSuccess = "OnEnd" }))
+                    {
+                        <div class="form-group">
+                            @Html.Label(@Utility.GetColumnName(@API.nv_NghiPhep, "Thời gian"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                            <div class="col-sm-2">
+                                @Html.TextBoxFor(model => model.TUNGAY, (Model.TUNGAY).ToString("yyyy-MM-dd"), new { @class = "form-control hasDatepicker", @placeholder = "dd/MM/yyyy", @type = "date" })
+                                @Html.ValidationMessageFor(model => model.TUNGAY, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="col-sm-2">
+                                @Html.TextBoxFor(model => model.DENNGAY, (Model.DENNGAY).ToString("yyyy-MM-dd"), new { @class = "form-control hasDatepicker", @placeholder = "dd/MM/yyyy", @type = "date" })
+                                @Html.ValidationMessageFor(model => model.DENNGAY, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @Html.Label(@Utility.GetColumnName(@API.nv_NghiPhep, "ID_NHANVIEN"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                            <div class="col-sm-3">
+                                <div class="input-group mb15">
+                                    <span class="input-group-btn">
+                                        <button type="button" class="btn btn-default" onclick="myFunOpenSearch('collapseOneDebt', '@{@API.dm_NhanVien;}', '@API.Chon1', 'lstdm_NhanVien', '')"><span class="glyphicon glyphicon-search"></span></button>
+                                    </span>
+                                    @Html.DropDownListFor(model => model.ID_NHANVIEN, new SelectList(Model.lstdm_NhanVien, "ID", "NAME"), !string.IsNullOrEmpty(Model.ID_NHANVIEN) ? "" : Utility.GetTitleChon(API.dm_NhanVien), htmlAttributes: new { @class = "form-control chosen-select", id = "lstdm_NhanVien" })
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="panel-footer">
+                            <div class="row">
+                                <div class="col-sm-5 col-sm-offset-2">
+                                    <button class="btn btn-primary">@Utility.TimKiem</button>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                </div>
+            </div>
+
+
+
+            <div style="overflow-x: auto; Overflow-y: scroll; height: 500px;">
+                <div class="panel-body panel-body-nopadding">
+                    <div class="form-horizontal form-bordered">
+                        <table class="table table-bordered mb30" id="example-table">
+                            <thead>
+                                <tr>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.nv_NghiPhep, "NAMPHEP")</th>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KhachHang, "MA")</th>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KhachHang, "NAME")</th>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.nv_NghiPhep, "THOIGIANVAO")</th>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.nv_NghiPhep, "THOIGIANRA")</th>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.nv_NghiPhep, "GHICHU")</th>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.nv_NghiPhep, "SOLUONG")</th>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.nv_NghiPhep, "ISNGHIPHEP")</th>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.nv_NghiPhep, "ISDUYETPHEP")</th>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.nv_NghiPhep, "NAME_NHANVIENDUYETPHEP")</th>
+                                    <th>
+
+                                    </th>
+                                </tr>
+                            </thead>
+
+                            @{
+                                if (Model.IPagedList != null && Model.IPagedList.Count() > 0)
+                                {
+                                    <tbody id="tbodytmpitem">
+
+                                        @foreach (var item in Model.IPagedList)
+                                        {
+                                            string THOIGIANVAO = item.THOIGIANVAO != null ? item.THOIGIANVAO.ToString("dd/MM/yyyy") : "";
+                                            string THOIGIANRA = item.THOIGIANRA != null ? item.THOIGIANRA.ToString("dd/MM/yyyy") : "";
+                                            string SOLUONG = item.SOLUONG.ToString("N0");
+                                            <tr id="@item.ID">
+                                                <td style="white-space: nowrap; " id="NAMPHEP"> @Html.DisplayFor(modelItem => item.NAMPHEP)</td>
+                                                <td style="white-space: nowrap; " id="MA"> @Html.DisplayFor(modelItem => item.MA_NHANVIEN)</td>
+                                                <td style="white-space: nowrap; " id="NAME"> @Html.DisplayFor(modelItem => item.NAME_NHANVIEN)</td>
+                                                <td style="white-space: nowrap; text-align: right;" id="THOIGIANVAO"> @THOIGIANVAO</td>
+                                                <td style="white-space: nowrap; text-align: right;" id="THOIGIANRA"> @THOIGIANRA</td>
+                                                <td style="white-space: nowrap; text-align: right;" id="GHICHU">@Html.DisplayFor(modelItem => item.GHICHU)</td>
+                                                <td style="white-space: nowrap; text-align: right;" id="SOLUONG">@Html.DisplayFor(modelItem => item.SOLUONG)</td>
+                                                <td style="white-space: nowrap; text-align: right;" id="ISNGHIPHEP">@Html.DisplayFor(modelItem => item.ISNGHIPHEP)</td>
+                                                <td style="white-space: nowrap; text-align: right;" id="NAME_DUYETPHEP">@Html.DisplayFor(modelItem => item.NAME_DUYETPHEP)</td>
+                                                <td style="white-space: nowrap; text-align: right;" id="NAME_NHANVIENDUYETPHEP">@Html.DisplayFor(modelItem => item.NAME_NHANVIENDUYETPHEP)</td>
+                                                <td style="white-space: nowrap; " class="fix">
+                                                    @if (!item.ISDUYETPHEP)
+                                                    {
+                                                        if (ViewBag.PermissionEdit)
+                                                        {
+                                                            if (Utility.IntWidth == 1)
+                                                            {
+                                                    <a class="label label-primary" onclick="myFunctionEdit('@{@API.nv_NghiPhep;}','@item.ID')" href="#"><i class="fa fa-edit" style="margin-right:5px"></i>@Utility.Sua</a>
+                                                            }
+                                                            else
+                                                            {
+                                                    @Html.ActionLink(Utility.Sua, "Edit", new { id = item.ID }, htmlAttributes: new { @class = "label label-primary" });
+                                                            }
+                                                        }
+                                                        if (ViewBag.PermissionDelete)
+                                                        {
+                                                            if (Utility.IntWidth == 1)
+                                                            {
+                                                    <a class="label label-danger" onclick="myFunctionPopup('@{@API.nv_NghiPhep;}','@item.ID')" href="#"><i class="glyphicon glyphicon-trash" style="margin-right:5px"></i>@Utility.Xoa</a>
+                                                            }
+                                                            else
+                                                            {
+                                                    <a class="label label-danger" onclick="myFunction('@{@API.nv_NghiPhep;}','@item.ID')" href="#"><i class="glyphicon glyphicon-trash" style="margin-right:5px"></i>@Utility.Xoa</a>
+                                                            }
+                                                        }
+                                                    }
+                                                    @if (ViewBag.PermissionApproveLeave)
+                                                    {
+                                                        if (Utility.IntWidth == 1)
+                                                        {
+                                                    <a class="label label-primary" onclick="myFunctionEdit('@{@API.nv_NghiPhep;}','@item.ID')" href="#"><i class="glyphicon glyphicon-check" style="margin-right:5px"></i>@Utility.Xoa</a>
+                                                        }
+                                                    }
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                }
+                            }
+                        </table>
+                    </div>
+                </div><!-- table-responsive -->
+            </div>
+
+            <div class="panel-footer">
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(function () {
+        // delete extra hidden fields created by checkboxes as the grid links mess this up by doubling the querystring parameters
+        $("input[type='hidden'][name='ISPHATSINHCONGNO']").remove();
+        $("input[type='hidden'][name='ISPHATSINHCONGNOTRONGKY']").remove();
+        $("input[type='hidden'][name='ISCONCONGNO']").remove();
+        $("input[type='hidden'][name='ISTHEOTHOIGIAN']").remove();
+    });
+</script>
+@if (Utility.IntWidth == 1)
+{
+    if (ViewBag.PermissionCreate)
+    {
+        <button id="myBtnAdd" style="display:none"></button>
+        <div id="myModalAdd" class="modal">
+            <div class="panel panel-default" @Html.Raw(Utility.StypeWidth_Level1)>
+                <!-- The Modal -->
+                @using (Ajax.BeginForm("CreatePopup", API.nv_NghiPhep, new AjaxOptions { OnSuccess = "OnSuccessCreate" }))
+                {
+                @Html.AntiForgeryToken()
+
+                <div class="panel-heading" style="padding-bottom:5px">
+                    <div class="panel-btns">
+                        <a onclick='myFunClosed("myModalAdd")'>&times;</a>
+                    </div>
+                    <input type="hidden" name="idProduct" id="idProduct" />
+                    <h1 class="panel-title" style="font-size: 20px;text-align: center "><label id="lblName" name="lblName">@Utility.GetTitleFrom(API.nv_NghiPhep)</label></h1>
+                    <div class="panel-body" style="padding:5px">
+                    </div>
+                </div>
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                <div id="ValidationSummary" class="validation-summary-errors text-danger">
+                </div>
+                @Html.HiddenFor(model => model.LOC_ID)
+                @Html.HiddenFor(model => model.ID)
+
+                <div class="panel-body panel-body-nopadding">
+                    <div class="form-horizontal form-bordered">
+                        @if (ViewBag.PermissionCreateUser != null && ViewBag.PermissionCreateUser)
+                        {
+                            <div class="form-group">
+                                @Html.Label(@Utility.GetColumnName(@API.nv_NghiPhep, "ID_NHANVIEN"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                                <div class="col-md-5">
+                                    @Html.DropDownListFor(model => model.ID_NHANVIEN, new SelectList(Model.lstdm_NhanVien, "ID", "NAME"), !string.IsNullOrEmpty(Model.ID_NHANVIEN) ? "" : Utility.GetTitleChon(API.dm_NhanVien), htmlAttributes: new { @class = "form-control chosen-select", id = "lstdm_NhanVien", @onchange = "CallChangeEmployee(this.value,'" + API.nv_NghiPhep + "')" })
+                                    @Html.ValidationMessageFor(model => model.ID_NHANVIEN, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            @Html.HiddenFor(model => model.ID_NHANVIEN)
+                        }
+
+                    <div class="form-group">
+                        @Html.Label(@Utility.GetColumnName(@API.nv_NghiPhep, "ID_PHEPNAM"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                        <div class="col-md-5">
+                            @Html.DropDownListFor(model => model.ID_PHEPNAM, new SelectList(Model.lstnv_PhepNam, "ID", "NAME"), !string.IsNullOrEmpty(Model.ID_PHEPNAM) ? "" : Utility.GetTitleChon(API.nv_PhepNam), htmlAttributes: new { @class = "form-control chosen-select", id = "lstnv_PhepNam" })
+                            @Html.ValidationMessageFor(model => model.ID_PHEPNAM, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                        <div class="form-group">
+                            @Html.Label(@Utility.GetColumnName(@API.nv_NghiPhep, "HINHTHUCNGHIPHEP"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                            <div class="col-sm-5">
+                                @Html.DropDownListFor(model => model.HINHTHUCNGHIPHEP, new SelectList(Model.lstTYPENghiPhep, "ID", "NAME"), Utility.GetTitleChon(""), htmlAttributes: new { @class = "form-control chosen-select", id = "lstTYPENghiPhep" })
+                                @Html.ValidationMessageFor(model => model.HINHTHUCNGHIPHEP, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @Html.Label(@Utility.GetColumnName(@API.nv_NghiPhep, "THOIGIANVAO"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                            <div class="col-sm-5">
+                                @Html.TextBoxFor(model => model.THOIGIANVAO, Model.THOIGIANVAO != null ? (Model.THOIGIANVAO).ToString("yyyy-MM-dd") : "", new { @class = "form-control hasDatepicker", @placeholder = "dd/MM/yyyy", @type = "date" })
+                                @Html.ValidationMessageFor(model => model.THOIGIANVAO, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div id="divTHOIGIANRA" class="form-group">
+                            <div class="form-group">
+                                @Html.Label(@Utility.GetColumnName(@API.nv_NghiPhep, "THOIGIANRA"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                                <div class="col-sm-5">
+                                    @Html.TextBoxFor(model => model.THOIGIANRA, Model.THOIGIANRA != null ? (Model.THOIGIANRA).ToString("yyyy-MM-dd") : "", new { @class = "form-control hasDatepicker", @placeholder = "dd/MM/yyyy", @type = "date" })
+                                    @Html.ValidationMessageFor(model => model.THOIGIANRA, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @Html.Label(@Utility.GetColumnName(@API.nv_NghiPhep, "GHICHU"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                            <div class="col-sm-5">
+                                @Html.EditorFor(model => model.GHICHU, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.GHICHU, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.Label(@Utility.GetColumnName(@API.nv_NghiPhep, "ISNGHIPHEP"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                            <div class="col-sm-5">
+                                @Html.CheckBoxFor(model => model.ISNGHIPHEP, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.ISNGHIPHEP, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-footer">
+                    <div class="row">
+                        <div class="col-sm-5 col-sm-offset-3">
+                            <button class="btn btn-primary">@Utility.ThucHien</button>
+                            <a class="btn btn-danger" onclick='myFunClosed("myModalAdd")'>@Utility.Dong</a>
+                        </div>
+                    </div>
+                </div>
+
+                }
+            </div>
+        </div>
+    }
+    if (ViewBag.PermissionEdit)
+    {
+        <button id="myBtnEdit" style="display:none"></button>
+        <div id="myModalEdit" class="modal">
+            <div class="panel panel-default" @Html.Raw(Utility.StypeWidth_Level1)>
+                <!-- The Modal -->
+                @using (Ajax.BeginForm("EditPopup", API.nv_NghiPhep, new AjaxOptions { OnSuccess = "OnSuccessEdit" }))
+                {
+                @Html.AntiForgeryToken()
+                <div class="panel-heading" style="padding-bottom:5px">
+                    <div class="panel-btns">
+                        <a onclick='myFunClosed("myModalEdit")'>&times;</a>
+                    </div>
+                    <input type="hidden" name="idProduct" id="idProduct" />
+                    <h1 class="panel-title" style="font-size: 20px;text-align: center "><label id="lblName" name="lblName">@Utility.GetTitleFrom(API.nv_NghiPhep)</label></h1>
+                    <div class="panel-body" style="padding:5px">
+
+                    </div>
+                </div>
+
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                <div id="ValidationSummary" class="validation-summary-errors text-danger">
+                </div>
+                @Html.HiddenFor(model => model.LOC_ID)
+                @Html.HiddenFor(model => model.ID)
+
+                <div class="panel-body panel-body-nopadding">
+                    <div class="form-horizontal form-bordered">
+                        <div class="form-group">
+                            @Html.Label(@Utility.GetColumnName(@API.nv_NghiPhep, "ID_NHANVIEN"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                            <div class="col-md-5">
+                                @Html.DropDownListFor(model => model.ID_NHANVIEN, new SelectList(Model.lstdm_NhanVien, "ID", "NAME"), !string.IsNullOrEmpty(Model.ID_NHANVIEN) ? "" : Utility.GetTitleChon(API.dm_NhanVien), htmlAttributes: new { @class = "form-control chosen-select", id = "lstdm_NhanVienEdit" })
+                                @Html.ValidationMessageFor(model => model.ID_NHANVIEN, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.Label(@Utility.GetColumnName(@API.nv_NghiPhep, "ID_PHEPNAM"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                            <div class="col-md-5">
+                                @Html.DropDownListFor(model => model.ID_PHEPNAM, new SelectList(Model.lstnv_PhepNam, "ID", "NAME"), !string.IsNullOrEmpty(Model.ID_PHEPNAM) ? "" : Utility.GetTitleChon(API.nv_PhepNam), htmlAttributes: new { @class = "form-control chosen-select", id = "lstnv_PhepNamEdit" })
+                                @Html.ValidationMessageFor(model => model.ID_PHEPNAM, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.Label(@Utility.GetColumnName(@API.nv_NghiPhep, "HINHTHUCNGHIPHEP"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                            <div class="col-sm-5">
+                                @Html.DropDownListFor(model => model.HINHTHUCNGHIPHEP, new SelectList(Model.lstTYPENghiPhep, "ID", "NAME"), Utility.GetTitleChon(""), htmlAttributes: new { @class = "form-control chosen-select", id = "lstTYPENghiPhepEdit" })
+                                @Html.ValidationMessageFor(model => model.HINHTHUCNGHIPHEP, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @Html.Label(@Utility.GetColumnName(@API.nv_NghiPhep, "THOIGIANVAO"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                            <div class="col-sm-5">
+                                @Html.TextBoxFor(model => model.THOIGIANVAO, Model.THOIGIANVAO != null ? (Model.THOIGIANVAO).ToString("yyyy-MM-dd") : "", new { @class = "form-control hasDatepicker", @placeholder = "dd/MM/yyyy", @type = "date" })
+                                @Html.ValidationMessageFor(model => model.THOIGIANVAO, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div id="divTHOIGIANRA" class="form-group">
+                            <div class="form-group">
+                                @Html.Label(@Utility.GetColumnName(@API.nv_NghiPhep, "THOIGIANRA"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                                <div class="col-sm-5">
+                                    @Html.TextBoxFor(model => model.THOIGIANRA, Model.THOIGIANRA != null ? (Model.THOIGIANRA).ToString("yyyy-MM-dd") : "", new { @class = "form-control hasDatepicker", @placeholder = "dd/MM/yyyy", @type = "date" })
+                                    @Html.ValidationMessageFor(model => model.THOIGIANRA, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @Html.Label(@Utility.GetColumnName(@API.nv_NghiPhep, "GHICHU"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                            <div class="col-sm-5">
+                                @Html.EditorFor(model => model.GHICHU, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.GHICHU, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.Label(@Utility.GetColumnName(@API.nv_NghiPhep, "ISNGHIPHEP"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                            <div class="col-sm-5">
+                                @Html.CheckBoxFor(model => model.ISNGHIPHEP, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.ISNGHIPHEP, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        @if (ViewBag.PermissionApproveLeave)
+                        {
+                            <div class="form-group">
+                                @Html.Label(@Utility.GetColumnName(@API.nv_NghiPhep, "ISDUYETPHEP"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                                <div class="col-sm-5">
+                                    @Html.CheckBoxFor(model => model.ISDUYETPHEP, new { htmlAttributes = new { @class = "form-control" } })
+                                    @Html.ValidationMessageFor(model => model.ISDUYETPHEP, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+                <div class="panel-footer">
+                    <div class="row">
+                        <div class="col-sm-5 col-sm-offset-3">
+                            <button class="btn btn-primary">@Utility.ThucHien</button>
+                            <a class="btn btn-danger" onclick='myFunClosed("myModalEdit")'>@Utility.Dong</a>
+                        </div>
+                    </div>
+                </div>
+
+                }
+            </div>
+        </div>
+    }
+}
+
+<script type="text/javascript">
+    $(function () {
+        // delete extra hidden fields created by checkboxes as the grid links mess this up by doubling the querystring parameters
+        $("input[type='hidden'][name='ISDUYETPHEP']").remove();
+        $("input[type='hidden'][name='ISNGHIPHEP']").remove();
+    });
+</script>

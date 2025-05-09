@@ -1,0 +1,361 @@
+﻿@model DatabaseTHP.v_ct_PhieuGiaoHang
+@using PagedList.Mvc;
+@using DatabaseTHP.Class;
+@using MVC_QuanLyTHP.Class;
+@using DatabaseTHP;
+@{
+    ViewBag.Title = API.ViewBagTitle;
+    Layout = "~/Views/Shared/Admin.cshtml";
+    //Boolean bolHoanTat = true;
+}
+
+@Html.Partial("LoadCssDanhMuc")
+<script src="@Url.Content("~/Scripts/InputOutput.js")"></script>
+<script src="@Url.Content("~/Scripts/Delivery.js")"></script>
+<div class="panel-group" id="accordion">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h1 class="panel-title" style="text-align:center">
+                <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+                    @Utility.GetTitleFrom(API.ct_PhieuGiaoHang)
+                </a>
+            </h1>
+        </div>
+
+        <div id="collapseOne" class="panel-collapse collapse in">
+            <div class="form-group">
+                <div class="col-sm-2" style="padding-bottom: 5px;">
+                    <div class="btn-group mr5">
+                        <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown">
+                            <i class="fa fa-sitemap" style="margin-right:5px"></i>  LIÊN QUAN <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a href="~/Receipt/Index?MAPHIEU=@Model.MAPHIEU">Phiếu thu</a></li>
+                            <li><a href="~/Payment/Index?MAPHIEU=@Model.MAPHIEU">Phiếu chi</a></li>
+                            <li><a href="~/Input/Index?MAPHIEU=@Model.MAPHIEU">Phiếu nhập</a></li>
+                            <li><a href="~/Output/Index?MAPHIEU=@Model.MAPHIEU">Phiếu xuất</a></li>
+                        </ul>
+                    </div><!-- btn-group -->
+                </div>
+                @if (ViewBag.PermissionDelivery_CreateReceipt)
+                {
+                    int TYPE = 0;
+                    <div class="col-sm-2" style="padding-bottom: 5px;">
+                        <div class="btn-group mr5">
+                            <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown">
+                                <i class="fa fa-pencil-square-o" style="margin-right:5px"></i>  @Utility.GetTitleFrom(API.ct_PhieuChi) <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" role="menu">
+                                @foreach (var itm in Model.lstdm_LoaiPhieuChi)
+                                {
+                                    if (TYPE != 0 && TYPE != itm.TYPE)
+                                    {
+                                        <li class="divider"></li>
+                                    }
+                                    <li><a href="#" onclick="myFunctionCreateReceiptDelivery('@{@API.ct_PhieuChi;}','@Model.ID', '@itm.ID','@Model.ID_XEGIAOHANG','@Model.MAPHIEU')">@itm.NAME</a></li>
+                                    TYPE = itm.TYPE;
+                                }
+                            </ul>
+                        </div><!-- btn-group -->
+                    </div>
+
+                    TYPE = 0;
+                    <div class="col-sm-2" style="padding-bottom: 5px;">
+                        <div class="btn-group mr5">
+                            <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown">
+                                <i class="fa fa-pencil-square-o" style="margin-right:5px"></i>  @Utility.GetTitleFrom(API.ct_PhieuThu) <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" role="menu">
+                                @foreach (var itm in Model.lstdm_LoaiPhieuThu)
+                                {
+                                    if (TYPE != 0 && TYPE != itm.TYPE)
+                                    {
+                                        <li class="divider"></li>
+                                    }
+                                    <li><a href="#" onclick="myFunctionCreateReceiptDelivery('@{@API.ct_PhieuThu;}','@Model.ID', '@itm.ID','@Model.ID_XEGIAOHANG','@Model.MAPHIEU')">@itm.NAME</a></li>
+                                    TYPE = itm.TYPE;
+                                }
+                            </ul>
+                        </div><!-- btn-group -->
+                    </div>
+                }
+            </div>
+            <div class="form-group">
+                @Html.Label(@Utility.GetColumnName(@API.ct_PhieuGiaoHang, "MAPHIEU"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                <div class="col-sm-2">
+                    @Html.EditorFor(model => model.MAPHIEU, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                </div>
+                @Html.Label(@Utility.GetColumnName(@API.ct_PhieuGiaoHang, "NGAYLAP"), htmlAttributes: new { @class = "col-sm-1 control-label" })
+                <div class="col-sm-2">
+                    @Html.TextBoxFor(model => model.NGAYLAP, (Model.NGAYLAP).ToString("yyyy-MM-dd"), new { @class = "form-control hasDatepicker", @placeholder = "dd/MM/yyyy", @type = "date", @readonly = "readonly" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.Label(@Utility.GetColumnName(@API.ct_PhieuGiaoHang, "ID_XEGIAOHANG"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                <div class="col-sm-5">
+                    @Html.EditorFor(model => model.NAME_XE, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.Label(@Utility.GetColumnName(@API.ct_PhieuGiaoHang, "GHICHU"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                <div class="col-sm-5">
+                    @Html.TextAreaFor(model => model.GHICHU, new { @class = "form-control", @rows = "3", @readonly = "readonly" })
+                </div>
+            </div>
+            @if (Model.SOLAN > 1)
+            {
+                <div class="form-group">
+                    <div class="col-sm-2">
+                        <select class="form-control chosen-select" id="ddlViewBy">
+                            <option value="-1">Tất cả</option>
+                            @for (int i = 1; i <= Model.SOLAN; i++)
+                            {
+                                <option value="@i">@i</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-sm-2">
+                        <div class="btn-group mr5">
+                            <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+                                <i class="fa fa-print" style="margin-right:5px"></i>PHIẾU IN <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" role="menu">
+                                <li><a onclick="myFunctionViewReportType('@{@API.ct_PhieuGiaoHang;}','@Model.ID', '4',document.getElementById('ddlViewBy').value)" href="#">Theo khu vực</a></li>
+                                <li><a onclick="myFunctionViewReportType('@{@API.ct_PhieuGiaoHang;}','@Model.ID', '1',document.getElementById('ddlViewBy').value)" href="#">Nhóm hàng hóa</a></li>
+                                <li><a onclick="myFunctionViewReportType('@{@API.ct_PhieuGiaoHang;}','@Model.ID', '2',document.getElementById('ddlViewBy').value)" href="#">Nhà cung cấp</a></li>
+                                <li class="divider"></li>
+                                <li><a onclick="myFunctionViewReportType('@{@API.ct_PhieuGiaoHang;}','@Model.ID', '3',document.getElementById('ddlViewBy').value)" href="#">Phiếu giao hàng</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            }
+            <div class="form-group">
+                <div class="col-sm-5" style="width:100%">
+                    <h5 class="subtitle">Danh sách nhân viên giao hàng: </h5>
+                    <div class="tablescroll" style="overflow-x:auto; Overflow-y:scroll; height: auto;">
+                        <div class="panel-body panel-body-nopadding">
+                            <div class="form-horizontal form-bordered">
+                                <table class="table table-bordered mb30">
+                                    <thead>
+                                        <tr>
+                                            <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuGiaoHang_NhanVienGiao, "MA_NHANVIEN")</th>
+                                            <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuGiaoHang_NhanVienGiao, "NAME_NHANVIEN")</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="lstct_PhieuGiaoHang_NhanVienGiaoEdit">
+                                        @if (Model.lstct_PhieuGiaoHang_NhanVienGiao != null)
+                                        {
+                                            foreach (var item in Model.lstct_PhieuGiaoHang_NhanVienGiao)
+                                            {
+                                                <tr id="@item.ID">
+                                                    <td style="white-space: nowrap;" id="MA_NHANVIEN"> @Html.DisplayFor(modelItem => item.MA_NHANVIEN)</td>
+                                                    <td style="white-space: nowrap;" id="NAME_NHANVIEN">  @Html.DisplayFor(modelItem => item.NAME_NHANVIEN)</td>
+
+                                                </tr>
+                                            }
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="tablescroll" style="overflow-x:auto; Overflow-y:scroll; height: auto;">
+                <h5 class="subtitle">Danh sách phiếu xuất: </h5>
+                <div class="panel-body panel-body-nopadding">
+                    <table class="table table-bordered mb30">
+                        <thead>
+                            <tr>
+                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuGiaoHang_ChiTiet, "MAPHIEU")</th>
+                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuGiaoHang_ChiTiet, "NGAYLAP")</th>
+                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuGiaoHang_ChiTiet, "NAME_KHACHHANG_NCC")</th>
+                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuGiaoHang_ChiTiet, "SOTIENGIAOHANG")</th>
+                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuGiaoHang_ChiTiet, "SOTIENDATHU")</th>
+                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuGiaoHang_ChiTiet, "ISTRAHANG")</th>
+                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuGiaoHang_ChiTiet, "CONLAI")</th>
+                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuGiaoHang_ChiTiet, "ISDAGIAOHANG")</th>
+
+                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuGiaoHang_ChiTiet, "INTPRINT")</th>
+                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuGiaoHang_ChiTiet, "GHICHU")</th>
+                                <th>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbodytmpitemPX">
+                            @if (Model.lstct_PhieuGiaoHang_ChiTiet != null)
+                            {
+                                double TongTien = 0;
+                                double TongTienDaThu = 0;
+                                double TongTienTraHang = 0;
+                                double TongTienConLai = 0;
+                                foreach (var item in Model.lstct_PhieuGiaoHang_ChiTiet)
+                                {
+                                    if (!item.ISDAGIAOHANG)
+                                    {
+                                        //bolHoanTat = false;
+                                    }
+
+                                    string SOTIENGIAOHANG = item.SOTIENGIAOHANG.ToString("N0");
+                                    string SOTIENDATHU = item.SOTIENDATHU.ToString("N0");
+                                    string TONGTIENTRAHANG = item.TONGTIENTRAHANG.ToString("N0");
+                                    string CONLAI = (item.SOTIENGIAOHANG - item.SOTIENDATHU - item.TONGTIENTRAHANG).ToString("N0");
+                                    TongTien += item.SOTIENGIAOHANG;
+                                    TongTienDaThu += item.SOTIENDATHU;
+                                    TongTienTraHang += item.TONGTIENTRAHANG;
+                                    TongTienConLai += (item.SOTIENGIAOHANG - item.SOTIENDATHU - item.TONGTIENTRAHANG);
+                                    <tr id="@item.ID">
+                                        <td style="white-space: nowrap;" id="MAPHIEU"> @Html.DisplayFor(modelItem => item.MAPHIEUXUAT)</td>
+                                        <td style="white-space: nowrap;" id="NGAYLAP"> @item.NGAYLAP.ToString("dd/MM/yy HH:mm")</td>
+                                        <td style="white-space: nowrap;" id="NAME_KHACHHANG_NCC"> @Html.DisplayFor(model => item.NAME_KHACHHANG_NCC)</td>
+                                        <td style="white-space: nowrap;" id="SOLUONG_DONHANG"> @SOTIENGIAOHANG </td>
+                                        <td style="white-space: nowrap;" id="SOTIENDATHU">
+                                            @if (!Model.ISHOANTAT && (item.SOTIENGIAOHANG - item.SOTIENDATHU - item.TONGTIENTRAHANG) > 0 && ViewBag.PermissionDelivery_CreateReceipt)
+                                            {
+                                                <a class="label label-success" onclick="myFunctionCreateReceiptDelivery('@{@API.ct_PhieuThu;}','@item.ID_PHIEUXUAT', '@ViewBag.ID_LOAIPHIEUTHU','@item.ID_KHACHHANG_NCC','@item.MAPHIEUXUAT')" href="#"><i class="fa fa-money" style="margin-right:5px"></i>@Utility.ThuTien</a>
+                                            }
+                                            @if (!item.ISCHUYENCONGNOCHONHANVIEN)
+                                            {
+                                                @SOTIENDATHU
+                                            }
+                                            else
+                                            {
+                                                @("***" + SOTIENDATHU + "(" + item.ID_PHIEUCHI + ")");
+                                                if (string.IsNullOrEmpty(item.ID_PHIEUCHI))
+                                                {
+                                                    <a class="label label-danger" onclick="myFunctionCreateReceiptDelivery('@{@API.ct_PhieuChi;}','@item.ID_PHIEUXUAT', '@ViewBag.ID_LOAIPHIEUCHI','@item.ID_KHACHHANG_NCC','@item.MAPHIEUXUAT')" href="#"><i class="fa fa-money" style="margin-right:5px"></i>@Utility.PhieuChi</a>
+                                                }
+                                            }
+
+                                        </td>
+
+                                        <td style="white-space: nowrap;" id="ISTRAHANG">
+                                            @if (!Model.ISHOANTAT && ViewBag.PermissionDelivery_CreateReturn)
+                                            {
+                                                <a class="label label-warning" onclick="myFunctionCreateReceiptDelivery('@{@API.ct_PhieuNhap;}','@item.ID_PHIEUXUAT', '@ViewBag.ID_LOAIPHIEUNHAP','@item.ID_KHACHHANG_NCC','@item.MAPHIEUXUAT')" href="#"><i class="fa fa-random" style="margin-right:5px"></i>@Utility.TraHang</a>
+                                            }
+                                            else
+                                            {
+
+                                            }
+                                            @Html.DisplayFor(modelItem => item.ISTRAHANG)
+                                            @TONGTIENTRAHANG
+                                        </td>
+                                        <td style="white-space: nowrap;" id="CONLAI">
+                                            @CONLAI
+                                        </td>
+                                        <td style="white-space: nowrap;" id="ISDAGIAOHANG">
+                                            <a class="label label-default" onclick="myFunOpenCamera('@API.ct_PhieuGiaoHang', '@item.ID', '@item.ID_PHIEUXUAT')" href="#"><i class="glyphicon glyphicon-camera" style="margin-right:5px"></i></a>
+                                            @if (!Model.ISHOANTAT)
+                                            {
+                                                if (item.ISDAGIAOHANG)
+                                                {
+                                                    <a class="label label-primary" onclick="myFunctionCompletedDelivery_Detail('@{@API.ct_PhieuGiaoHang;}','@item.ID', '0')" href="#"><i class="glyphicon glyphicon-check" style="margin-right:5px"></i>@Utility.DaGiaoHang</a>
+                                                }
+                                                else
+                                                {
+                                                    <a class="label label-danger" onclick="myFunctionCompletedDelivery_Detail('@{@API.ct_PhieuGiaoHang;}','@item.ID', '1')" href="#"><i class="glyphicon glyphicon-check" style="margin-right:5px"></i>@Utility.ChuaGiaoHang</a>
+                                                }
+
+                                            }
+                                            else
+                                            {
+                                                @Html.DisplayFor(modelItem => item.ISDAGIAOHANG)
+                                            }
+                                        </td>
+
+                                        <td style="white-space: nowrap;" id="INTPRINT">
+                                            @if (Utility.IntWidth == 1)
+                                            {
+                                                <a class="label label-default" onclick="myFunctionViewReport('@{@API.ct_PhieuXuat;}','@item.ID_PHIEUXUAT')" href="#"><i class="fa fa-print" style="margin-right:5px"></i>@Utility.In @(item.INTPRINT > 0 ? " (" +  item.INTPRINT + ")" : "")</a>
+                                            }
+                                        </td>
+                                        <td style="white-space: nowrap;" id="GHICHU"> @Html.DisplayFor(modelItem => item.GHICHU)</td>
+                                    </tr>
+                                }
+                        <tr>
+                            <td style="white-space: nowrap; text-align:center" id="MAPHIEU" colspan="3">Tổng </td>
+                            <td style="white-space: nowrap;" id="SOLUONG_DONHANG"> @TongTien.ToString("N0") </td>
+                            <td style="white-space: nowrap;" id="SOTIENDATHU">
+                                @TongTienDaThu.ToString("N0")
+                            </td>
+                            <td style="white-space: nowrap;" id="ISDAGIAOHANG">
+                                @TongTienTraHang.ToString("N0")
+                            </td>
+                            <td style="white-space: nowrap;" id="CONLAI">
+                                @TongTienConLai.ToString("N0")
+                            </td>
+                            <td style="white-space: nowrap;" id="INTPRINT">
+                            </td>
+                            <td style="white-space: nowrap;" id="GHICHU"></td>
+                        </tr>
+                            }
+
+
+                        </tbody>
+
+                    </table>
+                </div>
+            </div><!-- table-responsive -->
+        </div>
+
+        <div class="panel-footer">
+            <div class="row">
+                <div class="col-sm-5 col-sm-offset-3">
+                    @if (Model.ISHOANTAT)//bolHoanTat &&
+                    {
+                        <button class="btn btn-danger" onclick="myFunctionCompletedDelivery('@{@API.ct_PhieuGiaoHang;}','@Model.ID', '0')" href="#"><i class="glyphicon glyphicon-check" style="margin-right:5px"></i>@Utility.MoHoanTat</button>
+                    }
+                    else
+                    {
+                        <button class="btn btn-primary" onclick="myFunctionCompletedDelivery('@{@API.ct_PhieuGiaoHang;}','@Model.ID', '1')" href="#"><i class="glyphicon glyphicon-check" style="margin-right:5px"></i>@Utility.HoanTat</button>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (Utility.IntWidth == 1)
+{
+    if (ViewBag.PermissionDelivery_CreateReceipt)
+    {
+        <button id="myBtnAddReceipt" style="display:none"></button>
+        <div id="myModalAddReceipt" class="modal" style="">
+            <div class="panel panel-default" @Html.Raw(Utility.StypeWidth_Level1)>
+                <!-- The Modal -->
+                @{Html.RenderAction("Create", @API.ct_PhieuThu, new { type = 1, myModalAdd = "myModalAddReceipt", hienthichuyencongno = "1" });}
+            </div>
+        </div>
+    }
+
+    if (ViewBag.PermissionDelivery_CreateReceipt)
+    {
+        <button id="myBtnAddPayment" style="display:none"></button>
+        <div id="myModalAddPayment" class="modal" style="">
+            <div class="panel panel-default" @Html.Raw(Utility.StypeWidth_Level1)>
+                <!-- The Modal -->
+                @{Html.RenderAction("Create", @API.ct_PhieuChi, new { type = 1, myModalAdd = "myModalAddPayment" });}
+            </div>
+        </div>
+    }
+
+    if (ViewBag.PermissionDelivery_CreateReturn)
+    {
+        <button id="myBtnAddInput" style="display:none"></button>
+        <div id="myModalAddInput" class="modal" style="">
+            <div class="panel panel-default" @Html.Raw(Utility.StypeWidth_Level1)>
+                <!-- The Modal -->
+                @{Html.RenderAction("Create", @API.ct_PhieuNhap, new { type = 1, myModalAdd = "myModalAddInput" });}
+            </div>
+        </div>
+    }
+
+}
+@{Html.RenderAction("Image_Input", "FileManager");}

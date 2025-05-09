@@ -1,0 +1,366 @@
+/* 
+    Document   : stylefrom
+    Created on : Jul 24, 2013, 3:34:21 PM
+    Author     : youngpos
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+root { 
+    display: block;
+}
+
+#body{
+    margin: 0;
+    padding: 0;
+    border: 0;
+    overflow: hidden;
+    height: 100%; 
+    max-height: 100%; 
+}
+
+#framecontentLeft, #framecontentRight{
+    position: absolute;
+    top: 0px;
+    left: 0;
+    width: 150px; /*Width of left frame div*/
+    height: 100%;
+    overflow: hidden; /*Disable scrollbars. Set to "scroll" to enable*/
+    background-color: #828282;
+    color: white;
+}
+
+#framecontentRight{
+    left: auto;
+    right: 0;
+    width: 100px; /*Width of right frame div*/
+    overflow: hidden; /*Disable scrollbars. Set to "scroll" to enable*/
+    background-color: #828282;
+    color: white;
+}
+
+#framecontentBottom{
+    position: absolute;
+    bottom: 0;
+    left: 150px; /*Set left value to WidthOfLeftFrameDiv*/
+    right: 100px; /*Set right value to WidthOfRightFrameDiv*/
+    width: auto;
+    height: 120px; /*Height of bottom frame div*/
+    overflow: hidden; /*Disable scrollbars. Set to "scroll" to enable*/
+    background-color: #828282;
+    color: white;
+}
+
+#framecontentTop{
+    position: absolute;
+    top: 0;
+    left: 150px; /*Set left value to WidthOfLeftFrameDiv*/
+    right: 100px; /*Set right value to WidthOfRightFrameDiv*/
+    width: auto;
+    height: 160px; /*Height of bottom frame div*/
+    overflow: hidden; /*Disable scrollbars. Set to "scroll" to enable*/
+    background-color: #FFCC00;
+    color: white;
+}
+
+#maincontent{
+    position: fixed; 
+    border-radius: 7px; 
+    -moz-border-radius: 7px; 
+    -webkit-border-radius: 7px; 
+    border: 1px solid #D1AA3D;
+    top: 200px;
+    bottom: 120px; /*Set bottom value to HeightOfBottomFrameDiv*/
+    left: 150px; /*Set left value to WidthOfLeftFrameDiv*/
+    right: 100px; /*Set right value to WidthOfRightFrameDiv*/
+    overflow: auto; 
+    background: #fff;
+}
+
+#framecontentMenu{
+    position: absolute;
+    top: 160px;
+    left: 150px; /*Set left value to WidthOfLeftFrameDiv*/
+    right: 100px; /*Set right value to WidthOfRightFrameDiv*/
+    width: auto;
+    height: 40px; /*Height of bottom frame div*/
+    overflow: hidden; /*Disable scrollbars. Set to "scroll" to enable*/
+    background-color: #CCCCCC;
+    color: white;
+}
+
+#login_container{ 
+    font-size:0.9em;
+    width:auto;
+    margin:0 auto;
+    height:auto; 
+    border:0; 
+    padding:0; 
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+#containerTestthu {
+    width:auto;
+    height: auto;
+    padding:10px;
+    border:1px solid gray;
+    border-radius: 5px;
+    margin:5px;
+} 
+
+.innertube{
+    margin: 15px; /*Margins for inner DIV inside each DIV (to provide padding)*/
+}
+
+* html body{ /*IE6 hack*/
+    padding: 0 150px 120px 200px; /*Set value to (0 WidthOfRightFrameDiv HeightOfTopFrameDiv WidthOfLeftFrameDiv)*/
+}
+
+* html #maincontent{ /*IE6 hack*/
+    height: 100%; 
+    width: 100%; 
+}
+
+* html #framecontentBottom{ /*IE6 hack*/
+    width: 100%;
+}
+
+* html #framecontentTop{ /*IE6 hack*/
+    width: 100%;                
+} 
+
+* html #framecontentMenu{ /*IE6 hack*/
+    width: 100%;
+}
+
+#divUsername{
+    top: 50px;
+    left:50px;
+    width: auto;
+}
+
+
+.shadowblockmenu{
+    font-weight: bold;
+    font-size: 85%;
+    width: 100%;
+}
+
+.shadowblockmenu ul{
+    border: 1px solid #BBB;
+    border-width: 1px 0; /* Show only top and bottom border for main menu container */
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+}
+
+.shadowblockmenu ul li{
+    display: inline;
+    margin:0;
+    padding:0;
+}
+
+.shadowblockmenu ul li a{
+    display:block;
+    float:left;
+    text-transform: uppercase;
+    color: #494949;
+    padding: 8px 15px 8px 9px;
+    margin: 0;
+    text-decoration: none;
+    border-right: 1px solid #BBB; /*right border between menu items*/
+    -moz-box-shadow: inset -7px 0 10px rgba(114,114,114, 0.4); /* Add inset shadow to each menu item. First 3 values in (114,114,114, 0.4) specifies rgb values, last specifies opacity */
+    -webkit-box-shadow: inset -7px 0 10px rgba(114,114,114, 0.4);
+    box-shadow: inset -7px 0 10px rgba(114,114,114, 0.4);
+    text-shadow: 0 -1px 1px #cfcfcf; /* CSS text shadow to give text some depth */
+    -moz-transition: all 0.2s ease-in-out; /* Enable CSS transition between property changes */
+    -webkit-transition: all 0.2s ease-in-out;
+    -o-transition: all 0.2s ease-in-out;
+    -ms-transition: all 0.2s ease-in-out;
+    transition: all 0.2s ease-in-out;
+}
+
+
+.shadowblockmenu li:nth-of-type(1) a{ /* Extra style for first menu link */
+    border-left: 1px solid #BBB; /* add border to left side of first menu link */
+    padding-left:25px;
+    background: url(media/onebit_home.png) 1px center no-repeat; /* Add icon */
+}
+
+.shadowblockmenu li:nth-of-type(2) a{ /* Extra style for 2nd menu link */
+    padding-left:25px;
+    background: url(media/onebit_bulb.png) 1px center no-repeat; /* Add icon */
+}
+
+.shadowblockmenu ul li a:hover{
+    color: black;
+    -moz-box-shadow: inset -7px 0 10px rgba(60,162,221, 0.4), inset 0 0 12px rgba(60,162,221, 0.6); /* Add 2 inset shadows to each menu item  */
+    -webkit-box-shadow: inset -7px 0 10px rgba(60,162,221, 0.4), inset 0 0 12px rgba(60,162,221, 0.6);
+    box-shadow: inset -7px 0 10px rgba(60,162,221, 0.4), inset 0 0 12px rgba(60,162,221, 0.6);
+}           
+
+
+.formbutton{
+    cursor:pointer;
+    border:outset 1px #ccc;
+    background:#FFF;
+    color:#000;                
+    padding: 1px 2px;                
+}
+
+
+.css3dbutton {
+    background: darkred; /* background color of button */
+    color: white;
+    text-decoration: none;
+    font: bold 28px Arial; /* font size and style */
+    position: relative;
+    top: 0; /* anchor main button's position */
+    bottom: -12px; /* Depth of 3D effect. :after pseudo element inherits this value so it's animated in Chrome. See: kizu.ru/en/pseudos */
+    margin-bottom: 12px;
+    -moz-box-shadow: 0 -15px 5px darkred inset;
+    -webkit-box-shadow: 0 -15px 5px darkred inset;
+    box-shadow: 0 -15px 5px darkred inset;
+    -moz-transition: all 0.2s ease-in-out;
+    -o-transition: all 0.2s ease-in-out;
+    -webkit-transition: all 0.2s ease-in-out;
+    transition: all 0.2s ease-in-out;
+}
+
+.css3dbutton, .css3dbutton:after {
+    display: inline-block;
+    padding: 10px 15px; /* vertical and horizontal padding of button */
+    -moz-border-radius: 8px/15px;
+    -webkit-border-radius: 8px/15px;
+    border-radius: 8px/15px;
+    outline: none;
+}
+
+.css3dbutton:after { /* pseudo element to construct 3D side of button */
+    content: "";
+    position: absolute;
+    padding: 0;
+    z-index: -1;
+    bottom: inherit; /* Inherit main button bottom value to animate it. See: kizu.ru/en/pseudos */
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #6e0e0c; /* background color of 3D effect */
+    -moz-box-shadow: 1px 0 3px gray;
+    -webkit-box-shadow: 1px 0 3px gray;
+    box-shadow: 1px 0 3px gray;
+}
+
+.css3dbutton:hover {
+    -moz-box-shadow: 0 25px 5px rgba(182, 64, 61, 0.7) inset;
+    -webkit-box-shadow: 0 25px 5px rgba(182, 64, 61, 0.7) inset;
+    box-shadow: 0 25px 5px rgba(182, 64, 61, 0.7) inset;
+    background: #bc3835; /* background color when mouse rolls over button */
+}
+
+.css3dbutton:active {
+    top: 12px; /* shift button down 12px when depressed. Change 12px to match button's "bottom" property above */
+    bottom: 0;
+    -moz-box-shadow: 0 -20px 5px darkred inset, 1px 1px 2px #eee;
+    -webkit-box-shadow: 0 -20px 5px darkred inset, 1px 1px 2px #eee;
+    box-shadow: 0 -20px 5px darkred inset, 1px 1px 2px #eee;
+}
+.copyright {
+    height:60px; 
+    font-weight: bold; 
+    font-size: 10px; 
+    text-align:right;
+    vertical-align:top; 
+    padding:6px 0px 0px 0px; 
+    color: white;
+    color: #454545;
+    width: 100%;
+}
+
+#rightLoginContainer{
+    height:100%;
+    width:68%; 
+    float:right;
+    border:1px solid #c5daed; 
+    border-radius:5px;
+    margin:5px auto;
+}
+
+#rightLoginContainer-mirror{
+    height:270px;
+    width:215px; 
+    float:right; 
+    border:1px solid #c5daed;  
+    border-radius:5px; 
+    margin-top:0px; 
+    margin:5px auto; 
+    margin-right:10px; 
+    overflow:visible}
+
+#leftLoginContainer{
+    width:30%; 
+    float:left; 
+    padding-top:5px;
+}
+.banner_img{width:100%;}
+
+#leftLoginContainer-mirror{
+    border: 1px solid #C5DAED;
+    width:70%; 
+    float:left; 
+    padding-top:5px; 
+    padding-bottom:5px;
+    padding-left:50px;
+    margin:0px;
+    margin-top:13px
+}
+
+.parent {
+    border: 1px solid #B22222;
+    border-radius: 10px;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    height: 100%;
+    width: 100%
+}
+.title {
+    border: 1px solid #C5DAED;
+    border-radius: 10px;                
+    margin-top: 3px;
+    margin-bottom: 3px;
+    margin-left: 3px;
+    margin-right: 3px;
+    height: 98%;
+}
+
+.chikend {
+    border-radius: 5px; 
+    -moz-border-radius: 5px; 
+    -webkit-border-radius: 5px; 
+    border: 1px dashed #D1AA3D;                               
+}
+
+.demoLnks li
+{
+    list-style: none;
+    margin: 0px 0px 10px 12px;
+}
+.demoLnks li a
+{
+    padding: 4px 0px 4px 24px;
+    background: url("./images/play_button.png") no-repeat;
+}
+/*list */
+a.list:link {color: #777;}    /* unvisited link */
+a.list:visited {color:#777;} /* visited link */
+a.list:hover {color: blue;}   /* mouse over link */
+a.list:active {color:#777;}  /* selected link */
+/* list phan trang*/
+a.listpage:link {color: #777;}    /* unvisited link */
+a.listpage:visited {color:#777;} /* visited link */
+a.listpage:hover {color: blue;}   /* mouse over link */
+a.listpage:active {color:#777;}  /* selected link */
+a.menutop{
+    text-decoration:none;
+    color: gray;
+}

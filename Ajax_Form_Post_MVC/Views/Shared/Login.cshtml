@@ -1,0 +1,95 @@
+﻿@model MVC_QuanLyTHP.Controllers.Login_Model
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <link rel="shortcut icon" href="@Url.Content("~/images/favicon.ico")" type="image/png">
+
+    <title>SHome</title>
+  <link href="@Url.Content("~/Content/css/style.default.css")" rel="stylesheet">
+
+  <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!--[if lt IE 9]>
+  <script src="js/html5shiv.js"></script>
+  <script src="js/respond.min.js"></script>
+  <![endif]-->
+</head>
+
+<body class="signin">
+
+<!-- Preloader -->
+<div id="preloader">
+    <div id="status"><i class="fa fa-spinner fa-spin"></i></div>
+</div>
+
+<section>
+  
+    <div class="signinpanel">
+        
+        <div class="row">
+            
+            <div class="col-md-7">
+                
+                <div class="signin-info">
+                    <div class="logopanel">
+                        <h1><span>[</span> SHome <span>]</span></h1>
+                    </div><!-- logopanel -->
+                
+                    <div class="mb20"></div>
+                
+                    <h5><strong>Trở thành thành viên của SHome!</strong></h5>
+                    <ul>
+                        <li><i class="fa fa-arrow-circle-o-right mr5"></i>Dễ dành truy cập website</li>
+                        <li><i class="fa fa-arrow-circle-o-right mr5"></i>Dễ dàng thanh toán</li>
+                        <li><i class="fa fa-arrow-circle-o-right mr5"></i>Nhận được thông tin khuyễn mãi</li>
+                        <li><i class="fa fa-arrow-circle-o-right mr5"></i> Một số tiện ích khác...</li>
+                    </ul>
+                    <div class="mb20"></div>
+                    <strong>Bạn chưa có tài khoản thành viên? <a href="@Url.Action("Index", "Dangky")">Đăng ký</a></strong>
+                </div><!-- signin0-info -->
+            
+            </div><!-- col-sm-7 -->
+            
+            <div class="col-sm-5">
+                
+                @RenderBody()
+               
+            </div><!-- col-sm-5 -->
+            
+        </div><!-- row -->
+        
+        <div class="signup-footer">
+            <div class="pull-left">
+                &copy; 2014. Website Bán Hoa
+            </div>
+            <div class="pull-right">
+               <a href="@Url.Action("Index", "Home")">Trang chủ</a>
+            </div>
+        </div>
+        
+    </div><!-- signin -->
+  
+</section>
+
+
+<script src="@Url.Content("~/Content/js/jquery-1.10.2.min.js")"></script>
+<script src="@Url.Content("~/Content/js/jquery-migrate-1.2.1.min.js")"></script>
+<script src="@Url.Content("~/Content/js/bootstrap.min.js")"></script>
+<script src="@Url.Content("~/Content/js/modernizr.min.js")"></script>
+<script src="@Url.Content("~/Content/js/retina.min.js")"></script>
+
+<script src="@Url.Content("~/Content/js/custom.js")"></script>
+
+</body>
+</html>
+
+
+
+
+
+
+
+

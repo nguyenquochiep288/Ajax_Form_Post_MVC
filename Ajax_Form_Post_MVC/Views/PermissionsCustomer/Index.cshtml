@@ -1,0 +1,153 @@
+﻿@model MVC_QuanLyTHP.Models.PhanQuyenKhachHang
+@using PagedList.Mvc;
+@using DatabaseTHP.Class;
+@using MVC_QuanLyTHP.Class;
+@using MVC_QuanLyTHP.Models;
+@{
+    ViewBag.Title = API.ViewBagTitle;
+    Layout = "~/Views/Shared/Admin.cshtml";
+}
+<hr />
+<div class="panel-group" id="accordion">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h1 class="panel-title" style="text-align:center">
+                <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+                    @Utility.GetTitleFrom(API.web_PhanQuyenKhachHang)
+                </a>
+            </h1>
+        </div>
+
+        <div id="collapseOne" class="panel-collapse collapse in">
+            @using (Html.BeginForm())
+            {
+                <div class="form-group">
+                    <label class="col-sm-1 control-label">Nhóm quyền:</label>
+                    <div class="col-sm-2" style="padding-bottom: 5px;">
+                        <select class="form-control chosen-select" id="idNhomQuyen" name="idNhomQuyen" onchange="this.form.submit()">
+                            @foreach (v_v_web_NhomQuyen itm in Model.lstNhomQuyen)
+                            {
+                                if (ViewBag.showsearchValue == @itm.ID)
+                                {
+                                    <option value="@itm.ID" selected>@itm.NAME</option>
+                                }
+                                else
+                                {
+                                    <option value="@itm.ID">@itm.NAME</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                        <label class="col-sm-1 control-label">Lịch làm việc:</label>
+                        <div class="col-sm-2" style="padding-bottom: 5px;">
+                            <select class="form-control chosen-select" id="idLichLamViec" name="idLichLamViec" onchange="this.form.submit()">
+                                @foreach (v_v_dm_LichLamViec itm in Model.lstLichLamViec)
+                                {
+                                    if (ViewBag.idLichLamViec == @itm.ID)
+                                    {
+                                        <option value="@itm.ID" selected>@itm.NAME</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@itm.ID">@itm.NAME</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                </div>
+            }
+                <div class="form-group">
+                    <label class="col-sm-1 control-label"><input type="checkbox" onchange="OnchangeCheckboxTBL_DEPT(event)" />  Tìm kiếm:</label>
+                    <div class="col-sm-4">
+                        @Html.TextBox("SearchStringTree", (string)ViewBag.searchValue, htmlAttributes: new { @class = "form-control", @style = "width:80%;display:inline-block", @placeholder = Utility.TimKiem })
+                        <button onclick="funSearchTreeview()" class="btn btn-default"><span class='glyphicon glyphicon-search'></span></button>
+                    </div>
+                </div>
+                <div id="page-wrap">
+
+                    <ul class="treeview" id="treeview">
+                        @Html.Raw(ViewBag.Treeview)
+                    </ul>
+
+                </div>
+            </div>
+
+        <div class="panel-footer">
+            <div class="row">
+                <div class="col-sm-5 col-sm-offset-2">
+                    @if (ViewBag.PermissionEdit)
+                    {
+                        <button class="btn btn-primary" onclick="SaveTreeCustomer('Update', '@{@API.web_PhanQuyenKhachHang;}', '@{@Utility.LOC_ID;}')">@Utility.ThucHien</button>
+                    }
+                    @if (Request.UrlReferrer != null)
+                    {
+                        <a href="@Request.UrlReferrer.ToString()" class="btn btn-danger">@Utility.QuayLai</a>
+                    }
+                    else
+                    {
+
+                        @Html.ActionLink(Utility.QuayLai, "Index", null, new { @class = "btn btn-danger" })
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<link rel="stylesheet" href="@Url.Content("~/css/styleTreeview.css")">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="@Url.Content("~/Scripts/Treeview.js")"></script>
+
+<style>
+    .caret1 {
+        cursor: pointer;
+        -webkit-user-select: none; /* Safari 3.1+ */
+        -moz-user-select: none; /* Firefox 2+ */
+        -ms-user-select: none; /* IE 10+ */
+        user-select: none;
+    }
+
+        .caret1::before {
+            content: "\25B6";
+            color: black;
+            display: inline-block;
+            margin-right: 6px;
+        }
+
+    .caret1-down::before {
+        -ms-transform: rotate(90deg); /* IE 9 */
+        -webkit-transform: rotate(90deg); /* Safari */
+        transform: rotate(90deg);
+    }
+
+    .nested {
+        display: none;
+    }
+
+    .active {
+        display: block;
+    }
+
+    .nested1 {
+        display: none;
+    }
+
+    .active1 {
+        display: block;
+    }
+</style>
+<script>
+
+    var toggler = document.getElementsByClassName("caret1");
+    var i;
+
+    for (i = 0; i < toggler.length; i++) {
+        toggler[i].addEventListener("click", function () {
+            this.parentElement.querySelector(".nested").classList.toggle("active");
+            this.classList.toggle("caret1-down");
+        });
+    }
+
+</script>
+
