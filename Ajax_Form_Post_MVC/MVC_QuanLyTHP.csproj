@@ -1535,11 +1535,6 @@
       <SubType>Component</SubType>
       <DesignTime>True</DesignTime>
     </Compile>
-    <Compile Include="Report\rpt_DanhSachHangHoa_BanChay1.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>rpt_DanhSachHangHoa_BanChay.rpt</DependentUpon>
-    </Compile>
     <Compile Include="Report\rpt_DanhSachHangHoa_NV_KH.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
