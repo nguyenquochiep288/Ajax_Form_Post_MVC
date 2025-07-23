@@ -209,6 +209,7 @@ namespace MVC_QuanLyTHP.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult CreatePopup([Bind(Include = "LOC_ID,ID,ID_KHO,MAPHIEU,SOPHIEU,NGAYLAP,ID_KHACHHANG,ID_NHANVIEN,GHICHU,TONGTHANHTIEN,CHIETKHAU,TONGTIENGIAMGIA,TONGTIENVAT,TONGTIEN,BUTTONTYPE,ADDRESS,TEL")] v_v_ct_PhieuDatHang ct_PhieuDatHang)
         {
+            ApiResponse apiResponse = new ApiResponse();
             try
             {
                 if (Utility.KiemTra())
@@ -249,7 +250,7 @@ namespace MVC_QuanLyTHP.Controllers
                         Utility.EditObject(ct_PhieuDatHang_ChiTiet, lstString[0].ToString().Substring(3, lstString[0].ToString().Length - 3), value[0]);
                     }
                 }
-                ApiResponse apiResponse = new ApiResponse();
+               
                 if (ct_PhieuDatHang.BUTTONTYPE == "GetPromotion")
                 {
                     // Do Next Here
@@ -334,10 +335,13 @@ namespace MVC_QuanLyTHP.Controllers
             }
             catch (Exception ex)
             {
+                apiResponse.Success = false;
+                apiResponse.Message = ex.Message;
                 Utility.WriteLog(this, MethodBase.GetCurrentMethod().Name, ex);
                 TempData["TitleError"] = API.TitleTryCatch;
                 TempData["DetailError"] = ex.Message;
-                return RedirectToAction("Index", "Notfound");
+                return new JsonResult() { Data = apiResponse, JsonRequestBehavior = JsonRequestBehavior.AllowGet, MaxJsonLength = Int32.MaxValue };
+                //return RedirectToAction("Index", "Notfound");
             }
         }
 
@@ -1251,6 +1255,7 @@ namespace MVC_QuanLyTHP.Controllers
 
                 if (string.IsNullOrEmpty(model.keySearch))
                     model.keySearch = "";
+                model.BOLTONKHO = !model.BOLTONKHO;
                 ApiResponse apiResponse = GetDanhSachSanPham(model);
                 if (!apiResponse.Success)
                 {
@@ -1267,7 +1272,7 @@ namespace MVC_QuanLyTHP.Controllers
                         if (itm.TYLE_QD > 1)
                         {
                             PhanNguyen = Convert.ToInt32(itm.QTY) / Convert.ToInt32(itm.TYLE_QD);
-                            strQty = (PhanNguyen > 0 ? PhanNguyen.ToString("N0") + " " + itm.NAME_DVT : "") + ((itm.QTY - (PhanNguyen * itm.TYLE_QD)) > 0 ? "/" + (itm.QTY - (PhanNguyen * itm.TYLE_QD)).ToString("N0") + " " + itm.NAME_DVT_QD : "");
+                            strQty = (PhanNguyen > 0 ? PhanNguyen.ToString("N0") + " " + itm.NAME_DVT : "") + ((itm.QTY - (PhanNguyen * itm.TYLE_QD)) > 0 ? (PhanNguyen > 0 ? "/" : "") + (itm.QTY - (PhanNguyen * itm.TYLE_QD)).ToString("N0") + " " + itm.NAME_DVT_QD : "");
                         }
                         else
                             strQty = itm.QTY.ToString("N0") + " " + itm.NAME_DVT;
@@ -1279,8 +1284,8 @@ namespace MVC_QuanLyTHP.Controllers
                         newReturn.DATA += "<div class=\"productDeposit-details\">" + itm.NAME;
                         newReturn.DATA += "<div class=\"productDeposit-info\">";
                         if(!itm.ISKHONGHIENTHITONKHO)
-                            newReturn.DATA += "<code>SL: " + strQty + "</code>";
-                        newReturn.DATA += "<code>-"+ String.Format("{0:N0}", itm.GIA01)+" đ</code>";
+                            newReturn.DATA += "<code>SL: " + strQty + "</code>-";
+                        newReturn.DATA += "<code>"+ String.Format("{0:N0}", itm.GIA01)+" đ</code>";
                         newReturn.DATA += "</div></div></button></div>";
                         //newReturn.DATA += "<button style ='width: 150px;height:100px;"+ (itm.NAME.Length > 40 ? "font-size:" + (itm.NAME.Length > 60 ? "1.2ex;" : "1.5ex;" ): "")+ "' class='filterDiv active show' onclick='myFunOpenProduct(this,\"" + itm.ID_HANGHOAKHO + "\")'>" + itm.NAME + "<div style='font-size: 10px;'><code>SL: " + strQty + "</code> - <code>" + String.Format("{0:N0}", itm.GIA01) + " đ</code></div></button>";
                     }
@@ -1343,6 +1348,8 @@ namespace MVC_QuanLyTHP.Controllers
                     {
                         dm_HangHoa.GIA = dm_HangHoa.GIA01;
                         dm_HangHoa.GIA_QD = dm_HangHoa.GIA01_QD;
+                        dm_HangHoa.NAME_DVT = dm_HangHoa.NAME_DVT + " (" + dm_HangHoa.GIA01.ToString("N0") + ")";
+                        dm_HangHoa.NAME_DVT_QD = dm_HangHoa.NAME_DVT_QD + " (" + dm_HangHoa.GIA01_QD.ToString("N0") + ")";
                     }
                     if (!string.IsNullOrEmpty(dm_HangHoa.ID_THUESUAT))
                     {
@@ -1408,7 +1415,7 @@ namespace MVC_QuanLyTHP.Controllers
             objParameter.ID_NHOMHANGHOA = model.GroupID;
             objParameter.KEY = model.keySearch;
             objParameter.ID_KHO = model.ID_KHO;
-            objParameter.BOLTONKHO = true;
+            objParameter.BOLTONKHO = model.BOLTONKHO;
             objParameter.ID_HANGHOAKHO = "";
             apiResponse = Utility.ExecuteStoredProc<web_Sp_Get_DSSanPham_Result>(objParameter, API.web_Sp_Get_DSSanPham);
             if (!apiResponse.Success)
@@ -1619,7 +1626,8 @@ namespace MVC_QuanLyTHP.Controllers
                                 {
                                     apiResponse.Data = new List<Product_Detail>();
                                     TempData["TitleError"] = apiResponse.Message;
-                                    apiResponse.Success = false; apiResponse.URL = Url.Action("Index", "Notfound");
+                                    apiResponse.Success = false;
+                                    apiResponse.URL = Url.Action("Index", "Notfound");
                                     return new JsonResult() { Data = apiResponse, JsonRequestBehavior = JsonRequestBehavior.AllowGet, MaxJsonLength = Int32.MaxValue };
                                 }
 
@@ -1656,7 +1664,8 @@ namespace MVC_QuanLyTHP.Controllers
                 Utility.WriteLog(this, MethodBase.GetCurrentMethod().Name, ex, JsonConvert.SerializeObject(Product_Detail));
                 TempData["TitleError"] = API.TitleTryCatch;
                 TempData["DetailError"] = ex.Message;
-                apiResponse.Success = false; apiResponse.URL = Url.Action("Index", "Notfound");
+                apiResponse.Success = false;
+                apiResponse.URL = Url.Action("Index", "Notfound");
                 return new JsonResult() { Data = apiResponse, JsonRequestBehavior = JsonRequestBehavior.AllowGet, MaxJsonLength = Int32.MaxValue };
             }
         }
@@ -1760,7 +1769,7 @@ namespace MVC_QuanLyTHP.Controllers
 
         private string myProduct(string sbtnGroup, string Class)
         {
-            return " <div class=\"panel-group\" id=\"accordion1\"><div class=\"panel panel-default\"><div class=\"panel-heading\">    <h1 class=\"panel-title\">        <a data-toggle=\"collapse\" data-parent=\"#accordion1\" href=\"#collapseOne1\">            NHÓM HÀNG HÓA        </a>    </h1></div><div id=\"collapseOne1\" class=\"panel-collapse collapse in\">    <div id=\"myBtnContainer\">"+ sbtnGroup + "</div></div></div></div>\r\n<div class=\"panel-group\" id=\"accordion2\"><div class=\"panel panel-default\"><div class=\"panel-heading\">    <h1 class=\"panel-title\">        <a data-toggle=\"collapse\" data-parent=\"#accordion2\" href=\"#collapseOne2\">            DANH SÁCH HÀNG HÓA        </a>    </h1></div><div id=\"collapseOne2\" class=\"panel-collapse collapse in\">    <div>        <input id=\"myInput\" type=\"text\" placeholder=\""+ Utility.TimKiem + "\" class=\"form-control\" onkeyup=\"myInputOnkeyup(\'" + Class + "\', event)\" style=\"width:300px;display:inline-block\">        <button class='btn btn-default' onclick='funSearchItemProduct(\"" + Class + "\")'><span class='glyphicon glyphicon-search'></span></button>    </div><div id=\"myTest\">    </div>    <div id=\"mycontainer\" class=\"productDeposit-list\">    </div></div></div></div>";
+            return " <div class=\"panel-group\" id=\"accordion1\"><div class=\"panel panel-default\"><div class=\"panel-heading\">    <h1 class=\"panel-title\">        <a data-toggle=\"collapse\" data-parent=\"#accordion1\" href=\"#collapseOne1\">            NHÓM HÀNG HÓA        </a>    </h1> <div class='ckbox ckbox-default'><input type='checkbox' id='selectall' value='0'><label for='selectall'>Tất cả(Bao gồm hết tồn kho)</label></div></div><div id=\"collapseOne1\" class=\"panel-collapse collapse in\">    <div id=\"myBtnContainer\">" + sbtnGroup + "</div></div></div></div>\r\n<div class=\"panel-group\" id=\"accordion2\"><div class=\"panel panel-default\"><div class=\"panel-heading\">    <h1 class=\"panel-title\">        <a data-toggle=\"collapse\" data-parent=\"#accordion2\" href=\"#collapseOne2\">            DANH SÁCH HÀNG HÓA        </a>    </h1></div><div id=\"collapseOne2\" class=\"panel-collapse collapse in\">    <div>        <input id=\"myInput\" type=\"text\" placeholder=\""+ Utility.TimKiem + "\" class=\"form-control\" onkeyup=\"myInputOnkeyup(\'" + Class + "\', event)\" style=\"width:300px;display:inline-block\">        <button class='btn btn-default' onclick='funSearchItemProduct(\"" + Class + "\")'><span class='glyphicon glyphicon-search'></span></button>    </div><div id=\"myTest\">    </div>    <div id=\"mycontainer\" class=\"productDeposit-list\">    </div></div></div></div>";
         }
 
         private List<Product_Detail> XoaKhuyenMai(List<Product_Detail> lstOrderProduct)

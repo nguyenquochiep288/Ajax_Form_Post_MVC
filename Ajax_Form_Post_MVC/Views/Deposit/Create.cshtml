@@ -246,69 +246,69 @@ else
         Layout = "~/Views/Shared/Admin.cshtml";
     }
     <style>
-            /* Always set the map height explicitly to define the size of the div
+        /* Always set the map height explicitly to define the size of the div
         * element that contains the map. */
-            #map {
-                height: 10px;
-                height: 10px;
-            }
-            /* Optional: Makes the sample page fill the window. */
+        #map {
+            height: 10px;
+            height: 10px;
+        }
+        /* Optional: Makes the sample page fill the window. */
 
-            .productDeposit-list {
-                display: flex;
-                flex-wrap: wrap;
-                justify-content: center;
-                gap: 5px;
-                padding: 0px;
-            }
+        .productDeposit-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 5px;
+            padding: 0px;
+        }
 
-            .productDeposit {
-                display: flex;
-                justify-content: center;
-                align-items: center;
-            }
+        .productDeposit {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
 
-            .productDeposit-button {
-                width: 150px;
-                height: 200px; /* Adjusted height to accommodate image and text */
-                font-size: 1.5ex;
-                background-color: #fff;
-                border: 1px solid #ccc;
-                border-radius: 5px;
-                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-                cursor: pointer;
-                transition: background-color 0.3s ease;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                padding: 5px;
-            }
+        .productDeposit-button {
+            width: 150px;
+            height: 200px; /* Adjusted height to accommodate image and text */
+            font-size: 1.5ex;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 5px;
+        }
 
-                .productDeposit-button img {
-                    width: 100px; /* Fixed width */
-                    height: 100px; /* Fixed height */
-                    object-fit: cover; /* Ensures the image covers the area without distortion */
-                    border-bottom: 1px solid #ccc;
-                    margin-bottom: 5px;
-                }
-
-                .productDeposit-button:hover {
-                    background-color: #f0f0f0;
-                }
-
-            .productDeposit-details {
-                text-align: center;
-                color: black;
+            .productDeposit-button img {
+                width: 100px; /* Fixed width */
+                height: 100px; /* Fixed height */
+                object-fit: cover; /* Ensures the image covers the area without distortion */
+                border-bottom: 1px solid #ccc;
+                margin-bottom: 5px;
             }
 
-            .productDeposit-info {
-                font-size: 10px;
-                margin-top: 0px;
+            .productDeposit-button:hover {
+                background-color: #f0f0f0;
             }
 
-            .activeDeposit {
-                background-color: #d1e7dd; /* Change to your desired color */
-            }
+        .productDeposit-details {
+            text-align: center;
+            color: black;
+        }
+
+        .productDeposit-info {
+            font-size: 10px;
+            margin-top: 0px;
+        }
+
+        .activeDeposit {
+            background-color: #d1e7dd; /* Change to your desired color */
+        }
     </style>
     <script src="@Url.Content("~/Scripts/Deposit_Temp.js")"></script>
     using (Ajax.BeginForm("Create", API.ct_PhieuDatHang, new AjaxOptions { OnBegin = "OnBegin", OnSuccess = "OnSuccessCreate" }))
@@ -479,7 +479,7 @@ else
 
         </div>
     }
-
+    
     <div id="myProduct">
         @Html.Raw(ViewBag.NhomHang)
     </div>

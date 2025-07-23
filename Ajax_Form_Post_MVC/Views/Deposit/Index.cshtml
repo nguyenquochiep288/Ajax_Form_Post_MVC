@@ -417,8 +417,8 @@
                 @{Html.RenderAction("Create", @API.ct_PhieuDatHang, new { type = 1 });}
                 <div id="myProduct">
                 </div>
+                </div>
             </div>
-        </div>
     }
     if (ViewBag.PermissionEdit)
     {
@@ -440,6 +440,7 @@
 <script type="text/javascript">
     $(function () {
         // delete extra hidden fields created by checkboxes as the grid links mess this up by doubling the querystring parameters
+        $("input[type='hidden'][name='item.CHON']").remove();
         $("input[type='hidden'][name='item.CHON']").remove();
     });
 

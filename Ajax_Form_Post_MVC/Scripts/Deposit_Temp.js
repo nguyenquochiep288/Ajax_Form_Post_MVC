@@ -335,11 +335,17 @@ function myFunctionPage(GroupID, key, Class)
 
             }
         }
+        var checkbox = document.getElementById("selectall");
         OpenLoader();
         var employee = new Object();
         employee.GroupID = GroupID;
         employee.keySearch = key;
         employee.ID_KHO = ID_KHO;
+        if (checkbox != null && checkbox.checked == true)
+        {
+            employee.BOLTONKHO = true;
+        }
+        
         $.ajax({
             type: "POST",
             url: "/Deposit/LoadDanhSachSanPham",

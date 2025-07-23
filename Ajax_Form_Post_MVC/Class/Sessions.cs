@@ -32,6 +32,8 @@ namespace MVC_QuanLyTHP.Class
         public const string lstMenu = "lstMenu";
         public const string lstPhanQuyen = "lstPhanQuyen";
         public const string lstThongBao = "lstThongBao";
+
+        public const string BankVietQR = "BankVietQR";
         #endregion
 
         //

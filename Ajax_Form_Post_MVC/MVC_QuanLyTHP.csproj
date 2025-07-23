@@ -1422,12 +1422,6 @@
       <SubType>Component</SubType>
       <DesignTime>True</DesignTime>
     </Compile>
-    <Compile Include="Report\rptDanhSachPhieuGiaoHang_InGroupBy1.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>rptDanhSachPhieuGiaoHang_InGroupBy.rpt</DependentUpon>
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="Report\rptDanhSachPhieuGiaoHang_InGroupType.cs">
       <DependentUpon>rptDanhSachPhieuGiaoHang_InGroupType.rpt</DependentUpon>
       <AutoGen>True</AutoGen>
@@ -1534,6 +1528,17 @@
       <AutoGen>True</AutoGen>
       <SubType>Component</SubType>
       <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Report\rpt_DanhSachHangHoa_BanChay.cs">
+      <DependentUpon>rpt_DanhSachHangHoa_BanChay.rpt</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <SubType>Component</SubType>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Report\rpt_DanhSachHangHoa_BanChay1.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>rpt_DanhSachHangHoa_BanChay.rpt</DependentUpon>
     </Compile>
     <Compile Include="Report\rpt_DanhSachHangHoa_NV_KH.cs">
       <AutoGen>True</AutoGen>
@@ -1861,6 +1866,10 @@
     <EmbeddedResource Include="Report\rpt_DanhSachHangHoa.rpt">
       <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
       <LastGenOutput>rpt_DanhSachHangHoa.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Report\rpt_DanhSachHangHoa_BanChay.rpt">
+      <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
+      <LastGenOutput>rpt_DanhSachHangHoa_BanChay1.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Report\rpt_DanhSachHangHoa_NV_KH.rpt">
       <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>

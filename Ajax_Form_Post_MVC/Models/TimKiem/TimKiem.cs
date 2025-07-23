@@ -162,5 +162,7 @@ namespace MVC_QuanLyTHP.Models
         public string idNhomQuyen { get; set; }
 
         public string ID_KHO { get; set; }
+
+        public Boolean BOLTONKHO { get; set; }
     }
 }

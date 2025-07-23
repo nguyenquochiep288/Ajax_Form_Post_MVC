@@ -986,6 +986,10 @@ namespace MVC_QuanLyTHP.Controllers
                 }    
                 
                 report = Utility.GetFormulaFields(report, PhieuNhap);
+                String fullpath = Path.Combine(Server.MapPath("~" + API.PathLogo), "040937143939.png");
+                report.DataDefinition.FormulaFields["QRCode1"].Text = "'" + fullpath + "'";
+                fullpath = Path.Combine(Server.MapPath("~" + API.PathLogo), "117000052509.png");
+                report.DataDefinition.FormulaFields["QRCode2"].Text = "'" + fullpath + "'";
                 report.SetDataSource(data);
                 Response.Buffer = false;
                 Response.ClearContent();

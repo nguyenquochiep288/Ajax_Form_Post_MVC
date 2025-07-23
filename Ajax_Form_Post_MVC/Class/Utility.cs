@@ -107,6 +107,7 @@ namespace MVC_QuanLyTHP.Class
         #region Hiển thị
         public static string ThemTab = "Thêm thẻ mới";
         public static string ThucHien = "Thực hiện";
+        public static string XemBaoCaoTrenThietBiDiDong = "Xem báo cáo";
         public static string QuayLai = "Quay lại";
         public static string Dong = "Đóng";
         public static string Them = "Thêm";
@@ -336,6 +337,27 @@ namespace MVC_QuanLyTHP.Class
             }
             return lstMenu ?? new List<v_web_Menu>();
         }
+        #endregion
+
+        #region Danh sách ngân hàng VietQR
+        //public static List<Datum> GetBankVietQR(Boolean bolCache = false)
+        //{
+        //    List<Datum> lstMenu = new List<Datum>();
+        //    if (!bolCache && HttpContext.Current.Session[Sessions.BankVietQR] != null)
+        //    {
+        //        lstMenu = (List<Datum>)HttpContext.Current.Session[Sessions.BankVietQR];
+        //    }
+        //    else
+        //    {
+        //        var apiResponse = Utility.GetListData<Datum>(API.dm_TaiKhoanNganHang);
+        //        if (!apiResponse.Success)
+        //        {
+        //            return new List<Datum>();
+        //        }
+        //        HttpContext.Current.Session[Sessions.BankVietQR] = lstMenu = apiResponse.Data as List<Datum>;
+        //    }
+        //    return lstMenu ?? new List<Datum>();
+        //}
         #endregion
 
         #region Danh sách Phân quyền
@@ -1619,6 +1641,7 @@ namespace MVC_QuanLyTHP.Class
             Utility.GetMenu(true);
             Utility.GetPhanQuyen(true);
             Utility.GetThongBao(true);
+            //Utility.GetBankVietQR(true);
         }
         #endregion
 
@@ -3449,6 +3472,7 @@ namespace MVC_QuanLyTHP.Class
                     report.DataDefinition.FormulaFields["LOAIPHIEUNHAP"].Text = "'" + CovertText(PhieuXuat.NAME_LOAIPHIEUXUAT) + "'";
                     report.DataDefinition.FormulaFields["GHICHU"].Text = "'" + CovertText(PhieuXuat.GHICHU) + "'";
                     report.DataDefinition.FormulaFields["SOTIENBANGCHU"].Text = "'" + CovertText(PhieuXuat.GHICHU) + "'";
+                    
                     break;
                 case "v_ct_PhieuDatHang":
 

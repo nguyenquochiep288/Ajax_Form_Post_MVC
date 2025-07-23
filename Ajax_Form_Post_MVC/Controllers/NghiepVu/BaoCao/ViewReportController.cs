@@ -158,7 +158,7 @@ namespace MVC_QuanLyTHP.Controllers.NghiepVu
                 }
                 report.FileName = Server.MapPath(fileReport);
                 DataTable data = new DataTable();
-                if (objParameter.HINHTHUC_PHIEUXUATHANG_KHUYENMAI == null && objParameter.HINHTHUC_BAOCAOTAICHINH == null && objParameter.HINHTHUC == null)
+                if (web_Report.NAME_SP != API.Sp_Get_DanhSachHangHoa_BanChay && objParameter.HINHTHUC_PHIEUXUATHANG_KHUYENMAI == null && objParameter.HINHTHUC_BAOCAOTAICHINH == null && objParameter.HINHTHUC == null)
                 {
                     apiResponse = Utility.ExecuteStoredProc<DataTable>(objParameter, API.SP_GetReport);
                     if (!apiResponse.Success)
@@ -378,7 +378,7 @@ namespace MVC_QuanLyTHP.Controllers.NghiepVu
                         data = Utility.ToDataTable<v_PhieuGioaHang_InTheoGroup>(lstv_PhieuGioaHang_InTheoGroup);
 
                         report.DataDefinition.FormulaFields["TONGCONG"].Text = "'" + lstv_PhieuGioaHang_InTheoGroup.Sum(s => s.TONGCONG).ToString("N0") + "'";
-                        report.DataDefinition.FormulaFields["TONGTRONGLUONG"].Text = "'" + lstv_PhieuGioaHang_InTheoGroup.Sum(s => s.TONGTRONGLUONG).ToString("N0") + "'";
+                        report.DataDefinition.FormulaFields["TONGTRONGLUONG"].Text = "'" + lstv_PhieuGioaHang_InTheoGroup.Sum(s => s.TONGTRONGLUONG/1000).ToString("N0") + "'";
                         report.DataDefinition.FormulaFields["TONGSODONHANG"].Text = "'" + TONGSODONHANG.ToString("N0") + "'";
                         if (objParameter.ID_KHUVUC != null && lstv_PhieuGioaHang_InTheoGroup.Count > 0)
                             report.DataDefinition.FormulaFields["MAPHIEU"].Text = "'" + lstv_PhieuGioaHang_InTheoGroup.FirstOrDefault().NAME_GROUP + "'";
@@ -576,6 +576,22 @@ namespace MVC_QuanLyTHP.Controllers.NghiepVu
                     case "~/Report/rpt_DanhSachHangHoa_NV_KH.rpt":
                         apiResponse = Utility.ExecuteStoredProcT<Sp_Get_DanhSachHangHoa_Result>(objParameter, objParameter.NAME_SP);
                         List<Sp_Get_DanhSachHangHoa_Result> lstSp_Get_DanhSachHangHoa_Result = (apiResponse.Data as List<Sp_Get_DanhSachHangHoa_Result>);
+                        if (!apiResponse.Success)
+                        {
+                            apiResponse.Success = false;
+                            apiResponse.Message = apiResponse.Message;
+                            return new JsonResult() { Data = apiResponse, JsonRequestBehavior = JsonRequestBehavior.AllowGet, MaxJsonLength = Int32.MaxValue };
+                        }
+                        if (lstSp_Get_DanhSachHangHoa_Result == null)
+                            lstSp_Get_DanhSachHangHoa_Result = new List<Sp_Get_DanhSachHangHoa_Result>();
+                        data = Utility.ToDataTable<Sp_Get_DanhSachHangHoa_Result>(lstSp_Get_DanhSachHangHoa_Result);
+                        break;
+                    #endregion
+
+                    #region Báo cáo hàng hóa bán chạy
+                    case "~/Report/rpt_DanhSachHangHoa_BanChay.rpt":
+                        apiResponse = Utility.ExecuteStoredProcT<Sp_Get_DanhSachHangHoa_Result>(objParameter, objParameter.NAME_SP);
+                        lstSp_Get_DanhSachHangHoa_Result = (apiResponse.Data as List<Sp_Get_DanhSachHangHoa_Result>);
                         if (!apiResponse.Success)
                         {
                             apiResponse.Success = false;

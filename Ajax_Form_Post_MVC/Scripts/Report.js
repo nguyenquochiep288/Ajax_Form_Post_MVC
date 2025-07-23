@@ -26,13 +26,39 @@
 function OnSuccessReport(ID) {
     try {
         CloseLoaderReport();
-        $("#reportView" + ID).attr("src", "VerReporte").load();
+        //$("#reportView" + ID).attr("src", "VerReporte").load();
+        // Kiểm tra thiết bị di động
+        var isMobile = /Android|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i.test(navigator.userAgent);
+        var ua = navigator.userAgent;
+
+        // Kiểm tra Safari (nhưng không phải Chrome)
+        var isSafari = /^((?!chrome|android).)*safari/i.test(ua);
+        if (isMobile && !isSafari) {
+            const myWindow = window.open('/ViewReport/GetReport', 'MyWindow',
+                'toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=no,resizable=no,width=900,height=600');
+        } else {
+            // Thiết bị không phải di động
+            $("#reportView" + ID).attr("src", "VerReporte").load();
+        }
     }
     catch (ex) {
         alert(ex.Message);
         alert(ex);
     } 
    
+}
+
+function OnSuccessReportMobile() {
+    try {
+        // Mở cửa sổ pop-up cho thiết bị di động
+        window.open('/ViewReport/GetReport', 'MyWindow',
+            'toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=no,resizable=no,width=900,height=600');
+    }
+    catch (ex) {
+        alert(ex.Message);
+        alert(ex);
+    }
+
 }
 
 function DeleteTab(idTab)

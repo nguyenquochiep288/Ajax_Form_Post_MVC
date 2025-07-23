@@ -1618,9 +1618,16 @@ namespace MVC_QuanLyTHP.Controllers
                     {
                         THONGTINTHEM += itm.NAME_NHANVIEN + "; ";
                     }
+                    
                     report.DataDefinition.FormulaFields["THONGTINTHEM"].Text = "'" + THONGTINTHEM + "'";
+                    String fullpath = Path.Combine(Server.MapPath("~" + API.PathLogo), "040937143939.png");
+                    report.DataDefinition.FormulaFields["QRCode1"].Text = "'" + fullpath + "'";
+                    fullpath = Path.Combine(Server.MapPath("~" + API.PathLogo), "117000052509.png");
+                    report.DataDefinition.FormulaFields["QRCode2"].Text = "'" + fullpath + "'";
                 }
                 report.SetDataSource(data);
+                //report.Database.Tables[0].SetDataSource(data);
+                //report.Database.Tables[1].SetDataSource(dataTable2);
                 Response.Buffer = false;
                 Response.ClearContent();
                 Response.ClearHeaders();
