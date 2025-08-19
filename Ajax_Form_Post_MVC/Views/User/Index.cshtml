@@ -140,9 +140,10 @@
                 </div><!-- table-responsive -->
             </div>
 
-            <div class="panel-footer">
-                @Html.PagedListPager((PagedList.IPagedList<v_AspNetUsers>)Model.IPagedList, page => Url.Action("Index", new { Page = page, ShowSearchValue = ViewBag.showsearchValue, SearchString = ViewBag.searchValue }))
-            </div>
+
+        </div>
+        <div class="panel-footer">
+            @Html.PagedListPager((PagedList.IPagedList<v_AspNetUsers>)Model.IPagedList, page => Url.Action("Index", new { Page = page, ShowSearchValue = ViewBag.showsearchValue, SearchString = ViewBag.searchValue }))
         </div>
     </div>
 </div>

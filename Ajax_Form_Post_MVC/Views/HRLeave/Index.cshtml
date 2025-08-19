@@ -90,7 +90,7 @@
                             <div class="row">
                                 <div class="col-sm-5 col-sm-offset-2">
                                     <button class="btn btn-primary">@Utility.TimKiem</button>
-                                    
+
                                 </div>
                             </div>
                         </div>
@@ -151,22 +151,22 @@
                                                         {
                                                             if (Utility.IntWidth == 1)
                                                             {
-                                                    <a class="label label-primary" onclick="myFunctionEdit('@{@API.nv_NghiPhep;}','@item.ID')" href="#"><i class="fa fa-edit" style="margin-right:5px"></i>@Utility.Sua</a>
+                                                                <a class="label label-primary" onclick="myFunctionEdit('@{@API.nv_NghiPhep;}','@item.ID')" href="#"><i class="fa fa-edit" style="margin-right:5px"></i>@Utility.Sua</a>
                                                             }
                                                             else
                                                             {
-                                                    @Html.ActionLink(Utility.Sua, "Edit", new { id = item.ID }, htmlAttributes: new { @class = "label label-primary" });
+                                                                @Html.ActionLink(Utility.Sua, "Edit", new { id = item.ID }, htmlAttributes: new { @class = "label label-primary" });
                                                             }
                                                         }
                                                         if (ViewBag.PermissionDelete)
                                                         {
                                                             if (Utility.IntWidth == 1)
                                                             {
-                                                    <a class="label label-danger" onclick="myFunctionPopup('@{@API.nv_NghiPhep;}','@item.ID')" href="#"><i class="glyphicon glyphicon-trash" style="margin-right:5px"></i>@Utility.Xoa</a>
+                                                                <a class="label label-danger" onclick="myFunctionPopup('@{@API.nv_NghiPhep;}','@item.ID')" href="#"><i class="glyphicon glyphicon-trash" style="margin-right:5px"></i>@Utility.Xoa</a>
                                                             }
                                                             else
                                                             {
-                                                    <a class="label label-danger" onclick="myFunction('@{@API.nv_NghiPhep;}','@item.ID')" href="#"><i class="glyphicon glyphicon-trash" style="margin-right:5px"></i>@Utility.Xoa</a>
+                                                                <a class="label label-danger" onclick="myFunction('@{@API.nv_NghiPhep;}','@item.ID')" href="#"><i class="glyphicon glyphicon-trash" style="margin-right:5px"></i>@Utility.Xoa</a>
                                                             }
                                                         }
                                                     }
@@ -174,7 +174,7 @@
                                                     {
                                                         if (Utility.IntWidth == 1)
                                                         {
-                                                    <a class="label label-primary" onclick="myFunctionEdit('@{@API.nv_NghiPhep;}','@item.ID')" href="#"><i class="glyphicon glyphicon-check" style="margin-right:5px"></i>@Utility.Xoa</a>
+                                                            <a class="label label-primary" onclick="myFunctionEdit('@{@API.nv_NghiPhep;}','@item.ID')" href="#"><i class="glyphicon glyphicon-check" style="margin-right:5px"></i>@Utility.Xoa</a>
                                                         }
                                                     }
                                                 </td>
@@ -188,8 +188,9 @@
                 </div><!-- table-responsive -->
             </div>
 
-            <div class="panel-footer">
-            </div>
+
+        </div>
+        <div class="panel-footer">
         </div>
     </div>
 </div>

@@ -42,7 +42,7 @@ namespace MVC_QuanLyTHP.Controllers
                     TempData["TitleError"] = API.TitlePermission;
                     return RedirectToAction("Index", "Notfound");
                 }
-               // ShowSearchValue = Utility.GetShowSearchValue<ct_PhieuDatHangNCC>(ShowSearchValue);
+                //ShowSearchValue = Utility.GetShowSearchValue<ct_PhieuDatHangNCC>(ShowSearchValue);
                 ApiResponse apiResponse = new ApiResponse();
                 IPagedList<v_ct_PhieuDatHangNCC> lstpage = (new List<v_ct_PhieuDatHangNCC>()).ToList().ToPagedList(Page, Utility.GetPageSize());
                 if (FromDate != null || !string.IsNullOrEmpty(IDCODE))

@@ -62,7 +62,7 @@
                                     <span class="input-group-btn">
                                         <button type="button" class="btn btn-default" onclick="myFunOpenSearch('collapseOneDebt', '@{@API.dm_NhomHangHoa;}', '@API.Chon1', 'lstdm_NhomHangHoa', '')"><span class="glyphicon glyphicon-search"></span></button>
                                     </span>
-                                    @Html.DropDownListFor(model => model.ID_NHOMHANGHOA, new SelectList(Model.lstdm_NhomHangHoa, "ID", "NAME"),Utility.GetTitleChon(API.dm_NhomHangHoa), htmlAttributes: new { @class = "form-control chosen-select", id = "lstdm_NhomHangHoa" })
+                                    @Html.DropDownListFor(model => model.ID_NHOMHANGHOA, new SelectList(Model.lstdm_NhomHangHoa, "ID", "NAME"), Utility.GetTitleChon(API.dm_NhomHangHoa), htmlAttributes: new { @class = "form-control chosen-select", id = "lstdm_NhomHangHoa" })
                                 </div>
                             </div>
                             @Html.Label(@Utility.GetColumnName(@API.ThongKeTonKhoHangHoa, "ID_HANGHOA"), htmlAttributes: new { @class = "col-sm-2 control-label" })
@@ -110,130 +110,131 @@
                 </div>
             </div>
 
-                <div class="tablescroll" style="overflow-x:auto; Overflow-y:scroll; height: 500px;">
-                    <div class="panel-body panel-body-nopadding">
-                        <div class="form-horizontal form-bordered">
-                            <table class="table table-bordered mb30" id="example-table">
+            <div class="tablescroll" style="overflow-x:auto; Overflow-y:scroll; height: 500px;">
+                <div class="panel-body panel-body-nopadding">
+                    <div class="form-horizontal form-bordered">
+                        <table class="table table-bordered mb30" id="example-table">
+                            <thead>
+                                <tr>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KhachHang, "MA")</th>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KhachHang, "NAME")</th>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ThongKeTonKhoHangHoa, "TONGTIENCONGNODAUKY")</th>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ThongKeTonKhoHangHoa, "TONGTIENPHIEUNHAP")</th>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ThongKeTonKhoHangHoa, "TONGTIENPHIEUDATHANG")</th>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ThongKeTonKhoHangHoa, "TONGTIENPHIEUXUAT")</th>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ThongKeTonKhoHangHoa, "TONGTIENCONGNOCUOIKY")</th>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ThongKeTonKhoHangHoa, "TONKHOHIENTAI")</th>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ThongKeTonKhoHangHoa, "TONGTIENTONKHOHIENTAI")</th>
+                                </tr>
+                            </thead>
+
+                            @{
+                                string strLoi = "";
+                                double TT_GIATRITONKHOHIENTAI = 0, TT_TONKHOHIENTAI = 0, TT_TONGTIENCONGNODAUKY = 0, TT_TONGTIENPHIEUDATHANG = 0, TT_TONGTIENPHIEUXUAT = 0, TT_TONGTIENPHIEUNHAP = 0, TT_TONGTIENPHIEUTHU = 0, TT_TONGTIENPHIEUCHI = 0, TT_TONGTIENCONGNOCUOIKY = 0;
+                                if (Model.IPagedList != null && Model.IPagedList.Count() != 0)
+                                {
+                                    <tbody id="tbodytmpitem">
+
+                                        @foreach (var item in Model.IPagedList)
+                                        {
+                                            int PhanNguyen = 0;
+                                            string strQtyDK = "";
+                                            string strQtyDHTK = "";
+                                            string strQtyXuatTK = "";
+                                            string strQtyNhapTK = "";
+                                            string strQtyCK = "";
+                                            string strQtyHT = "";
+                                            string strTTHT = "";
+                                            string Mau = "";
+                                            if (item.TYLE_QD > 1)
+                                            {
+                                                PhanNguyen = Convert.ToInt32(item.TONGTIENPHIEUDATHANG) / Convert.ToInt32(item.TYLE_QD);
+                                                strQtyDHTK = (PhanNguyen != 0 ? PhanNguyen.ToString("N0") + " " + item.NAME_DVT : "") + ((item.TONGTIENPHIEUDATHANG - (PhanNguyen * item.TYLE_QD)) != 0 ? " " + (item.TONGTIENPHIEUDATHANG - (PhanNguyen * item.TYLE_QD)).ToString("N0") + " " + item.NAME_DVT_QD : "");
+                                                PhanNguyen = Convert.ToInt32(item.TONGTIENCONGNODAUKY) / Convert.ToInt32(item.TYLE_QD);
+                                                strQtyDK = (PhanNguyen != 0 ? PhanNguyen.ToString("N0") + " " + item.NAME_DVT : "") + ((item.TONGTIENCONGNODAUKY - (PhanNguyen * item.TYLE_QD)) != 0 ? " " + (item.TONGTIENCONGNODAUKY - (PhanNguyen * item.TYLE_QD)).ToString("N0") + " " + item.NAME_DVT_QD : "");
+                                                PhanNguyen = Convert.ToInt32(item.TONGTIENPHIEUXUAT) / Convert.ToInt32(item.TYLE_QD);
+                                                strQtyXuatTK = (PhanNguyen != 0 ? PhanNguyen.ToString("N0") + " " + item.NAME_DVT : "") + ((item.TONGTIENPHIEUXUAT - (PhanNguyen * item.TYLE_QD)) != 0 ? " " + (item.TONGTIENPHIEUXUAT - (PhanNguyen * item.TYLE_QD)).ToString("N0") + " " + item.NAME_DVT_QD : "");
+                                                PhanNguyen = Convert.ToInt32(item.TONGTIENPHIEUNHAP) / Convert.ToInt32(item.TYLE_QD);
+                                                strQtyNhapTK = (PhanNguyen != 0 ? PhanNguyen.ToString("N0") + " " + item.NAME_DVT : "") + ((item.TONGTIENPHIEUNHAP - (PhanNguyen * item.TYLE_QD)) != 0 ? " " + (item.TONGTIENPHIEUNHAP - (PhanNguyen * item.TYLE_QD)).ToString("N0") + " " + item.NAME_DVT_QD : "");
+                                                PhanNguyen = Convert.ToInt32(item.TONGTIENCONGNOCUOIKY) / Convert.ToInt32(item.TYLE_QD);
+                                                strQtyCK = (PhanNguyen != 0 ? PhanNguyen.ToString("N0") + " " + item.NAME_DVT : "") + ((item.TONGTIENCONGNOCUOIKY - (PhanNguyen * item.TYLE_QD)) != 0 ? " " + (item.TONGTIENCONGNOCUOIKY - (PhanNguyen * item.TYLE_QD)).ToString("N0") + " " + item.NAME_DVT_QD : "");
+                                                PhanNguyen = Convert.ToInt32(item.TONKHOHIENTAI) / Convert.ToInt32(item.TYLE_QD);
+                                                strQtyHT = (PhanNguyen != 0 ? PhanNguyen.ToString("N0") + " " + item.NAME_DVT : "") + ((item.TONKHOHIENTAI - (PhanNguyen * item.TYLE_QD)) != 0 ? " " + (item.TONKHOHIENTAI - (PhanNguyen * item.TYLE_QD)).ToString("N0") + " " + item.NAME_DVT_QD : "");
+                                                double GiaTriHangTon = PhanNguyen * item.GIA;
+                                                GiaTriHangTon += ((item.TONKHOHIENTAI - (PhanNguyen * item.TYLE_QD)) * item.GIA01);
+                                                strTTHT = GiaTriHangTon.ToString("N0");
+                                                TT_GIATRITONKHOHIENTAI += GiaTriHangTon;
+                                            }
+                                            else
+                                            {
+                                                strQtyDK = item.TONGTIENCONGNODAUKY != 0 ? item.TONGTIENCONGNODAUKY.ToString("N0") + " " + item.NAME_DVT : "";
+                                                strQtyDHTK = item.TONGTIENPHIEUDATHANG != 0 ? item.TONGTIENPHIEUDATHANG.ToString("N0") + " " + item.NAME_DVT : "";
+                                                strQtyXuatTK = item.TONGTIENPHIEUXUAT != 0 ? item.TONGTIENPHIEUXUAT.ToString("N0") + " " + item.NAME_DVT : "";
+                                                strQtyNhapTK = item.TONGTIENPHIEUNHAP != 0 ? item.TONGTIENPHIEUNHAP.ToString("N0") + " " + item.NAME_DVT : "";
+                                                strQtyCK = item.TONGTIENCONGNOCUOIKY != 0 ? item.TONGTIENCONGNOCUOIKY.ToString("N0") + " " + item.NAME_DVT : "";
+                                                strQtyHT = item.TONKHOHIENTAI != 0 ? item.TONKHOHIENTAI.ToString("N0") + " " + item.NAME_DVT : "";
+                                                double GiaTriHangTon = (item.TONKHOHIENTAI * item.GIA);
+                                                strTTHT = GiaTriHangTon.ToString("N0");
+                                                TT_GIATRITONKHOHIENTAI += GiaTriHangTon;
+                                            }
+
+                                            TT_TONGTIENCONGNODAUKY += item.TONGTIENCONGNODAUKY;
+                                            TT_TONGTIENPHIEUDATHANG += item.TONGTIENPHIEUDATHANG;
+                                            TT_TONGTIENPHIEUXUAT += item.TONGTIENPHIEUXUAT;
+                                            TT_TONGTIENPHIEUNHAP += item.TONGTIENPHIEUNHAP;
+                                            TT_TONGTIENPHIEUTHU += item.TONGTIENPHIEUTHU;
+                                            TT_TONGTIENPHIEUCHI += item.TONGTIENPHIEUCHI;
+                                            TT_TONGTIENCONGNOCUOIKY += item.TONGTIENCONGNOCUOIKY;
+                                            TT_TONKHOHIENTAI += item.TONKHOHIENTAI;
+                                            Boolean bol = Model.ISTHEOTHOIGIAN;
+
+                                            if (!bol && (strQtyCK != strQtyHT || strQtyCK.Contains("-") || strQtyHT.Contains("-")))
+                                            {
+                                                Mau = "color:red";
+                                                var Login_Model = (MVC_QuanLyTHP.Controllers.Login_Model)Session[Sessions.Login_Model];
+                                                if (Login_Model.user == "hiepnq")
+                                                {
+                                                    strLoi += "(" + item.ID + "|" + item.MA + "|" + (item.TONKHOHIENTAI - item.TONGTIENCONGNOCUOIKY).ToString() + "|" + (item.TONKHOHIENTAI - (item.TONKHOHIENTAI - item.TONGTIENCONGNOCUOIKY)).ToString() + ")";
+                                                }
+                                            }
+
+                                            //string TONGTIENCONGNODAUKY = item.TONGTIENCONGNODAUKY.ToString("N0");
+                                            //string TONGTIENPHIEUXUAT = item.TONGTIENPHIEUXUAT.ToString("N0");
+                                            //string TONGTIENPHIEUNHAP = item.TONGTIENPHIEUNHAP.ToString("N0");
+                                            //string TONGTIENPHIEUTHU = item.TONGTIENPHIEUTHU.ToString("N0");
+                                            //string TONGTIENPHIEUCHI = item.TONGTIENPHIEUCHI.ToString("N0");
+                                            //string TONGTIENCONGNOCUOIKY = item.TONGTIENCONGNOCUOIKY.ToString("N0");
+                                            <tr id="@item.ID">
+                                                <td style="white-space: nowrap; " id="MA"> @Html.DisplayFor(modelItem => item.MA)</td>
+                                                <td style="white-space: nowrap; " id="NAME"> @Html.DisplayFor(modelItem => item.NAME)</td>
+                                                <td style="white-space: nowrap; text-align: right;" id="TONGTIENCONGNODAUKY"> @strQtyDK</td>
+                                                <td style="white-space: nowrap; text-align: right;" id="TONGTIENPHIEUNHAP"> @strQtyNhapTK</td>
+                                                <td style="white-space: nowrap; text-align: right;" id="TONGTIENPHIEUDATHANG"> @strQtyDHTK</td>
+                                                <td style="white-space: nowrap; text-align: right;" id="TONGTIENPHIEUXUAT"> @strQtyXuatTK</td>
+                                                <td style="white-space: nowrap; text-align: right;" id="TONGTIENCONGNOCUOIKY"> @strQtyCK</td>
+                                                <td style="white-space: nowrap; text-align: right;@Mau" id="TONKHOHIENTAI"> @strQtyHT</td>
+                                                <td style="white-space: nowrap; text-align: right;" id="TONGTIENTONKHOHIENTAI"> @strTTHT</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                }
                                 <thead>
-                                    <tr>
-                                        <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KhachHang, "MA")</th>
-                                        <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KhachHang, "NAME")</th>
-                                        <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ThongKeTonKhoHangHoa, "TONGTIENCONGNODAUKY")</th>
-                                        <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ThongKeTonKhoHangHoa, "TONGTIENPHIEUNHAP")</th>
-                                        <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ThongKeTonKhoHangHoa, "TONGTIENPHIEUDATHANG")</th>
-                                        <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ThongKeTonKhoHangHoa, "TONGTIENPHIEUXUAT")</th>
-                                        <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ThongKeTonKhoHangHoa, "TONGTIENCONGNOCUOIKY")</th>
-                                        <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ThongKeTonKhoHangHoa, "TONKHOHIENTAI")</th>
-                                        <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ThongKeTonKhoHangHoa, "TONGTIENTONKHOHIENTAI")</th>
+                                    <tr style="font-weight: bold;">
+                                        <td style="white-space: nowrap; text-align: right;" colspan="8"> Tổng:</td>
+                                        <td style="white-space: nowrap; text-align: right;" id="TT_GIATRITONKHOHIENTAI"> @TT_GIATRITONKHOHIENTAI.ToString("N0")</td>
                                     </tr>
                                 </thead>
-
-                                @{
-                                    string strLoi = "";
-                                    double TT_GIATRITONKHOHIENTAI = 0, TT_TONKHOHIENTAI = 0, TT_TONGTIENCONGNODAUKY = 0, TT_TONGTIENPHIEUDATHANG = 0, TT_TONGTIENPHIEUXUAT = 0, TT_TONGTIENPHIEUNHAP = 0, TT_TONGTIENPHIEUTHU = 0, TT_TONGTIENPHIEUCHI = 0, TT_TONGTIENCONGNOCUOIKY = 0;
-                                    if (Model.IPagedList != null && Model.IPagedList.Count() != 0)
-                                    {
-                                        <tbody id="tbodytmpitem">
-
-                                            @foreach (var item in Model.IPagedList)
-                                            {
-                                                int PhanNguyen = 0;
-                                                string strQtyDK = "";
-                                                string strQtyDHTK = "";
-                                                string strQtyXuatTK = "";
-                                                string strQtyNhapTK = "";
-                                                string strQtyCK = "";
-                                                string strQtyHT = "";
-                                                string strTTHT = "";
-                                                string Mau = "";
-                                                if (item.TYLE_QD > 1)
-                                                {
-                                                    PhanNguyen = Convert.ToInt32(item.TONGTIENPHIEUDATHANG) / Convert.ToInt32(item.TYLE_QD);
-                                                    strQtyDHTK = (PhanNguyen != 0 ? PhanNguyen.ToString("N0") + " " + item.NAME_DVT : "") + ((item.TONGTIENPHIEUDATHANG - (PhanNguyen * item.TYLE_QD)) != 0 ? " " + (item.TONGTIENPHIEUDATHANG - (PhanNguyen * item.TYLE_QD)).ToString("N0") + " " + item.NAME_DVT_QD : "");
-                                                    PhanNguyen = Convert.ToInt32(item.TONGTIENCONGNODAUKY) / Convert.ToInt32(item.TYLE_QD);
-                                                    strQtyDK = (PhanNguyen != 0 ? PhanNguyen.ToString("N0") + " " + item.NAME_DVT : "") + ((item.TONGTIENCONGNODAUKY - (PhanNguyen * item.TYLE_QD)) != 0 ? " " + (item.TONGTIENCONGNODAUKY - (PhanNguyen * item.TYLE_QD)).ToString("N0") + " " + item.NAME_DVT_QD : "");
-                                                    PhanNguyen = Convert.ToInt32(item.TONGTIENPHIEUXUAT) / Convert.ToInt32(item.TYLE_QD);
-                                                    strQtyXuatTK = (PhanNguyen != 0 ? PhanNguyen.ToString("N0") + " " + item.NAME_DVT : "") + ((item.TONGTIENPHIEUXUAT - (PhanNguyen * item.TYLE_QD)) != 0 ? " " + (item.TONGTIENPHIEUXUAT - (PhanNguyen * item.TYLE_QD)).ToString("N0") + " " + item.NAME_DVT_QD : "");
-                                                    PhanNguyen = Convert.ToInt32(item.TONGTIENPHIEUNHAP) / Convert.ToInt32(item.TYLE_QD);
-                                                    strQtyNhapTK = (PhanNguyen != 0 ? PhanNguyen.ToString("N0") + " " + item.NAME_DVT : "") + ((item.TONGTIENPHIEUNHAP - (PhanNguyen * item.TYLE_QD)) != 0 ? " " + (item.TONGTIENPHIEUNHAP - (PhanNguyen * item.TYLE_QD)).ToString("N0") + " " + item.NAME_DVT_QD : "");
-                                                    PhanNguyen = Convert.ToInt32(item.TONGTIENCONGNOCUOIKY) / Convert.ToInt32(item.TYLE_QD);
-                                                    strQtyCK = (PhanNguyen != 0 ? PhanNguyen.ToString("N0") + " " + item.NAME_DVT : "") + ((item.TONGTIENCONGNOCUOIKY - (PhanNguyen * item.TYLE_QD)) != 0 ? " " + (item.TONGTIENCONGNOCUOIKY - (PhanNguyen * item.TYLE_QD)).ToString("N0") + " " + item.NAME_DVT_QD : "");
-                                                    PhanNguyen = Convert.ToInt32(item.TONKHOHIENTAI) / Convert.ToInt32(item.TYLE_QD);
-                                                    strQtyHT = (PhanNguyen != 0 ? PhanNguyen.ToString("N0") + " " + item.NAME_DVT : "") + ((item.TONKHOHIENTAI - (PhanNguyen * item.TYLE_QD)) != 0 ? " " + (item.TONKHOHIENTAI - (PhanNguyen * item.TYLE_QD)).ToString("N0") + " " + item.NAME_DVT_QD : "");
-                                                    double GiaTriHangTon = PhanNguyen * item.GIA;
-                                                    GiaTriHangTon += ((item.TONKHOHIENTAI - (PhanNguyen * item.TYLE_QD)) * item.GIA01);
-                                                    strTTHT = GiaTriHangTon.ToString("N0");
-                                                    TT_GIATRITONKHOHIENTAI += GiaTriHangTon;
-                                                }
-                                                else
-                                                {
-                                                    strQtyDK = item.TONGTIENCONGNODAUKY != 0 ? item.TONGTIENCONGNODAUKY.ToString("N0") + " " + item.NAME_DVT : "";
-                                                    strQtyDHTK = item.TONGTIENPHIEUDATHANG != 0 ? item.TONGTIENPHIEUDATHANG.ToString("N0") + " " + item.NAME_DVT : "";
-                                                    strQtyXuatTK = item.TONGTIENPHIEUXUAT != 0 ? item.TONGTIENPHIEUXUAT.ToString("N0") + " " + item.NAME_DVT : "";
-                                                    strQtyNhapTK = item.TONGTIENPHIEUNHAP != 0 ? item.TONGTIENPHIEUNHAP.ToString("N0") + " " + item.NAME_DVT : "";
-                                                    strQtyCK = item.TONGTIENCONGNOCUOIKY != 0 ? item.TONGTIENCONGNOCUOIKY.ToString("N0") + " " + item.NAME_DVT : "";
-                                                    strQtyHT = item.TONKHOHIENTAI != 0 ? item.TONKHOHIENTAI.ToString("N0") + " " + item.NAME_DVT : "";
-                                                    double GiaTriHangTon = (item.TONKHOHIENTAI * item.GIA);
-                                                    strTTHT = GiaTriHangTon.ToString("N0");
-                                                    TT_GIATRITONKHOHIENTAI += GiaTriHangTon;
-                                                }
-
-                                                TT_TONGTIENCONGNODAUKY += item.TONGTIENCONGNODAUKY;
-                                                TT_TONGTIENPHIEUDATHANG += item.TONGTIENPHIEUDATHANG;
-                                                TT_TONGTIENPHIEUXUAT += item.TONGTIENPHIEUXUAT;
-                                                TT_TONGTIENPHIEUNHAP += item.TONGTIENPHIEUNHAP;
-                                                TT_TONGTIENPHIEUTHU += item.TONGTIENPHIEUTHU;
-                                                TT_TONGTIENPHIEUCHI += item.TONGTIENPHIEUCHI;
-                                                TT_TONGTIENCONGNOCUOIKY += item.TONGTIENCONGNOCUOIKY;
-                                                TT_TONKHOHIENTAI += item.TONKHOHIENTAI;
-                                                Boolean bol = Model.ISTHEOTHOIGIAN;
-
-                                                if(!bol && (strQtyCK != strQtyHT || strQtyCK.Contains("-") || strQtyHT.Contains("-")))
-                                                {
-                                                    Mau = "color:red";
-                                                    var Login_Model = (MVC_QuanLyTHP.Controllers.Login_Model)Session[Sessions.Login_Model];
-                                                    if(Login_Model.user == "hiepnq")
-                                                    {
-                                                        strLoi +="("+ item.ID + "|" + item.MA + "|" + (item.TONKHOHIENTAI - item.TONGTIENCONGNOCUOIKY).ToString() + "|" + (item.TONKHOHIENTAI -(item.TONKHOHIENTAI - item.TONGTIENCONGNOCUOIKY)).ToString() + ")";
-                                                    }
-                                                }
-
-                                                //string TONGTIENCONGNODAUKY = item.TONGTIENCONGNODAUKY.ToString("N0");
-                                                //string TONGTIENPHIEUXUAT = item.TONGTIENPHIEUXUAT.ToString("N0");
-                                                //string TONGTIENPHIEUNHAP = item.TONGTIENPHIEUNHAP.ToString("N0");
-                                                //string TONGTIENPHIEUTHU = item.TONGTIENPHIEUTHU.ToString("N0");
-                                                //string TONGTIENPHIEUCHI = item.TONGTIENPHIEUCHI.ToString("N0");
-                                                //string TONGTIENCONGNOCUOIKY = item.TONGTIENCONGNOCUOIKY.ToString("N0");
-                                                <tr id="@item.ID">
-                                                    <td style="white-space: nowrap; " id="MA"> @Html.DisplayFor(modelItem => item.MA)</td>
-                                                    <td style="white-space: nowrap; " id="NAME"> @Html.DisplayFor(modelItem => item.NAME)</td>
-                                                    <td style="white-space: nowrap; text-align: right;" id="TONGTIENCONGNODAUKY"> @strQtyDK</td>
-                                                    <td style="white-space: nowrap; text-align: right;" id="TONGTIENPHIEUNHAP"> @strQtyNhapTK</td>
-                                                    <td style="white-space: nowrap; text-align: right;" id="TONGTIENPHIEUDATHANG"> @strQtyDHTK</td>
-                                                    <td style="white-space: nowrap; text-align: right;" id="TONGTIENPHIEUXUAT"> @strQtyXuatTK</td>
-                                                    <td style="white-space: nowrap; text-align: right;" id="TONGTIENCONGNOCUOIKY"> @strQtyCK</td>
-                                                    <td style="white-space: nowrap; text-align: right;@Mau" id="TONKHOHIENTAI"> @strQtyHT</td>
-                                                    <td style="white-space: nowrap; text-align: right;" id="TONGTIENTONKHOHIENTAI"> @strTTHT</td>
-                                                </tr>
-                                            }
-                                        </tbody>
-                                    }
-                                    <thead>
-                                        <tr style="font-weight: bold;">
-                                            <td style="white-space: nowrap; text-align: right;" colspan="8"> Tổng:</td>
-                                            <td style="white-space: nowrap; text-align: right;" id="TT_GIATRITONKHOHIENTAI"> @TT_GIATRITONKHOHIENTAI.ToString("N0")</td>
-                                        </tr>
-                                    </thead>
-                                }
-                            </table>
-                        </div>
-                    </div><!-- table-responsive -->
-                </div>
-
-                <div class="panel-footer">
-                    @strLoi
-                </div>
+                            }
+                        </table>
+                    </div>
+                </div><!-- table-responsive -->
             </div>
+
+
+        </div>
+        <div class="panel-footer">
+            @strLoi
+        </div>
     </div>
 </div>
 <script type="text/javascript">

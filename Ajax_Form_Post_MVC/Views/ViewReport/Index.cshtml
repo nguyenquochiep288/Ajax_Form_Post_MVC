@@ -6,7 +6,7 @@
     Layout = "~/Views/Shared/Admin.cshtml";
 }
 @Html.Partial("LoadCssDanhMuc")
-<script src="@Url.Content("~/Scripts/Report.js")"></script>
+<script src="@Url.Content("~/Scripts/Report.js?v=3.0.2")"></script>
 <script src="@Url.Content("~/Content/static/js/shieldui-all.min.js")"></script>
 <link href="@Url.Content("~/Content/static/css/all.min.css")" rel="stylesheet">
 <div class="panel-group" id="accordion">
@@ -64,6 +64,7 @@
                                     <button class="btn btn-primary" id="btnThucHien">@Utility.ThucHien</button>
                                     <a class="btn btn-danger" onclick='myFunClosed("myModalAdd")'>@Utility.Dong</a>
                                     <button class="btn btn-primary" id="btnViewReport" onclick='OnSuccessReportMobile()'>@Utility.XemBaoCaoTrenThietBiDiDong</button>
+                                    <button class="btn btn-primary" id="btnViewReport" onclick='OnSuccessReportMobile_Excel()'>@Utility.XuatExcel</button>
                                 </div>
                             </div>
                         </div>

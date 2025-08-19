@@ -1688,7 +1688,8 @@ namespace MVC_QuanLyTHP.Controllers
                     check.TYPE = TYPE;
                     Utility.TinhTong(check, VALUE, lstOrderProduct);
                 }
-                lstOrderProduct = XoaKhuyenMai(lstOrderProduct);
+                if(check.TYPE != "CHIETKHAU" && check.TYPE != "TONGTIENGIAMGIA")
+                    lstOrderProduct = XoaKhuyenMai(lstOrderProduct);
                 Session[Sessions.lstProductInput] = lstOrderProduct;
                 apiResponse.ProductCombo = Utility.GetProductInputOutput(lstOrderProduct, "Deposit_Temp");
                 apiResponse.Success = true;

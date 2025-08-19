@@ -60,7 +60,21 @@ function OnSuccessReportMobile() {
     }
 
 }
+function OnSuccessReportMobile_Excel() {
+    try {
+        const link = document.createElement('a');
+        link.href = '/ViewReport/ExportExcel';
+        link.download = 'report.xlsx';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+    catch (ex) {
+        alert(ex.Message);
+        alert(ex);
+    }
 
+}
 function DeleteTab(idTab)
 {
     try {

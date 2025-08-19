@@ -1769,7 +1769,9 @@ function OnSuccessProductInputOutput(apiResponse) {
             } catch { }
 
             $("input.form-control.maskinput").each((i, ele) => {
+                $(ele).removeAttr("onkeyup");
                 let clone = $(ele).clone(false)
+                clone.removeAttr("onkeyup"); // Xoá thuộc tính gây sự kiện
                 clone.attr("type", "text")
                 let ele1 = $(ele)
                 clone.val(Number(ele1.val()).toLocaleString("vn"))
@@ -1846,7 +1848,9 @@ function updateInputOutput(ID, elem) {
                     } catch { }
 
                     $("input.form-control.maskinput").each((i, ele) => {
+                        $(ele).removeAttr("onkeyup");
                         let clone = $(ele).clone(false)
+                        clone.removeAttr("onkeyup"); // Xoá thuộc tính gây sự kiện
                         clone.attr("type", "text")
                         let ele1 = $(ele)
                         clone.val(Number(ele1.val()).toLocaleString("vn"))

@@ -589,7 +589,9 @@ function OnSuccessProductDeposit_Temp(apiResponse) {
 
 
             $("input.form-control.maskinput").each((i, ele) => {
+                $(ele).removeAttr("onkeyup"); // Xoá thuộc tính gây sự kiện
                 let clone = $(ele).clone(false)
+                clone.removeAttr("onkeyup"); // Xoá thuộc tính gây sự kiện
                 clone.attr("type", "text")
                 let ele1 = $(ele)
                 clone.val(Number(ele1.val()).toLocaleString("vn"))
@@ -735,7 +737,9 @@ function updateDeposit_Temp(ID, elem) {
                 } catch { }
 
                 $("input.form-control.maskinput").each((i, ele) => {
+                    $(ele).removeAttr("onkeyup"); // Xoá thuộc tính gây sự kiện
                     let clone = $(ele).clone(false)
+                    clone.removeAttr("onkeyup"); // Xoá thuộc tính gây sự kiện
                     clone.attr("type", "text")
                     let ele1 = $(ele)
                     clone.val(Number(ele1.val()).toLocaleString("vn"))
@@ -812,7 +816,9 @@ function OnSuccessCreateDeposit(apiResponse) {
                 var tbodyTempItemInput = document.getElementById("tbodyTempItemInput");
                 tbodyTempItemInput.innerHTML = apiResponse.GETPROMOTION;
                 $("input.form-control.maskinput").each((ii, ele) => {
+                    $(ele).removeAttr("onkeyup"); // Xoá thuộc tính gây sự kiện
                     let clone = $(ele).clone(false)
+                    clone.removeAttr("onkeyup"); // Xoá thuộc tính gây sự kiện
                     clone.attr("type", "text")
                     let ele1 = $(ele)
                     clone.val(Number(ele1.val()).toLocaleString("vn"))
@@ -929,7 +935,9 @@ function OnSuccessEditDeposit(apiResponse) {
                     var tbodyTempItemInput = document.getElementById("tbodyTempItemInputEdit");
                     tbodyTempItemInput.innerHTML = apiResponse.GETPROMOTION;
                     $("input.form-control.maskinput").each((ii, ele) => {
+                        $(ele).removeAttr("onkeyup"); // Xoá thuộc tính gây sự kiện
                         let clone = $(ele).clone(false)
+                        clone.removeAttr("onkeyup"); // Xoá thuộc tính gây sự kiện
                         clone.attr("type", "text")
                         let ele1 = $(ele)
                         clone.val(Number(ele1.val()).toLocaleString("vn"))

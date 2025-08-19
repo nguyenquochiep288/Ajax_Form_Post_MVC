@@ -67,112 +67,113 @@
                 </div>
             </div>
 
-                
-                <div style="overflow-x: auto; Overflow-y: scroll; height: 500px;">
-                    <div class="panel-body panel-body-nopadding">
-                        <div class="form-horizontal form-bordered">
-                            <table class="table table-bordered mb30" id="example-table">
-                                <thead>
-                                    <tr>
-                                        <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KhachHang, "")</th>
-                                        <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KhachHang, "")</th>
-                                        <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.BaoCaoNhanVien, "TONGTIENNHAP")</th>
-                                        <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.BaoCaoNhanVien, "TONGTIENXUAT")</th>
 
-                                        <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.BaoCaoNhanVien, "TONGTIENTHU")</th>
-                                        <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.BaoCaoNhanVien, "TONGTIENCHI")</th>
-                                        <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.BaoCaoNhanVien, "CONLAI")</th>
-                                    </tr>
-                                </thead>
+            <div style="overflow-x: auto; Overflow-y: scroll; height: 500px;">
+                <div class="panel-body panel-body-nopadding">
+                    <div class="form-horizontal form-bordered">
+                        <table class="table table-bordered mb30" id="example-table">
+                            <thead>
+                                <tr>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KhachHang, "")</th>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KhachHang, "")</th>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.BaoCaoNhanVien, "TONGTIENNHAP")</th>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.BaoCaoNhanVien, "TONGTIENXUAT")</th>
 
-                                @{
-                                    double TT_TONGTIENNHAP = 0, TT_TONGTIENXUAT = 0, TT_TONGTIENTHU = 0, TT_TONGTIENCHI = 0, TT_TONGTIENCONLAI = 0;
-                                    string NAME_NHANVIEN = "";
-                                    if (Model.IPagedList != null && Model.IPagedList.Count() > 0)
-                                    {
-                                                                <tbody id="tbodytmpitem">
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.BaoCaoNhanVien, "TONGTIENTHU")</th>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.BaoCaoNhanVien, "TONGTIENCHI")</th>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.BaoCaoNhanVien, "CONLAI")</th>
+                                </tr>
+                            </thead>
 
-                                                                    @foreach (var item in Model.IPagedList)
-                                                                    {
-                                                                        string TONGTIENNHAP = item.TONGTIENNHAP.ToString("N0");
-                                                                        string TONGTIENXUAT = item.TONGTIENXUAT.ToString("N0");
-                                                                        string TONGTIENTHU = item.TONGTIENTHU.ToString("N0");
-                                                                        string TONGTIENCHI = item.TONGTIENCHI.ToString("N0");
-                                                                        string CONLAI = item.CONLAI.ToString("N0");
-                                                                        item.ID_NHANVIEN = item.ID_NGUOITAO;
-                                                                        item.ISTHEOTHOIGIAN = Model.ISTHEOTHOIGIAN;
-                                                                        item.TUNGAY = Model.TUNGAY;
-                                                                        item.DENNGAY = Model.DENNGAY;
-                                                                        string ShowSearchValue = "";
-                                                                        if (!string.IsNullOrEmpty(NAME_NHANVIEN) && NAME_NHANVIEN != item.NAME_NHANVIEN)
-                                                                        {
-                                                                            <tr style="font-weight: bold;">
-                                                                                <td style="white-space: nowrap; " colspan="2"></td>
-                                                                                <td style="white-space: nowrap; text-align: right;" id="TT_TONGTIENNHAP">  @TT_TONGTIENNHAP.ToString("N0") </td>
-                                                                                <td style="white-space: nowrap; text-align: right;" id="TT_TONGTIENXUAT"> @TT_TONGTIENXUAT.ToString("N0")</td>
+                            @{
+                                double TT_TONGTIENNHAP = 0, TT_TONGTIENXUAT = 0, TT_TONGTIENTHU = 0, TT_TONGTIENCHI = 0, TT_TONGTIENCONLAI = 0;
+                                string NAME_NHANVIEN = "";
+                                if (Model.IPagedList != null && Model.IPagedList.Count() > 0)
+                                {
+                                    <tbody id="tbodytmpitem">
 
-                                                                                <td style="white-space: nowrap; text-align: right;" id="TT_TONGTIENTHU"> @TT_TONGTIENTHU.ToString("N0")</td>
-                                                                                <td style="white-space: nowrap; text-align: right;" id="TT_TONGTIENCHI">@TT_TONGTIENCHI.ToString("N0")</td>
-                                                                                <td style="white-space: nowrap; text-align: right;" id="CONLAI">@TT_TONGTIENCONLAI.ToString("N0")</td>
-                                                                            </tr>
-                                                                        }
-                                                                        if (string.IsNullOrEmpty(NAME_NHANVIEN) || NAME_NHANVIEN != item.NAME_NHANVIEN)
-                                                                        {
-                                                                            int TYPE = item.TYPE;
-                                                                            string NAME_LOAIPHIEU = item.NAME_LOAIPHIEU;
-                                                                            item.TYPE = 0;
-                                                                            ShowSearchValue = clsMaHoa.Encrypt(JsonConvert.SerializeObject(item), clsMaHoa.PassMaHoa);
-                                                                            <tr id="@item.ID_NGUOITAO" ondblclick="myFunSuccessDebt('@API.BaoCaoNhanVien','@ShowSearchValue')">
-                                                                                <td style="white-space: nowrap; " id="MA" colspan="7"> @Html.DisplayFor(modelItem => item.NAME_NHANVIEN)</td>
-                                                                            </tr>
-                                                                            TT_TONGTIENNHAP = 0;
-                                                                            TT_TONGTIENXUAT = 0;
-                                                                            TT_TONGTIENTHU = 0;
-                                                                            TT_TONGTIENCHI = 0;
-                                                                            TT_TONGTIENCONLAI = 0;
-                                                                            item.TYPE = TYPE;
-                                                                            item.NAME_LOAIPHIEU = NAME_LOAIPHIEU;
-                                                                        }
-                                                                        TT_TONGTIENNHAP += item.TONGTIENNHAP;
-                                                                        TT_TONGTIENXUAT += item.TONGTIENXUAT;
-                                                                        TT_TONGTIENTHU += item.TONGTIENTHU;
-                                                                        TT_TONGTIENCHI += item.TONGTIENCHI;
-                                                                        TT_TONGTIENCONLAI = TT_TONGTIENNHAP - TT_TONGTIENXUAT + TT_TONGTIENTHU - TT_TONGTIENCHI;
-                                                                        ShowSearchValue = clsMaHoa.Encrypt(JsonConvert.SerializeObject(item), clsMaHoa.PassMaHoa);
-                                                                        <tr id="@item.ID_NGUOITAO" ondblclick="myFunSuccessDebt('@API.BaoCaoNhanVien','@ShowSearchValue')">
-                                                                            <td style="white-space: nowrap; " id="MA"></td>
-                                                                            <td style="white-space: nowrap; " id="NAME"> @Html.DisplayFor(modelItem => item.NAME_LOAIPHIEU)</td>
-                                                                            <td style="white-space: nowrap; text-align: right;" id="TONGTIENNHAP">  @TONGTIENNHAP </td>
-                                                                            <td style="white-space: nowrap; text-align: right;" id="TONGTIENXUAT"> @TONGTIENXUAT</td>
-                                                                            <td style="white-space: nowrap; text-align: right;" id="TONGTIENTHU"> @TONGTIENTHU</td>
-                                                                            <td style="white-space: nowrap; text-align: right;" id="TONGTIENCHI">@TONGTIENCHI</td>
-                                                                            <td style="white-space: nowrap; text-align: right;" id="CONLAI"></td>
-                                                                        </tr>
+                                        @foreach (var item in Model.IPagedList)
+                                        {
+                                            string TONGTIENNHAP = item.TONGTIENNHAP.ToString("N0");
+                                            string TONGTIENXUAT = item.TONGTIENXUAT.ToString("N0");
+                                            string TONGTIENTHU = item.TONGTIENTHU.ToString("N0");
+                                            string TONGTIENCHI = item.TONGTIENCHI.ToString("N0");
+                                            string CONLAI = item.CONLAI.ToString("N0");
+                                            item.ID_NHANVIEN = item.ID_NGUOITAO;
+                                            item.ISTHEOTHOIGIAN = Model.ISTHEOTHOIGIAN;
+                                            item.TUNGAY = Model.TUNGAY;
+                                            item.DENNGAY = Model.DENNGAY;
+                                            string ShowSearchValue = "";
+                                            if (!string.IsNullOrEmpty(NAME_NHANVIEN) && NAME_NHANVIEN != item.NAME_NHANVIEN)
+                                            {
+                                                <tr style="font-weight: bold;">
+                                                    <td style="white-space: nowrap; " colspan="2"></td>
+                                                    <td style="white-space: nowrap; text-align: right;" id="TT_TONGTIENNHAP">  @TT_TONGTIENNHAP.ToString("N0") </td>
+                                                    <td style="white-space: nowrap; text-align: right;" id="TT_TONGTIENXUAT"> @TT_TONGTIENXUAT.ToString("N0")</td>
+
+                                                    <td style="white-space: nowrap; text-align: right;" id="TT_TONGTIENTHU"> @TT_TONGTIENTHU.ToString("N0")</td>
+                                                    <td style="white-space: nowrap; text-align: right;" id="TT_TONGTIENCHI">@TT_TONGTIENCHI.ToString("N0")</td>
+                                                    <td style="white-space: nowrap; text-align: right;" id="CONLAI">@TT_TONGTIENCONLAI.ToString("N0")</td>
+                                                </tr>
+                                            }
+                                            if (string.IsNullOrEmpty(NAME_NHANVIEN) || NAME_NHANVIEN != item.NAME_NHANVIEN)
+                                            {
+                                                int TYPE = item.TYPE;
+                                                string NAME_LOAIPHIEU = item.NAME_LOAIPHIEU;
+                                                item.TYPE = 0;
+                                                ShowSearchValue = clsMaHoa.Encrypt(JsonConvert.SerializeObject(item), clsMaHoa.PassMaHoa);
+                                                <tr id="@item.ID_NGUOITAO" ondblclick="myFunSuccessDebt('@API.BaoCaoNhanVien','@ShowSearchValue')">
+                                                    <td style="white-space: nowrap; " id="MA" colspan="7"> @Html.DisplayFor(modelItem => item.NAME_NHANVIEN)</td>
+                                                </tr>
+                                                TT_TONGTIENNHAP = 0;
+                                                TT_TONGTIENXUAT = 0;
+                                                TT_TONGTIENTHU = 0;
+                                                TT_TONGTIENCHI = 0;
+                                                TT_TONGTIENCONLAI = 0;
+                                                item.TYPE = TYPE;
+                                                item.NAME_LOAIPHIEU = NAME_LOAIPHIEU;
+                                            }
+                                            TT_TONGTIENNHAP += item.TONGTIENNHAP;
+                                            TT_TONGTIENXUAT += item.TONGTIENXUAT;
+                                            TT_TONGTIENTHU += item.TONGTIENTHU;
+                                            TT_TONGTIENCHI += item.TONGTIENCHI;
+                                            TT_TONGTIENCONLAI = TT_TONGTIENNHAP - TT_TONGTIENXUAT + TT_TONGTIENTHU - TT_TONGTIENCHI;
+                                            ShowSearchValue = clsMaHoa.Encrypt(JsonConvert.SerializeObject(item), clsMaHoa.PassMaHoa);
+                                            <tr id="@item.ID_NGUOITAO" ondblclick="myFunSuccessDebt('@API.BaoCaoNhanVien','@ShowSearchValue')">
+                                                <td style="white-space: nowrap; " id="MA"></td>
+                                                <td style="white-space: nowrap; " id="NAME"> @Html.DisplayFor(modelItem => item.NAME_LOAIPHIEU)</td>
+                                                <td style="white-space: nowrap; text-align: right;" id="TONGTIENNHAP">  @TONGTIENNHAP </td>
+                                                <td style="white-space: nowrap; text-align: right;" id="TONGTIENXUAT"> @TONGTIENXUAT</td>
+                                                <td style="white-space: nowrap; text-align: right;" id="TONGTIENTHU"> @TONGTIENTHU</td>
+                                                <td style="white-space: nowrap; text-align: right;" id="TONGTIENCHI">@TONGTIENCHI</td>
+                                                <td style="white-space: nowrap; text-align: right;" id="CONLAI"></td>
+                                            </tr>
 
 
-                                                                        NAME_NHANVIEN = item.NAME_NHANVIEN;
-                                                                    }
-                                                                    <tr style="font-weight: bold;">
-                                                                        <td style="white-space: nowrap; " colspan="2"></td>
-                                                                        <td style="white-space: nowrap; text-align: right;" id="TT_TONGTIENNHAP">  @TT_TONGTIENNHAP.ToString("N0") </td>
-                                                                        <td style="white-space: nowrap; text-align: right;" id="TT_TONGTIENXUAT"> @TT_TONGTIENXUAT.ToString("N0")</td>
+                                            NAME_NHANVIEN = item.NAME_NHANVIEN;
+                                        }
+                                        <tr style="font-weight: bold;">
+                                            <td style="white-space: nowrap; " colspan="2"></td>
+                                            <td style="white-space: nowrap; text-align: right;" id="TT_TONGTIENNHAP">  @TT_TONGTIENNHAP.ToString("N0") </td>
+                                            <td style="white-space: nowrap; text-align: right;" id="TT_TONGTIENXUAT"> @TT_TONGTIENXUAT.ToString("N0")</td>
 
-                                                                        <td style="white-space: nowrap; text-align: right;" id="TT_TONGTIENTHU"> @TT_TONGTIENTHU.ToString("N0")</td>
-                                                                        <td style="white-space: nowrap; text-align: right;" id="TT_TONGTIENCHI">@TT_TONGTIENCHI.ToString("N0")</td>
-                                                                        <td style="white-space: nowrap; text-align: right;" id="CONLAI">@TT_TONGTIENCONLAI.ToString("N0")</td>
-                                                                    </tr>
-                                                                </tbody>
-                                    }
+                                            <td style="white-space: nowrap; text-align: right;" id="TT_TONGTIENTHU"> @TT_TONGTIENTHU.ToString("N0")</td>
+                                            <td style="white-space: nowrap; text-align: right;" id="TT_TONGTIENCHI">@TT_TONGTIENCHI.ToString("N0")</td>
+                                            <td style="white-space: nowrap; text-align: right;" id="CONLAI">@TT_TONGTIENCONLAI.ToString("N0")</td>
+                                        </tr>
+                                    </tbody>
                                 }
-                            </table>
-                        </div>
-                    </div><!-- table-responsive -->
-                </div>
-
-                <div class="panel-footer">
-                </div>
+                            }
+                        </table>
+                    </div>
+                </div><!-- table-responsive -->
             </div>
+
+
         </div>
+        <div class="panel-footer">
+        </div>
+    </div>
 </div>
 <script type="text/javascript">
     $(function () {

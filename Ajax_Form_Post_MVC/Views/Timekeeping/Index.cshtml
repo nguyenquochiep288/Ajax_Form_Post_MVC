@@ -110,10 +110,10 @@
                                         <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.nv_ChamCong, "IP_CHAMCONGVAO")</th>
                                         <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.nv_ChamCong, "IP_CHAMCONGRA")</th>
                                     }
-                                        <th>
+                                    <th>
 
-                                        </th>
-                                    </tr>
+                                    </th>
+                                </tr>
                             </thead>
 
                             @{
@@ -143,32 +143,32 @@
                                                     <td style="white-space: nowrap; " id="IP_CHAMCONGVAO"> @Html.DisplayFor(modelItem => item.IP_CHAMCONGVAO)</td>
                                                     <td style="white-space: nowrap; " id="IP_CHAMCONGRA"> @Html.DisplayFor(modelItem => item.IP_CHAMCONGRA)</td>
                                                 }
-                                                    <td style="white-space: nowrap; " class="fix">
-                                                        @if (ViewBag.PermissionEdit)
+                                                <td style="white-space: nowrap; " class="fix">
+                                                    @if (ViewBag.PermissionEdit)
+                                                    {
+                                                        if (Utility.IntWidth == 1)
                                                         {
-                                                            if (Utility.IntWidth == 1)
-                                                            {
-                                                                <a class="label label-primary" onclick="myFunctionEdit('@{@API.nv_ChamCong;}','@item.ID')" href="#"><i class="fa fa-edit" style="margin-right:5px"></i>@Utility.Sua</a>
-                                                            }
-                                                            else
-                                                            {
-                                                                @Html.ActionLink(Utility.Sua, "Edit", new { id = item.ID }, htmlAttributes: new { @class = "label label-primary" });
-                                                            }
+                                                            <a class="label label-primary" onclick="myFunctionEdit('@{@API.nv_ChamCong;}','@item.ID')" href="#"><i class="fa fa-edit" style="margin-right:5px"></i>@Utility.Sua</a>
                                                         }
-                                                        @if (ViewBag.PermissionDelete)
+                                                        else
                                                         {
-                                                            if (Utility.IntWidth == 1)
-                                                            {
-                                                                <a class="label label-danger" onclick="myFunctionPopup('@{@API.nv_ChamCong;}','@item.ID')" href="#"><i class="glyphicon glyphicon-trash" style="margin-right:5px"></i>@Utility.Xoa</a>
-                                                            }
-                                                            else
-                                                            {
-                                                                <a class="label label-danger" onclick="myFunction('@{@API.nv_ChamCong;}','@item.ID')" href="#"><i class="glyphicon glyphicon-trash" style="margin-right:5px"></i>@Utility.Xoa</a>
-                                                            }
+                                                            @Html.ActionLink(Utility.Sua, "Edit", new { id = item.ID }, htmlAttributes: new { @class = "label label-primary" });
+                                                        }
+                                                    }
+                                                    @if (ViewBag.PermissionDelete)
+                                                    {
+                                                        if (Utility.IntWidth == 1)
+                                                        {
+                                                            <a class="label label-danger" onclick="myFunctionPopup('@{@API.nv_ChamCong;}','@item.ID')" href="#"><i class="glyphicon glyphicon-trash" style="margin-right:5px"></i>@Utility.Xoa</a>
+                                                        }
+                                                        else
+                                                        {
+                                                            <a class="label label-danger" onclick="myFunction('@{@API.nv_ChamCong;}','@item.ID')" href="#"><i class="glyphicon glyphicon-trash" style="margin-right:5px"></i>@Utility.Xoa</a>
+                                                        }
 
-                                                        }
-                                                    </td>
-                                                </tr>
+                                                    }
+                                                </td>
+                                            </tr>
                                         }
                                     </tbody>
                                 }
@@ -178,8 +178,9 @@
                 </div><!-- table-responsive -->
             </div>
 
-            <div class="panel-footer">
-            </div>
+
+        </div>
+        <div class="panel-footer">
         </div>
     </div>
 </div>

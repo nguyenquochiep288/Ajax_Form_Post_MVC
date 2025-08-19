@@ -116,11 +116,11 @@
                                             {
                                                 if (Utility.IntWidth == 1)
                                                 {
-                                                    <a class="label label-danger" onclick="myFunctionPopup('@{@API.dm_PhongBan;}','@item.ID')" href="#"><i class="glyphicon glyphicon-trash" style="margin-right:5px" ></i>@Utility.Xoa</a>
+                                                    <a class="label label-danger" onclick="myFunctionPopup('@{@API.dm_PhongBan;}','@item.ID')" href="#"><i class="glyphicon glyphicon-trash" style="margin-right:5px"></i>@Utility.Xoa</a>
                                                 }
                                                 else
                                                 {
-                                                    <a class="label label-danger" onclick="myFunction('@{@API.dm_PhongBan;}','@item.ID')" href="#"><i class="glyphicon glyphicon-trash" style="margin-right:5px" ></i>@Utility.Xoa</a>
+                                                    <a class="label label-danger" onclick="myFunction('@{@API.dm_PhongBan;}','@item.ID')" href="#"><i class="glyphicon glyphicon-trash" style="margin-right:5px"></i>@Utility.Xoa</a>
                                                 }
 
                                             }
@@ -133,9 +133,10 @@
                 </div><!-- table-responsive -->
             </div>
 
-            <div class="panel-footer">
-                @Html.PagedListPager((PagedList.IPagedList<v_dm_PhongBan>)Model.IPagedList, page => Url.Action("Index", new { Page = page, ShowSearchValue = ViewBag.showsearchValue, SearchString = ViewBag.searchValue }))
-            </div>
+
+        </div>
+        <div class="panel-footer">
+            @Html.PagedListPager((PagedList.IPagedList<v_dm_PhongBan>)Model.IPagedList, page => Url.Action("Index", new { Page = page, ShowSearchValue = ViewBag.showsearchValue, SearchString = ViewBag.searchValue }))
         </div>
     </div>
 </div>

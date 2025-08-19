@@ -111,111 +111,112 @@
                     <button class="btn btn-default" onclick="funSearchInputOutput('@{@API.ct_PhieuDatHangNCC;}')"><span class='glyphicon glyphicon-search'></span></button>
                 </div>
             </div>
+            <div class="tablescroll" style="overflow-x:auto; Overflow-y:scroll; height: auto;">
+                <div class="panel-body panel-body-nopadding">
+                    <table class="table table-bordered mb30" id="example-table">
+                        <thead>
+                            <tr>
+                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuNhap, "ID_LOAIPHIEUNHAP")</th>
+                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuNhap, "ID_KHO")</th>
+                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuNhap, "MAPHIEU")</th>
+                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuNhap, "NGAYLAP")</th>
+                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuNhap, "NAME_KHACHHANG_NCC")</th>
+                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuNhap, "ID_NHANVIEN")</th>
+
+                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuNhap, "TONGTHANHTIEN")</th>
+                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuNhap, "TONGTIENGIAMGIA")</th>
+                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuNhap, "TONGTIENVAT")</th>
+                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuNhap, "TONGTIEN")</th>
+                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuNhap, "GHICHU")</th>
+                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuNhap, "CHUNGTUKEMTHEO")</th>
+                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuNhap, "ISHOANTAT")</th>
+                                <th>
+
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbodytmpitem">
+                            @foreach (var item in Model.IPagedList)
+                            {
+                                string NGAYLAP = item.NGAYLAP.ToString("dd/MM/yyyy");
+                                string TONGTHANHTIEN = item.TONGTHANHTIEN.ToString("N0");
+                                string TONGTIENGIAMGIA = item.TONGTIENGIAMGIA.ToString("N0");
+                                string TONGTIENVAT = item.TONGTIENVAT.ToString("N0");
+                                string TONGTIEN = item.TONGTIEN.ToString("N0");
+                                <tr id="@item.ID">
+                                    <td style="white-space: nowrap; " id="NAME_LOAIPHIEUNHAP"> @Html.DisplayFor(modelItem => item.NAME_LOAIPHIEUNHAP)</td>
+                                    <td style="white-space: nowrap; " id="NAME_KHO"> @Html.DisplayFor(modelItem => item.NAME_KHO)</td>
+                                    <td style="white-space: nowrap; " id="MAPHIEU"> @Html.DisplayFor(modelItem => item.MAPHIEU)</td>
+                                    <td style="white-space: nowrap; " id="NGAYLAP"> @NGAYLAP </td>
+                                    <td style="white-space: nowrap; " id="NAME_KHACHHANG_NCC"> @Html.DisplayFor(modelItem => item.NAME_KHACHHANG_NCC)</td>
+                                    <td style="white-space: nowrap; " id="NAME_NHANVIEN"> @Html.DisplayFor(modelItem => item.NAME_NHANVIEN)</td>
+                                    <td style="white-space: nowrap; " id="TONGTHANHTIEN"> @TONGTHANHTIEN</td>
+                                    <td style="white-space: nowrap; " id="TONGTIENGIAMGIA"> @TONGTIENGIAMGIA</td>
+                                    <td style="white-space: nowrap; " id="TONGTIENVAT"> @TONGTIENVAT</td>
+                                    <td style="white-space: nowrap; " id="TONGTIEN"> @TONGTIEN</td>
+                                    <td style="white-space: nowrap; " id="GHICHU"> @Html.DisplayFor(modelItem => item.GHICHU)</td>
+                                    <td style="white-space: nowrap; " id="CHUNGTUKEMTHEO"> @Html.DisplayFor(modelItem => item.CHUNGTUKEMTHEO)</td>
+                                    <td style="white-space: nowrap; " id="ISHOANTAT"> @Html.DisplayFor(modelItem => item.ISHOANTAT)</td>
+                                    <td style="white-space: nowrap; " class="fix">
+
+
+                                        <a class="label label-default" onclick="myFunctionViewReport('@{@API.ct_PhieuDatHangNCC;}','@item.ID')" href="#"><i class="fa fa-print" style="margin-right:5px"></i>@Utility.In</a>
+                                        @if (!item.ISHOANTAT)
+                                        {
+                                            if (ViewBag.PermissionCreateInput)
+                                            {
+                                                <a class="label label-primary" onclick="myFunctionCreateOrder_Provider('@{@API.ct_PhieuNhap;}','@item.ID')" href="#"><i class="fa fa-shopping-cart" style="margin-right:5px"></i>@Utility.Sua</a>
+                                            }
+
+                                            if (ViewBag.PermissionEdit && string.IsNullOrEmpty(item.CHUNGTUKEMTHEO))
+                                            {
+                                                if (Utility.IntWidth == 1)
+                                                {
+                                                    <a class="label label-primary" onclick="myFunctionEdit('@{@API.ct_PhieuDatHangNCC;}','@item.ID')" href="#"><i class="fa fa-edit" style="margin-right:5px"></i>@Utility.Sua</a>
+                                                }
+                                                else
+                                                {
+                                                    @Html.ActionLink(Utility.Sua, "Edit", new { id = item.ID }, htmlAttributes: new { @class = "label label-primary" });
+                                                }
+                                            }
+                                            if (ViewBag.PermissionDelete && string.IsNullOrEmpty(item.CHUNGTUKEMTHEO))
+                                            {
+                                                if (Utility.IntWidth == 1)
+                                                {
+                                                    <a class="label label-danger" onclick="myFunctionPopup('@{@API.ct_PhieuDatHangNCC;}','@item.ID')" href="#"><i class="glyphicon glyphicon-trash" style="margin-right:5px"></i>@Utility.Xoa</a>
+                                                }
+                                                else
+                                                {
+                                                    <a class="label label-danger" onclick="myFunction('@{@API.ct_PhieuDatHangNCC;}','@item.ID')" href="#"><i class="glyphicon glyphicon-trash" style="margin-right:5px"></i>@Utility.Xoa</a>
+                                                }
+
+                                            }
+                                        }
+                                        @if (Utility.KiemTraQuyenMoKhoa())
+                                        {
+                                            if (item.ISHOANTAT)
+                                            {
+                                                <a class="label label-info" onclick="myFunctionCompletedDelivery('@{@API.ct_PhieuDatHangNCC;}','@item.ID', '0')" href="#"><i class="fa fa-lock" style="margin-right:5px"></i></a>
+                                            }
+                                            else
+                                            {
+                                                <a class="label label-warning" onclick="myFunctionCompletedDelivery('@{@API.ct_PhieuDatHangNCC;}','@item.ID', '1')" href="#"><i class="fa fa-unlock" style="margin-right:5px"></i></a>
+                                            }
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                    </table>
+                </div>
+            </div><!-- table-responsive -->
         </div>
 
-        <div class="tablescroll" style="overflow-x:auto; Overflow-y:scroll; height: auto;">
-            <div class="panel-body panel-body-nopadding">
-                <table class="table table-bordered mb30" id="example-table">
-                    <thead>
-                        <tr>
-                            <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuNhap, "ID_LOAIPHIEUNHAP")</th>
-                            <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuNhap, "ID_KHO")</th>
-                            <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuNhap, "MAPHIEU")</th>
-                            <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuNhap, "NGAYLAP")</th>
-                            <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuNhap, "NAME_KHACHHANG_NCC")</th>
-                            <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuNhap, "ID_NHANVIEN")</th>
-
-                            <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuNhap, "TONGTHANHTIEN")</th>
-                            <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuNhap, "TONGTIENGIAMGIA")</th>
-                            <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuNhap, "TONGTIENVAT")</th>
-                            <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuNhap, "TONGTIEN")</th>
-                            <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuNhap, "GHICHU")</th>
-                            <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuNhap, "CHUNGTUKEMTHEO")</th>
-                            <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuNhap, "ISHOANTAT")</th>
-                            <th>
-
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody id="tbodytmpitem">
-                        @foreach (var item in Model.IPagedList)
-                        {
-                            string NGAYLAP = item.NGAYLAP.ToString("dd/MM/yyyy");
-                            string TONGTHANHTIEN = item.TONGTHANHTIEN.ToString("N0");
-                            string TONGTIENGIAMGIA = item.TONGTIENGIAMGIA.ToString("N0");
-                            string TONGTIENVAT = item.TONGTIENVAT.ToString("N0");
-                            string TONGTIEN = item.TONGTIEN.ToString("N0");
-                            <tr id="@item.ID">
-                                <td style="white-space: nowrap; " id="NAME_LOAIPHIEUNHAP"> @Html.DisplayFor(modelItem => item.NAME_LOAIPHIEUNHAP)</td>
-                                <td style="white-space: nowrap; " id="NAME_KHO"> @Html.DisplayFor(modelItem => item.NAME_KHO)</td>
-                                <td style="white-space: nowrap; " id="MAPHIEU"> @Html.DisplayFor(modelItem => item.MAPHIEU)</td>
-                                <td style="white-space: nowrap; " id="NGAYLAP"> @NGAYLAP </td>
-                                <td style="white-space: nowrap; " id="NAME_KHACHHANG_NCC"> @Html.DisplayFor(modelItem => item.NAME_KHACHHANG_NCC)</td>
-                                <td style="white-space: nowrap; " id="NAME_NHANVIEN"> @Html.DisplayFor(modelItem => item.NAME_NHANVIEN)</td>
-                                <td style="white-space: nowrap; " id="TONGTHANHTIEN"> @TONGTHANHTIEN</td>
-                                <td style="white-space: nowrap; " id="TONGTIENGIAMGIA"> @TONGTIENGIAMGIA</td>
-                                <td style="white-space: nowrap; " id="TONGTIENVAT"> @TONGTIENVAT</td>
-                                <td style="white-space: nowrap; " id="TONGTIEN"> @TONGTIEN</td>
-                                <td style="white-space: nowrap; " id="GHICHU"> @Html.DisplayFor(modelItem => item.GHICHU)</td>
-                                <td style="white-space: nowrap; " id="CHUNGTUKEMTHEO"> @Html.DisplayFor(modelItem => item.CHUNGTUKEMTHEO)</td>
-                                <td style="white-space: nowrap; " id="ISHOANTAT"> @Html.DisplayFor(modelItem => item.ISHOANTAT)</td>
-                                <td style="white-space: nowrap; " class="fix">
-
-
-                                    <a class="label label-default" onclick="myFunctionViewReport('@{@API.ct_PhieuDatHangNCC;}','@item.ID')" href="#"><i class="fa fa-print" style="margin-right:5px"></i>@Utility.In</a>
-                                    @if (!item.ISHOANTAT)
-                                    {
-                                        if (ViewBag.PermissionCreateInput)
-                                        {
-                                            <a class="label label-primary" onclick="myFunctionCreateOrder_Provider('@{@API.ct_PhieuNhap;}','@item.ID')" href="#"><i class="fa fa-shopping-cart" style="margin-right:5px"></i>@Utility.Sua</a>
-                                        }
-
-                                        if (ViewBag.PermissionEdit && string.IsNullOrEmpty(item.CHUNGTUKEMTHEO))
-                                        {
-                                            if (Utility.IntWidth == 1)
-                                            {
-                                                <a class="label label-primary" onclick="myFunctionEdit('@{@API.ct_PhieuDatHangNCC;}','@item.ID')" href="#"><i class="fa fa-edit" style="margin-right:5px"></i>@Utility.Sua</a>
-                                            }
-                                            else
-                                            {
-                                                @Html.ActionLink(Utility.Sua, "Edit", new { id = item.ID }, htmlAttributes: new { @class = "label label-primary" });
-                                            }
-                                        }
-                                        if (ViewBag.PermissionDelete && string.IsNullOrEmpty(item.CHUNGTUKEMTHEO))
-                                        {
-                                            if (Utility.IntWidth == 1)
-                                            {
-                                                <a class="label label-danger" onclick="myFunctionPopup('@{@API.ct_PhieuDatHangNCC;}','@item.ID')" href="#"><i class="glyphicon glyphicon-trash" style="margin-right:5px"></i>@Utility.Xoa</a>
-                                            }
-                                            else
-                                            {
-                                                <a class="label label-danger" onclick="myFunction('@{@API.ct_PhieuDatHangNCC;}','@item.ID')" href="#"><i class="glyphicon glyphicon-trash" style="margin-right:5px"></i>@Utility.Xoa</a>
-                                            }
-
-                                        }
-                                    }
-                                    @if (Utility.KiemTraQuyenMoKhoa())
-                                    {
-                                        if (item.ISHOANTAT)
-                                        {
-                                            <a class="label label-info" onclick="myFunctionCompletedDelivery('@{@API.ct_PhieuDatHangNCC;}','@item.ID', '0')" href="#"><i class="fa fa-lock" style="margin-right:5px"></i></a>
-                                        }
-                                        else
-                                        {
-                                            <a class="label label-warning" onclick="myFunctionCompletedDelivery('@{@API.ct_PhieuDatHangNCC;}','@item.ID', '1')" href="#"><i class="fa fa-unlock" style="margin-right:5px"></i></a>
-                                        }
-                                    }
-                                </td>
-                            </tr>
-                        }
-                </table>
-            </div>
-        </div><!-- table-responsive -->
+        <div class="panel-footer">
+            @Html.PagedListPager((PagedList.IPagedList<v_ct_PhieuDatHangNCC>)Model.IPagedList, page => Url.Action("Index", new { Page = page, ShowSearchValue = ViewBag.showsearchValue, SearchString = ViewBag.searchValue, FromDate = ViewBag.fromdate, ToDate = ViewBag.todate }))
+        </div>
     </div>
 
-    <div class="panel-footer">
-        @Html.PagedListPager((PagedList.IPagedList<v_ct_PhieuDatHangNCC>)Model.IPagedList, page => Url.Action("Index", new { Page = page, ShowSearchValue = ViewBag.showsearchValue, SearchString = ViewBag.searchValue }))
-    </div>
+   
 </div>
 
 @if (Utility.IntWidth == 1)

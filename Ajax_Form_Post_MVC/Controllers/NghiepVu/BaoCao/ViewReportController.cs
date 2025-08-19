@@ -80,6 +80,17 @@ namespace MVC_QuanLyTHP.Controllers.NghiepVu
             Tree += "</li>";
             return Tree;
         }
+        [HttpGet]
+        public ActionResult ExportExcel()
+        {
+            var stream = Utility.Report.ExportToStream(ExportFormatType.ExcelWorkbook);
+            stream.Seek(0, SeekOrigin.Begin);
+
+            return File(stream,
+                        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                        "report.xlsx");
+
+        }
 
         [HttpPost, ValidateInput(false)]
         public ActionResult VerReporte(SP_Parameter_Report objParameter)
@@ -213,6 +224,7 @@ namespace MVC_QuanLyTHP.Controllers.NghiepVu
                                                                 NAME_GROUP = s.Key.NAME_NHOMHANGHOA,
                                                                 MAPHIEUXUAT = "",
                                                                 MA_HANGHOA = s.Key.MA,
+                                                                TONGTRONGLUONG = Convert.ToDecimal(s.Key.TRONGLUONG * s.Sum(x => Math.Round(x.TONGSOLUONG, 0))),
                                                                 NAME_HANGHOA = s.Key.NAME,
                                                                 NAME_DVT = s.Key.NAME_DVT,
                                                                 CHIETKHAU = s.Sum(x => Math.Round(x.CHIETKHAU, 0)),
@@ -222,7 +234,6 @@ namespace MVC_QuanLyTHP.Controllers.NghiepVu
                                                                 TONGTIENVAT = s.Sum(x => Math.Round(x.TONGTIENVAT, 0)),
                                                                 TONGCONG = s.Sum(x => Math.Round(x.TONGCONG, 0)),
                                                                 TONGSOLUONG = Convert.ToDecimal(s.Sum(x => Math.Round(x.TONGSOLUONG, 0))),
-                                                                TONGTRONGLUONG = Convert.ToDecimal(s.Key.TRONGLUONG * s.Sum(x => Math.Round(x.TONGSOLUONG, 0))),
                                                                 NAME_DVT_QD = s.Key.NAME_DVT_QD,
                                                                 TYLE_QD = s.Key.TYLE_QD
                                                             }).ToList();
@@ -311,7 +322,8 @@ namespace MVC_QuanLyTHP.Controllers.NghiepVu
                                                                 NAME_GROUP = s.Key.NAME_KHUVUC,
                                                                 MAPHIEUXUAT = s.Key.NAME_NHOMHANGHOA,
                                                                 MA_HANGHOA = s.Key.MA,
-                                                                NAME_HANGHOA = s.Key.NAME,
+                                                                TONGTRONGLUONG = Convert.ToDecimal(s.Key.TRONGLUONG * s.Sum(x => Math.Round(x.TONGSOLUONG, 0))),
+                                                                NAME_HANGHOA = s.Key.NAME + " - (" + Math.Round(Convert.ToDecimal(s.Key.TRONGLUONG * s.Sum(x => Math.Round(x.TONGSOLUONG, 0))) /1000, 1).ToString("N0") + " Kg)",
                                                                 NAME_DVT = s.Key.NAME_DVT,
                                                                 CHIETKHAU = s.Sum(x => Math.Round(x.CHIETKHAU, 0)),
                                                                 TONGTIENGIAMGIA = s.Sum(x => Math.Round(x.TONGTIENGIAMGIA, 0)),
@@ -320,7 +332,6 @@ namespace MVC_QuanLyTHP.Controllers.NghiepVu
                                                                 TONGTIENVAT = s.Sum(x => Math.Round(x.TONGTIENVAT, 0)),
                                                                 TONGCONG = s.Sum(x => Math.Round(x.TONGCONG, 0)),
                                                                 TONGSOLUONG = Convert.ToDecimal(s.Sum(x => Math.Round(x.TONGSOLUONG, 0))),
-                                                                TONGTRONGLUONG = Convert.ToDecimal(s.Key.TRONGLUONG * s.Sum(x => Math.Round(x.TONGSOLUONG, 0))),
                                                                 NAME_DVT_QD = s.Key.NAME_DVT_QD,
                                                                 TYLE_QD = s.Key.TYLE_QD
                                                             }).ToList();
@@ -703,7 +714,7 @@ namespace MVC_QuanLyTHP.Controllers.NghiepVu
             Stream stream = Utility.Report.ExportToStream(ExportFormatType.PortableDocFormat);
             byte[] fileBytes = ReadToEnd(stream);
             return File(fileBytes, System.Net.Mime.MediaTypeNames.Application.Octet, "yourfile.pdf");
-        }
+        } 
         public static byte[] ReadToEnd(System.IO.Stream stream)
         {
             long originalPosition = 0;
@@ -853,6 +864,8 @@ namespace MVC_QuanLyTHP.Controllers.NghiepVu
                 if(web_Menu.CONTROLLERNAME == "Sp_Get_DanhSachPhieuDatHang")
                 {
                     bolPhanQuyenUser = Utility.KiemTraQuyen(API.Sp_Get_DanhSachPhieuDatHang, API.CreateUser);
+                    if (Utility.KiemTraQuyenAdmin())
+                        bolPhanQuyenUser = false;
                 }
                
                 foreach (var item in lst)

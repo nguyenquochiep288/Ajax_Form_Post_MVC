@@ -1529,6 +1529,15 @@ namespace MVC_QuanLyTHP.Class
         #endregion
 
         #region Kiểm tra quyền
+        public static Boolean KiemTraQuyenAdmin()
+        {
+            if (HttpContext.Current.Session[Sessions.idNhomQuyen] != null && HttpContext.Current.Session[Sessions.idNhomQuyen].ToString() == "-1")
+            {
+                return true;
+            }
+            return false;
+        }
+
         public static Boolean KiemTraQuyen(string MaForm, string MaQuyen, v_web_Menu web_Menu = null)
         {
             if (HttpContext.Current.Session[Sessions.idNhomQuyen] != null && HttpContext.Current.Session[Sessions.idNhomQuyen].ToString() == "-1")
@@ -2200,8 +2209,7 @@ namespace MVC_QuanLyTHP.Class
         {
             try
             {
-
-                return Convert.ToDouble(value.ToString().Replace(".",",").Replace("'", ""));
+                return Convert.ToDouble(value.ToString().Replace("'", ""));//.Replace(".",",")
             }
             catch (Exception ex)
             {
@@ -2220,7 +2228,7 @@ namespace MVC_QuanLyTHP.Class
                 BodyField += "<tr id=\"" + itm.ID + "\">";
                 BodyField += "<td style=\"white-space: nowrap; \" id=\"MA\">" + itm.MA + "</td>";
                 BodyField += "<td style=\"white-space: nowrap; \" id=\"NAME\">" + itm.NAME + "</td>";
-                BodyField += "<td style=\"white-space: nowrap; \" id=\"QTY\"><input type=\"number\" class=\"form-control maskinput\" name=\"txtQuantity|" + itm.ID_HANGHOA + "|" + itm.ID_DVT + "|" + itm.TYLE_QD + "\" min=\"0.10\" data-id=\"" + itm.ID + "\" step=\"any\" value=\"" + Utility.ConvertNumberToString(itm.QTY) + "\" style=\"width:80px\" min=\"0\"/></td>";
+                BodyField += "<td style=\"white-space: nowrap; \" id=\"QTY\"><input type=\"number\" class=\"form-control maskinput\" data-type=\"currency\"  name=\"txtQuantity|" + itm.ID_HANGHOA + "|" + itm.ID_DVT + "|" + itm.TYLE_QD + "\" min=\"0.10\" data-id=\"" + itm.ID + "\" step=\"any\" value=\"" + Utility.ConvertNumberToString(itm.QTY) + "\" style=\"width:80px\" min=\"0\"/></td>";
                 BodyField += "<td style=\"white-space: nowrap; \" id=\"NAME_DVT\">" + itm.NAME_DVT + "</td>";
                 BodyField += "<td style=\"white-space: nowrap; \"><a class=\"label label-danger\" onclick=\"myFunctionDeleteProdcutCombo('" + API.dm_HangHoa_Combo + "','" + itm.ID_HANGHOA + "','" + itm.ID_DVT + "')\" href=\"#\"><i class=\"glyphicon glyphicon-trash\" style=\"margin-right:5px\"></i>" + Utility.Xoa + "</a></td>";
                 BodyField += "</tr>";
@@ -2240,13 +2248,13 @@ namespace MVC_QuanLyTHP.Class
                 BodyField += "<td style=\"white-space: nowrap; \" id=\"MA\">" + itm.NAME_HINHTHUC + "</td>";
                 BodyField += "<td style=\"white-space: nowrap; \" id=\"MA\">" + itm.MA + "</td>";
                 BodyField += "<td style=\"white-space: nowrap; \" id=\"NAME\">" + itm.NAME + "</td>";
-                BodyField += "<td style=\"white-space: nowrap; \" id=\"MONEY\"><input type=\"number\" class=\"form-control maskinput\" name=\"txtMoney_YC|" + ShowSearchValue + "\"  step=\"any\" value=\"" + Utility.ConvertNumberToString(itm.SOTIEN) + "\" style=\"width:100%\" min=\"0\"/></td>";
-                BodyField += "<td style=\"white-space: nowrap; \" id=\"QTY\"><input type=\"number\" class=\"form-control maskinput\" name=\"txtQuantity_YC|" + ShowSearchValue + "\" step=\"any\" value=\"" + Utility.ConvertNumberToString(itm.SOLUONG) + "\" style=\"width:100%\" min=\"0\"/></td>";
+                BodyField += "<td style=\"white-space: nowrap; \" id=\"MONEY\"><input type=\"number\" class=\"form-control maskinput\" data-type=\"currency\"  name=\"txtMoney_YC|" + ShowSearchValue + "\"  step=\"any\" value=\"" + Utility.ConvertNumberToString(itm.SOTIEN) + "\" style=\"width:100%\" min=\"0\"/></td>";
+                BodyField += "<td style=\"white-space: nowrap; \" id=\"QTY\"><input type=\"number\" class=\"form-control maskinput\" data-type=\"currency\" name=\"txtQuantity_YC|" + ShowSearchValue + "\" step=\"any\" value=\"" + Utility.ConvertNumberToString(itm.SOLUONG) + "\" style=\"width:100%\" min=\"0\"/></td>";
                 BodyField += "<td style=\"white-space: nowrap; \" id=\"NAME_DVT\">" + itm.NAME_DVT + "</td>";
-                BodyField += "<td style=\"white-space: nowrap; \" id=\"CHIETKHAU\"><input type=\"number\" class=\"form-control maskinput\" name=\"txtCHIETKHAU_YC|" + ShowSearchValue + "\" step=\"any\" value=\"" + Utility.ConvertNumberToString(itm.CHIETKHAU) + "\" style=\"width:100%\" min=\"0\" max=\"100\"/></td>";
-                BodyField += "<td style=\"white-space: nowrap; \" id=\"TIENGIAM\"><input type=\"number\" class=\"form-control maskinput\" name=\"txtTIENGIAM_YC|" + ShowSearchValue + "\" step=\"any\" value=\"" + Utility.ConvertNumberToString(itm.TIENGIAM) + "\" style=\"width:100%\" min=\"0\"/></td>";
+                BodyField += "<td style=\"white-space: nowrap; \" id=\"CHIETKHAU\"><input type=\"number\" class=\"form-control maskinput\" data-type=\"currency\" name=\"txtCHIETKHAU_YC|" + ShowSearchValue + "\" step=\"any\" value=\"" + Utility.ConvertNumberToString(itm.CHIETKHAU) + "\" style=\"width:100%\" min=\"0\" max=\"100\"/></td>";
+                BodyField += "<td style=\"white-space: nowrap; \" id=\"TIENGIAM\"><input type=\"number\" class=\"form-control maskinput\" data-type=\"currency\" name=\"txtTIENGIAM_YC|" + ShowSearchValue + "\" step=\"any\" value=\"" + Utility.ConvertNumberToString(itm.TIENGIAM) + "\" style=\"width:100%\" min=\"0\"/></td>";
                 BodyField += "<td style=\"white-space: nowrap; \" id=\"ISBATBUOC\"><input type=\"checkbox\" class=\"form-control\" name=\"txtISBATBUOC|" + ShowSearchValue + "\" id=\"ISBATBUOC\" " + (itm.ISBATBUOC ? "checked" : "") + "/></td>";
-                BodyField += "<td style=\"white-space: nowrap; \" id=\"SOLUONG_BATBUOC\"><input type=\"number\" class=\"form-control maskinput\" name=\"txtSOLUONG_BATBUOC|" + ShowSearchValue + "\" step=\"any\" value=\"" + Utility.ConvertNumberToString(itm.SOLUONG_BATBUOC) + "\" style=\"width:100%\" min=\"0\"/></td>";
+                BodyField += "<td style=\"white-space: nowrap; \" id=\"SOLUONG_BATBUOC\"><input type=\"number\" class=\"form-control maskinput\" data-type=\"currency\" name=\"txtSOLUONG_BATBUOC|" + ShowSearchValue + "\" step=\"any\" value=\"" + Utility.ConvertNumberToString(itm.SOLUONG_BATBUOC) + "\" style=\"width:100%\" min=\"0\"/></td>";
                 BodyField += "<td style=\"white-space: nowrap; \"><a class=\"label label-danger\" onclick=\"myFunctionDeletePromotion_YC('" + API.dm_ChuongTrinhKhuyenMai + "','" + itm.ID_HANGHOA + "','" + itm.ID_DVT + "')\" href=\"#\"><i class=\"glyphicon glyphicon-trash\" style=\"margin-right:5px\"></i>" + @Utility.Xoa + "</a></td>";
                 BodyField += "</tr>";
             }
@@ -2262,8 +2270,8 @@ namespace MVC_QuanLyTHP.Class
                 BodyField += "<tr id=\"" + itm.ID + "\">";
                 BodyField += "<td style=\"white-space: nowrap; \" id=\"MA\">" + itm.MA + "</td>";
                 BodyField += "<td style=\"white-space: nowrap; \" id=\"NAME\">" + itm.NAME + "</td>";
-                BodyField += "<td style=\"white-space: nowrap; \" id=\"MONEY\"><input type=\"number\" class=\"form-control maskinput\" name=\"txtMoney_Tang|" + ShowSearchValue + "\"  step=\"any\" value=\"" + Utility.ConvertNumberToString(itm.SOTIEN) + "\" style=\"width:100%\" min=\"0\"/></td>";
-                BodyField += "<td style=\"white-space: nowrap; \" id=\"QTY\"><input type=\"number\" class=\"form-control maskinput\" name=\"txtQuantity_Tang|" + ShowSearchValue + "\" step=\"any\" value=\"" + Utility.ConvertNumberToString(itm.SOLUONG) + "\" style=\"width:100%\" min=\"0\"/></td>";
+                BodyField += "<td style=\"white-space: nowrap; \" id=\"MONEY\"><input type=\"number\" class=\"form-control maskinput\" data-type=\"currency\" name=\"txtMoney_Tang|" + ShowSearchValue + "\"  step=\"any\" value=\"" + Utility.ConvertNumberToString(itm.SOTIEN) + "\" style=\"width:100%\" min=\"0\"/></td>";
+                BodyField += "<td style=\"white-space: nowrap; \" id=\"QTY\"><input type=\"number\" class=\"form-control maskinput\" data-type=\"currency\" name=\"txtQuantity_Tang|" + ShowSearchValue + "\" step=\"any\" value=\"" + Utility.ConvertNumberToString(itm.SOLUONG) + "\" style=\"width:100%\" min=\"0\"/></td>";
                 BodyField += "<td style=\"white-space: nowrap; \" id=\"NAME_DVT\">" + itm.NAME_DVT + "</td>";
                 BodyField += "<td style=\"white-space: nowrap; \"><a class=\"label label-danger\" onclick=\"myFunctionDeletePromotion_Tang('" + API.dm_ChuongTrinhKhuyenMai + "','" + itm.ID_HANGHOA + "','" + itm.ID_DVT + "')\" href=\"#\"><i class=\"glyphicon glyphicon-trash\" style=\"margin-right:5px\"></i>" + @Utility.Xoa + "</a></td>";
                 BodyField += "</tr>";
@@ -2290,11 +2298,11 @@ namespace MVC_QuanLyTHP.Class
                 BodyField += "<td style=\"white-space: nowrap; \" id=\"MA\">" + itm.NAME_HINHTHUC + "</td>";
                 BodyField += "<td style=\"white-space: nowrap; \" id=\"MA\">" + itm.MA + "</td>";
                 BodyField += "<td style=\"white-space: nowrap; \" id=\"NAME\">" + itm.NAME + "</td>";
-                BodyField += "<td style=\"white-space: nowrap; \" id=\"MONEY\"><input type=\"number\" class=\"form-control maskinput\" name=\"txtMoney_YC|" + ShowSearchValue + "\"  step=\"any\" value=\"" + Utility.ConvertNumberToString(itm.SOTIEN) + "\" style=\"width:100%\" min=\"0\"/></td>";
-                BodyField += "<td style=\"white-space: nowrap; \" id=\"QTY\"><input type=\"number\" class=\"form-control maskinput\" name=\"txtQuantity_YC|" + ShowSearchValue + "\" step=\"any\" value=\"" + Utility.ConvertNumberToString(itm.SOLUONG) + "\" style=\"width:100%\" min=\"0\"/></td>";
+                BodyField += "<td style=\"white-space: nowrap; \" id=\"MONEY\"><input type=\"number\" class=\"form-control maskinput\" data-type=\"currency\" name=\"txtMoney_YC|" + ShowSearchValue + "\"  step=\"any\" value=\"" + Utility.ConvertNumberToString(itm.SOTIEN) + "\" style=\"width:100%\" min=\"0\"/></td>";
+                BodyField += "<td style=\"white-space: nowrap; \" id=\"QTY\"><input type=\"number\" class=\"form-control maskinput\" data-type=\"currency\" name=\"txtQuantity_YC|" + ShowSearchValue + "\" step=\"any\" value=\"" + Utility.ConvertNumberToString(itm.SOLUONG) + "\" style=\"width:100%\" min=\"0\"/></td>";
                 BodyField += "<td style=\"white-space: nowrap; \" id=\"NAME_DVT\">" + itm.NAME_DVT + "</td>";
-                BodyField += "<td style=\"white-space: nowrap; \" id=\"CHIETKHAU\"><input type=\"number\" class=\"form-control maskinput\" name=\"txtCHIETKHAU_YC|" + ShowSearchValue + "\" step=\"any\" value=\"" + Utility.ConvertNumberToString(itm.CHIETKHAU) + "\" style=\"width:100%\" min=\"0\" max=\"100\"/></td>";
-                BodyField += "<td style=\"white-space: nowrap; \" id=\"TIENGIAM\"><input type=\"number\" class=\"form-control maskinput\" name=\"txtTIENGIAM_YC|" + ShowSearchValue + "\" step=\"any\" value=\"" + Utility.ConvertNumberToString(itm.TIENGIAM) + "\" style=\"width:100%\" min=\"0\"/></td>";
+                BodyField += "<td style=\"white-space: nowrap; \" id=\"CHIETKHAU\"><input type=\"number\" class=\"form-control maskinput\" data-type=\"currency\" name=\"txtCHIETKHAU_YC|" + ShowSearchValue + "\" step=\"any\" value=\"" + Utility.ConvertNumberToString(itm.CHIETKHAU) + "\" style=\"width:100%\" min=\"0\" max=\"100\"/></td>";
+                BodyField += "<td style=\"white-space: nowrap; \" id=\"TIENGIAM\"><input type=\"number\" class=\"form-control maskinput\" data-type=\"currency\" name=\"txtTIENGIAM_YC|" + ShowSearchValue + "\" step=\"any\" value=\"" + Utility.ConvertNumberToString(itm.TIENGIAM) + "\" style=\"width:100%\" min=\"0\"/></td>";
                 BodyField += "<td style=\"white-space: nowrap; \"><a class=\"label label-danger\" onclick=\"myFunctionDeletePromotion_YC('" + API.dm_KPI_KinhDoanh + "','" + itm.ID_HANGHOA + "','" + itm.ID_DVT + "')\" href=\"#\"><i class=\"glyphicon glyphicon-trash\" style=\"margin-right:5px\"></i>" + @Utility.Xoa + "</a></td>";
                 BodyField += "</tr>";
             }
@@ -2380,19 +2388,19 @@ namespace MVC_QuanLyTHP.Class
                                       "   <label class=\"col-sm-2 control-label\" for=\"T_ng_ti_n\" style=\"font-weight: bold; text-align:center; white-space: nowrap;float:right;\">Tổng tiền</label>" +
                                       "</td>" +
                                       "<td style=\"font-weight: bold; text-align:center; white-space: nowrap;\">" +
-                                      "   <input class=\"form-control maskinput\" min=\"-10000000\" step=\"any\" data-val=\"true\" data-val-number=\"The field TONGTIENGIAMGIA must be a number.\" data-val-required=\"The TONGTIENGIAMGIA field is required.\" id=\"TONGTIENGIAMGIA\" name=\"TONGTIENGIAMGIA\" type=\"number\" value=\"" + Utility.ConvertNumberToString(TONGTIENGIAMGIA) + "\" style=\"width:100%\">" +
+                                      "   <input class=\"form-control maskinput\" data-type=\"currency\" min=\"-10000000\" step=\"any\" data-val=\"true\" data-val-number=\"The field TONGTIENGIAMGIA must be a number.\" data-val-required=\"The TONGTIENGIAMGIA field is required.\" id=\"TONGTIENGIAMGIA\" name=\"TONGTIENGIAMGIA\" type=\"number\" value=\"" + Utility.ConvertNumberToString(TONGTIENGIAMGIA) + "\" style=\"width:100%\">" +
                                       "    <span class=\"field-validation-valid text-danger\" data-valmsg-for=\"TONGTIENGIAMGIA\" data-valmsg-replace=\"true\"></span>" +
                                       "</td>" +
                                       "<td style=\"font-weight: bold; text-align:center; white-space: nowrap;\">" +
-                                      "    <input class=\"form-control maskinput\" min=\"0\" step=\"any\" data-val=\"true\" data-val-number=\"The field TONGTHANHTIEN must be a number.\" data-val-required=\"The TONGTHANHTIEN field is required.\" id=\"TONGTHANHTIEN\" name=\"TONGTHANHTIEN\" type=\"number\" value=\"" + Utility.ConvertNumberToString(TONGTHANHTIEN) + "\" style=\"width:100%\">" +
+                                      "    <input class=\"form-control maskinput\" data-type=\"currency\" min=\"0\" step=\"any\" data-val=\"true\" data-val-number=\"The field TONGTHANHTIEN must be a number.\" data-val-required=\"The TONGTHANHTIEN field is required.\" id=\"TONGTHANHTIEN\" name=\"TONGTHANHTIEN\" type=\"number\" value=\"" + Utility.ConvertNumberToString(TONGTHANHTIEN) + "\" style=\"width:100%\">" +
                                       "   <span class=\"field-validation-valid text-danger\" data-valmsg-for=\"TONGTHANHTIEN\" data-valmsg-replace=\"true\"></span>" +
                                       "</td>" +
                                       "<td style=\"font-weight: bold; text-align:center; white-space: nowrap;\" colspan=\"2\">" +
-                                      "    <input class=\"form-control maskinput\" min=\"0\" step=\"any\" data-val=\"true\" data-val-number=\"The field TONGTIENVAT must be a number.\" data-val-required=\"The TONGTIENVAT field is required.\" id=\"TONGTIENVAT\" name=\"TONGTIENVAT\" type=\"number\" value=\"" + Utility.ConvertNumberToString(TONGTIENVAT) + "\" style=\"width:100%\">" +
+                                      "    <input class=\"form-control maskinput\" data-type=\"currency\" min=\"0\" step=\"any\" data-val=\"true\" data-val-number=\"The field TONGTIENVAT must be a number.\" data-val-required=\"The TONGTIENVAT field is required.\" id=\"TONGTIENVAT\" name=\"TONGTIENVAT\" type=\"number\" value=\"" + Utility.ConvertNumberToString(TONGTIENVAT) + "\" style=\"width:100%\">" +
                                       "    <span class=\"field-validation-valid text-danger\" data-valmsg-for=\"TONGTIENVAT\" data-valmsg-replace=\"true\"></span>" +
                                       "</td>" +
                                       "<td style=\"font-weight: bold; text-align:center; white-space: nowrap;\">" +
-                                      "   <input class=\"form-control maskinput\" min=\"0\" step=\"any\" data-val=\"true\" data-val-number=\"The field TONGTIEN must be a number.\" data-val-required=\"The TONGTIEN field is required.\" id=\"TONGTIEN\" name=\"TONGTIEN\" type=\"number\" value=\"" + Utility.ConvertNumberToString(TONGTIEN) + "\" style=\"width:100%\">" +
+                                      "   <input class=\"form-control maskinput\" data-type=\"currency\" min=\"0\" step=\"any\" data-val=\"true\" data-val-number=\"The field TONGTIEN must be a number.\" data-val-required=\"The TONGTIEN field is required.\" id=\"TONGTIEN\" name=\"TONGTIEN\" type=\"number\" value=\"" + Utility.ConvertNumberToString(TONGTIEN) + "\" style=\"width:100%\">" +
                                       "   <span class=\"field-validation-valid text-danger\" data-valmsg-for=\"TONGTIEN\" data-valmsg-replace=\"true\"></span>" +
                                       "</td>" +
                                       "<td>" +
@@ -2422,7 +2430,7 @@ namespace MVC_QuanLyTHP.Class
             }
             string ShowSearchValue = clsMaHoa.Encrypt(JsonConvert.SerializeObject(Product_Detail), clsMaHoa.PassMaHoa);
             string td = "";
-            td = "<td style=\"white-space: nowrap; \" id=\"" + nameinput + "\"><input type=\"number\" class=\"form-control maskinput\" name=\"" + txt + "|" + ShowSearchValue + "\" id=\"" + nameinput + "\" min=\"" + (!string.IsNullOrEmpty(Min) ? Min : "0") + "\" step=\"any\" value=\"" + Utility.ConvertNumberToString(value) + "\" style=\"width:" + width + "\" min=\"0\" onchange=\"update" + name + "('" + Product_Detail.ID + "',this)\" "+ (bolreadonly ? "" : "onkeyup=\"this.onchange();\"") +" " + (bolreadonly ? "readonly = \"readonly\"" : "") + "/></td>";
+            td = "<td style=\"white-space: nowrap; \" id=\"" + nameinput + "\"><input type=\"number\" class=\"form-control maskinput\" data-type=\"currency\" name=\"" + txt + "|" + ShowSearchValue + "\" id=\"" + nameinput + "\" min=\"" + (!string.IsNullOrEmpty(Min) ? Min : "0") + "\" step=\"any\" value=\"" + Utility.ConvertNumberToString(value) + "\" style=\"width:" + width + "\" min=\"0\" onchange=\"update" + name + "('" + Product_Detail.ID + "',this)\" "+ (bolreadonly ? "" : "onkeyup=\"this.onchange();\"") +" " + (bolreadonly ? "readonly = \"readonly\"" : "") + "/></td>";
             //td += "<input type=\"text\" class=\"form-control mask\" name=\"" + txt + "|" + ID_HANGHOAKHO + "|" + ID_DVT + "|" + TYLE_QD + "\" id=\"txtQty|" + ID_HANGHOAKHO + "|" + ID_DVT + "|" + TYLE_QD + "\" min=\"0.10\" step=\"any\" value=\"" + Utility.ConvertNumberToString(value) + "\" style=\"width:" + width + "\" min=\"0\"/></td>";
             return td;
         }
@@ -2441,7 +2449,7 @@ namespace MVC_QuanLyTHP.Class
                     string ShowSearchValue = clsMaHoa.Encrypt(JsonConvert.SerializeObject(itm), clsMaHoa.PassMaHoa);
                     BodyField += "<tr id=\"" + itm.ID + "\">";
                     BodyField += "<td style=\"white-space: nowrap; \" id=\"NAME_PARAMETER\">" + (!string.IsNullOrEmpty(itm.NAME_PARAMETER) ? itm.NAME_PARAMETER : itm.NAME) + "</td>";
-                    BodyField += "<td style=\"white-space: nowrap; \" id=\"STT\"><input type=\"number\" class=\"form-control maskinput\" name=\"txtSTT|" + ShowSearchValue + "\" id=\"STT\" min=\"0\" step=\"any\" value=\"" + Utility.ConvertNumberToString(itm.STT) + "\" style=\"width:80px\" min=\"0\"/></td>";
+                    BodyField += "<td style=\"white-space: nowrap; \" id=\"STT\"><input type=\"number\" class=\"form-control maskinput\" data-type=\"currency\" name=\"txtSTT|" + ShowSearchValue + "\" id=\"STT\" min=\"0\" step=\"any\" value=\"" + Utility.ConvertNumberToString(itm.STT) + "\" style=\"width:80px\" min=\"0\"/></td>";
                     BodyField += "<td style=\"white-space: nowrap; \" id=\"ISACTIVE\"><input type=\"checkbox\" class=\"form-control\" name=\"txtISACTIVE|" + ShowSearchValue + "\" id=\"ISACTIVE\" " + (itm.ISACTIVE ? "checked" : "") + "/></td>";
                     BodyField += "<td style=\"white-space: nowrap; \" id=\"VALUE_REPORT\"><textarea class=\"form-control\" runat=\"server\" cols=\"20\" id=\"VALUE_REPORT\" name=\"txtVALUE_REPORT|" + ShowSearchValue + "\" rows=\"3\"> " + itm.VALUE_REPORT + "</textarea></td>";
                 }
@@ -2489,7 +2497,7 @@ namespace MVC_QuanLyTHP.Class
                         BodyField += "<option value = \"" + s.ID + "\" " + (s.ID == itm.TYPE_QUYTACTINHLUONG ? "selected" : "") + "> " + s.NAME + " </option>";
                     }
                     BodyField += "</select></td>";
-                    BodyField += "<td style=\"white-space: nowrap; \" id=\"SOTIEN\"><input type=\"number\" class=\"form-control maskinput\" name=\"txtSOTIEN|" + ShowSearchValue + "\" step=\"any\" value=\"" + Utility.ConvertNumberToString(itm.SOTIEN) + "\" style=\"width:100%\" min=\"0\"/></td>";
+                    BodyField += "<td style=\"white-space: nowrap; \" id=\"SOTIEN\"><input type=\"number\" class=\"form-control maskinput\" data-type=\"currency\" name=\"txtSOTIEN|" + ShowSearchValue + "\" step=\"any\" value=\"" + Utility.ConvertNumberToString(itm.SOTIEN) + "\" style=\"width:100%\" min=\"0\"/></td>";
                     BodyField += "<td style=\"white-space: nowrap; \"><a class=\"label label-danger\" onclick=\"myFunctionDeletePayroll('" + itm.ID + "','CategoryPayroll')\" href=\"#\"><i class=\"glyphicon glyphicon-trash\" style=\"margin-right:5px\"></i>" + Utility.Xoa + "</a></td>";
                     BodyField += "</tr>";
                    
@@ -2529,7 +2537,7 @@ namespace MVC_QuanLyTHP.Class
                         BodyField += "<option value = \"" + s.ID + "\" " + (s.ID.ToString() == itm.TYPE ? "selected" : "") + "> " + s.NAME + " </option>";
                     }
                     BodyField += "</select></td>";
-                    BodyField += "<td style=\"white-space: nowrap; \" id=\"txtSOTIEN\"><input type=\"number\" class=\"form-control maskinput\" name=\"txtSOTIEN|" + ShowSearchValue + "\" step=\"any\" value=\"" + Utility.ConvertNumberToString(itm.SOTIEN) + "\" style=\"width:100%\" min=\"0\"/></td>";
+                    BodyField += "<td style=\"white-space: nowrap; \" id=\"txtSOTIEN\"><input type=\"number\" class=\"form-control maskinput\" data-type=\"currency\" name=\"txtSOTIEN|" + ShowSearchValue + "\" step=\"any\" value=\"" + Utility.ConvertNumberToString(itm.SOTIEN) + "\" style=\"width:100%\" min=\"0\"/></td>";
                     BodyField += "<td style=\"white-space: nowrap; \"><a class=\"label label-danger\" onclick=\"myFunctionDeletePayroll('" + itm.ID + "','Payroll')\" href=\"#\"><i class=\"glyphicon glyphicon-trash\" style=\"margin-right:5px\"></i>" + Utility.Xoa + "</a></td>";
                     BodyField += "</tr>";
 
@@ -2909,8 +2917,6 @@ namespace MVC_QuanLyTHP.Class
         }
         #endregion
 
-
-
         #region Lấy danh sách phiếu giao hàng
         public static ApiResponse Get_DanhSachPhieuGiaoHang<T>(string ID_KHO, DateTime? TUNGAY, DateTime? DENNAY, string SearchString = "", string TypeSearch = "")
         {
@@ -3166,6 +3172,8 @@ namespace MVC_QuanLyTHP.Class
         #endregion
 
         #region Tính tổng 
+        private static int SoNguyenTongCong = 0;
+        private static int TongCongKhac = 2;
         public static void TinhTong(Product_Detail Product_Detail, string VALUE = null, List<Product_Detail> lstProduct = null)
         {
             if (Product_Detail.TYPE == "ID_THUESUAT")
@@ -3197,72 +3205,72 @@ namespace MVC_QuanLyTHP.Class
             else if (Product_Detail.TYPE == "SOLUONG")
             {
                 if (!string.IsNullOrEmpty(VALUE))
-                    Product_Detail.SOLUONG = Utility.ConvertStringToDouble(VALUE);
-                Product_Detail.TONGTIENGIAMGIA = (Product_Detail.SOLUONG * Product_Detail.DONGIA) * Product_Detail.CHIETKHAU / 100;
-                Product_Detail.THANHTIEN = (Product_Detail.SOLUONG * Product_Detail.DONGIA) - Product_Detail.TONGTIENGIAMGIA;
-                Product_Detail.TONGTIENVAT = Product_Detail.THANHTIEN * Product_Detail.THUESUAT / 100;
-                Product_Detail.TONGCONG = Product_Detail.THANHTIEN + Product_Detail.TONGTIENVAT;
+                    Product_Detail.SOLUONG = Math.Round( Utility.ConvertStringToDouble(VALUE), TongCongKhac);
+                Product_Detail.TONGTIENGIAMGIA = Math.Round((Product_Detail.SOLUONG * Product_Detail.DONGIA) * Product_Detail.CHIETKHAU / 100, TongCongKhac);
+                Product_Detail.THANHTIEN = Math.Round((Product_Detail.SOLUONG * Product_Detail.DONGIA) - Product_Detail.TONGTIENGIAMGIA, TongCongKhac);
+                Product_Detail.TONGTIENVAT = Math.Round(Product_Detail.THANHTIEN * Product_Detail.THUESUAT / 100, TongCongKhac);
+                Product_Detail.TONGCONG = Math.Round(Product_Detail.THANHTIEN + Product_Detail.TONGTIENVAT, SoNguyenTongCong);
             }
             else if (Product_Detail.TYPE == "DONGIA")
             {
                 if (!string.IsNullOrEmpty(VALUE))
-                    Product_Detail.DONGIA = Utility.ConvertStringToDouble(VALUE);
-                Product_Detail.TONGTIENGIAMGIA = (Product_Detail.SOLUONG * Product_Detail.DONGIA) * Product_Detail.CHIETKHAU / 100;
-                Product_Detail.THANHTIEN = (Product_Detail.SOLUONG * Product_Detail.DONGIA) - Product_Detail.TONGTIENGIAMGIA;
-                Product_Detail.TONGTIENVAT = Product_Detail.THANHTIEN * Product_Detail.THUESUAT / 100;
-                Product_Detail.TONGCONG = Product_Detail.THANHTIEN + Product_Detail.TONGTIENVAT;
+                    Product_Detail.DONGIA = Math.Round(Utility.ConvertStringToDouble(VALUE), TongCongKhac);
+                Product_Detail.TONGTIENGIAMGIA = Math.Round((Product_Detail.SOLUONG * Product_Detail.DONGIA) * Product_Detail.CHIETKHAU / 100, TongCongKhac);
+                Product_Detail.THANHTIEN = Math.Round((Product_Detail.SOLUONG * Product_Detail.DONGIA) - Product_Detail.TONGTIENGIAMGIA, TongCongKhac);
+                Product_Detail.TONGTIENVAT = Math.Round(Product_Detail.THANHTIEN * Product_Detail.THUESUAT / 100, TongCongKhac);
+                Product_Detail.TONGCONG = Math.Round(Product_Detail.THANHTIEN + Product_Detail.TONGTIENVAT, SoNguyenTongCong);
             }
             else if (Product_Detail.TYPE == "TONGTIENGIAMGIA")
             {
                 if (!string.IsNullOrEmpty(VALUE))
-                    Product_Detail.TONGTIENGIAMGIA = Utility.ConvertStringToDouble(VALUE);
-                Product_Detail.THANHTIEN = (Product_Detail.SOLUONG * Product_Detail.DONGIA) - Product_Detail.TONGTIENGIAMGIA;
-                Product_Detail.TONGTIENVAT = Product_Detail.THANHTIEN * Product_Detail.THUESUAT / 100;
-                Product_Detail.TONGCONG = Product_Detail.THANHTIEN + Product_Detail.TONGTIENVAT;
+                    Product_Detail.TONGTIENGIAMGIA = Math.Round(Utility.ConvertStringToDouble(VALUE), TongCongKhac);
+                Product_Detail.THANHTIEN = Math.Round((Product_Detail.SOLUONG * Product_Detail.DONGIA) - Product_Detail.TONGTIENGIAMGIA, TongCongKhac);
+                Product_Detail.TONGTIENVAT = Math.Round(Product_Detail.THANHTIEN * Product_Detail.THUESUAT / 100, TongCongKhac);
+                Product_Detail.TONGCONG = Math.Round(Product_Detail.THANHTIEN + Product_Detail.TONGTIENVAT, SoNguyenTongCong);
             }
             else if (Product_Detail.TYPE == "CHIETKHAU")
             {
                 if (!string.IsNullOrEmpty(VALUE))
-                    Product_Detail.CHIETKHAU = Utility.ConvertStringToDouble(VALUE);
-                Product_Detail.TONGTIENGIAMGIA = (Product_Detail.SOLUONG * Product_Detail.DONGIA) * Product_Detail.CHIETKHAU / 100;
-                Product_Detail.THANHTIEN = (Product_Detail.SOLUONG * Product_Detail.DONGIA) - Product_Detail.TONGTIENGIAMGIA;
-                Product_Detail.TONGTIENVAT = Product_Detail.THANHTIEN * Product_Detail.THUESUAT / 100;
-                Product_Detail.TONGCONG = Product_Detail.THANHTIEN + Product_Detail.TONGTIENVAT;
+                    Product_Detail.CHIETKHAU = Math.Round(Utility.ConvertStringToDouble(VALUE), TongCongKhac);
+                Product_Detail.TONGTIENGIAMGIA = Math.Round((Product_Detail.SOLUONG * Product_Detail.DONGIA) * Product_Detail.CHIETKHAU / 100, TongCongKhac);
+                Product_Detail.THANHTIEN = Math.Round((Product_Detail.SOLUONG * Product_Detail.DONGIA) - Product_Detail.TONGTIENGIAMGIA, TongCongKhac);
+                Product_Detail.TONGTIENVAT = Math.Round(Product_Detail.THANHTIEN * Product_Detail.THUESUAT / 100, TongCongKhac);
+                Product_Detail.TONGCONG = Math.Round(Product_Detail.THANHTIEN + Product_Detail.TONGTIENVAT, SoNguyenTongCong);
             }
             else if (Product_Detail.TYPE == "TONGTIENVAT")
             {
                 if (!string.IsNullOrEmpty(VALUE))
-                    Product_Detail.TONGTIENVAT = Utility.ConvertStringToDouble(VALUE);
-                Product_Detail.TONGCONG = Product_Detail.THANHTIEN + Product_Detail.TONGTIENVAT;
+                    Product_Detail.TONGTIENVAT = Math.Round(Utility.ConvertStringToDouble(VALUE), TongCongKhac);
+                Product_Detail.TONGCONG = Math.Round(Product_Detail.THANHTIEN + Product_Detail.TONGTIENVAT, SoNguyenTongCong);
             }
             else if (Product_Detail.TYPE == "THANHTIEN")
             {
                 if (!string.IsNullOrEmpty(VALUE))
-                    Product_Detail.THANHTIEN = Utility.ConvertStringToDouble(VALUE);
-                Product_Detail.TONGTIENVAT = Product_Detail.THANHTIEN * Product_Detail.THUESUAT / 100;
-                Product_Detail.TONGCONG = Product_Detail.THANHTIEN + Product_Detail.TONGTIENVAT;
+                    Product_Detail.THANHTIEN = Math.Round(Utility.ConvertStringToDouble(VALUE), TongCongKhac);
+                Product_Detail.TONGTIENVAT = Math.Round(Product_Detail.THANHTIEN * Product_Detail.THUESUAT / 100, TongCongKhac);
+                Product_Detail.TONGCONG = Math.Round(Product_Detail.THANHTIEN + Product_Detail.TONGTIENVAT, SoNguyenTongCong);
             }
             else if (Product_Detail.TYPE == "DONGIA")
             {
                 if (!string.IsNullOrEmpty(VALUE))
-                    Product_Detail.DONGIA = Utility.ConvertStringToDouble(VALUE);
+                    Product_Detail.DONGIA = Math.Round(Utility.ConvertStringToDouble(VALUE), TongCongKhac);
 
-                Product_Detail.TONGTIENGIAMGIA = (Product_Detail.SOLUONG * Product_Detail.DONGIA) * Product_Detail.CHIETKHAU / 100;
-                Product_Detail.THANHTIEN = (Product_Detail.SOLUONG * Product_Detail.DONGIA) - Product_Detail.TONGTIENGIAMGIA;
-                Product_Detail.TONGTIENVAT = Product_Detail.THANHTIEN * Product_Detail.THUESUAT / 100;
-                Product_Detail.TONGCONG = Product_Detail.THANHTIEN + Product_Detail.TONGTIENVAT;
+                Product_Detail.TONGTIENGIAMGIA = Math.Round((Product_Detail.SOLUONG * Product_Detail.DONGIA) * Product_Detail.CHIETKHAU / 100, TongCongKhac);
+                Product_Detail.THANHTIEN = Math.Round((Product_Detail.SOLUONG * Product_Detail.DONGIA) - Product_Detail.TONGTIENGIAMGIA, TongCongKhac);
+                Product_Detail.TONGTIENVAT = Math.Round(Product_Detail.THANHTIEN * Product_Detail.THUESUAT / 100, TongCongKhac);
+                Product_Detail.TONGCONG = Math.Round(Product_Detail.THANHTIEN + Product_Detail.TONGTIENVAT, SoNguyenTongCong);
             }
             else if (Product_Detail.TYPE == "TONGCONG")
             {
                 if (!string.IsNullOrEmpty(VALUE))
-                    Product_Detail.TONGCONG = Utility.ConvertStringToDouble(VALUE);
+                    Product_Detail.TONGCONG = Math.Round(Utility.ConvertStringToDouble(VALUE), TongCongKhac);
             }
             else
             {
-                Product_Detail.TONGTIENGIAMGIA = (Product_Detail.SOLUONG * Product_Detail.DONGIA) * Product_Detail.CHIETKHAU / 100;
-                Product_Detail.THANHTIEN = (Product_Detail.SOLUONG * Product_Detail.DONGIA) - Product_Detail.TONGTIENGIAMGIA;
-                Product_Detail.TONGTIENVAT = Product_Detail.THANHTIEN * Product_Detail.THUESUAT / 100;
-                Product_Detail.TONGCONG = Product_Detail.THANHTIEN + Product_Detail.TONGTIENVAT;
+                Product_Detail.TONGTIENGIAMGIA = Math.Round((Product_Detail.SOLUONG * Product_Detail.DONGIA) * Product_Detail.CHIETKHAU / 100, TongCongKhac);
+                Product_Detail.THANHTIEN = Math.Round((Product_Detail.SOLUONG * Product_Detail.DONGIA) - Product_Detail.TONGTIENGIAMGIA, TongCongKhac);
+                Product_Detail.TONGTIENVAT = Math.Round(Product_Detail.THANHTIEN * Product_Detail.THUESUAT / 100, TongCongKhac);
+                Product_Detail.TONGCONG = Math.Round(Product_Detail.THANHTIEN + Product_Detail.TONGTIENVAT, SoNguyenTongCong);
             }
 
             if (!string.IsNullOrEmpty(Product_Detail.ID_COMBO))
