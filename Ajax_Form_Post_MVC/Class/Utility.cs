@@ -2415,7 +2415,6 @@ namespace MVC_QuanLyTHP.Class
                 Utility.WriteLog("GetProductInputOutput", MethodBase.GetCurrentMethod().Name, ex, JsonConvert.SerializeObject(lstProduct));
                 return "";
             }
-
         }
 
         private static string Get_tdInput(string name, string nameinput, string txt, Product_Detail Product_Detail, double value, string width = "50px", bool bolreadonly = false, string Min = "")
@@ -2430,7 +2429,7 @@ namespace MVC_QuanLyTHP.Class
             }
             string ShowSearchValue = clsMaHoa.Encrypt(JsonConvert.SerializeObject(Product_Detail), clsMaHoa.PassMaHoa);
             string td = "";
-            td = "<td style=\"white-space: nowrap; \" id=\"" + nameinput + "\"><input type=\"number\" class=\"form-control maskinput\" data-type=\"currency\" name=\"" + txt + "|" + ShowSearchValue + "\" id=\"" + nameinput + "\" min=\"" + (!string.IsNullOrEmpty(Min) ? Min : "0") + "\" step=\"any\" value=\"" + Utility.ConvertNumberToString(value) + "\" style=\"width:" + width + "\" min=\"0\" onchange=\"update" + name + "('" + Product_Detail.ID + "',this)\" "+ (bolreadonly ? "" : "onkeyup=\"this.onchange();\"") +" " + (bolreadonly ? "readonly = \"readonly\"" : "") + "/></td>";
+            td = "<td style=\"white-space: nowrap; \" id=\"" + nameinput + "\"><input type=\"number\" class=\"form-control maskinput\" data-type=\"currency\" name=\"" + txt + "|" + ShowSearchValue + "\" id=\"" + nameinput + "\" min=\"" + (!string.IsNullOrEmpty(Min) ? Min : "0") + "\" step=\"any\" value=\"" + Utility.ConvertNumberToString(value) + "\" style=\"width:" + width + "\" min=\"0\" onchange=\"update" + name + "('" + Product_Detail.ID + "',this)\" "+ (bolreadonly ? "" : "") +" " + (bolreadonly ? "readonly = \"readonly\"" : "") + "/></td>"; //onkeyup =\"this.onchange();\"
             //td += "<input type=\"text\" class=\"form-control mask\" name=\"" + txt + "|" + ID_HANGHOAKHO + "|" + ID_DVT + "|" + TYLE_QD + "\" id=\"txtQty|" + ID_HANGHOAKHO + "|" + ID_DVT + "|" + TYLE_QD + "\" min=\"0.10\" step=\"any\" value=\"" + Utility.ConvertNumberToString(value) + "\" style=\"width:" + width + "\" min=\"0\"/></td>";
             return td;
         }
