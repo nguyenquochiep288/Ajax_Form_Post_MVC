@@ -1902,7 +1902,7 @@ namespace MVC_QuanLyTHP.Class
                         if (Type.GetTypeCode(val.GetType()) == TypeCode.Int32)
                             itmPropertyInfo.SetValue(InputOutput, (Convert.ToInt32(VALUE)), null);
                         else
-                            itmPropertyInfo.SetValue(InputOutput, (Convert.ToDouble(VALUE.ToString().Replace('.', ','))), null);
+                            itmPropertyInfo.SetValue(InputOutput, (Utility.ConvertStringToDouble(VALUE.ToString())), null);
                     }
                     else if (val != null && Type.GetTypeCode(val.GetType()) == TypeCode.Boolean)
                     {
@@ -2209,7 +2209,7 @@ namespace MVC_QuanLyTHP.Class
         {
             try
             {
-                return Convert.ToDouble(value.ToString().Replace("'", ""));//.Replace(".",",")
+                return Convert.ToDouble(value.ToString().Replace("'", "").Replace(".", ","));//
             }
             catch (Exception ex)
             {
