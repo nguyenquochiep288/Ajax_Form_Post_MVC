@@ -2786,6 +2786,8 @@ namespace MVC_QuanLyTHP.Report {
             
             private global::System.Data.DataColumn columnTONGCONG_CONLAI;
             
+            private global::System.Data.DataColumn columnSOLUONG_MUA;
+            
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             public DanhSachHangHoa_NV_KHDataTable() {
@@ -2949,6 +2951,14 @@ namespace MVC_QuanLyTHP.Report {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public global::System.Data.DataColumn SOLUONG_MUAColumn {
+                get {
+                    return this.columnSOLUONG_MUA;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             [global::System.ComponentModel.Browsable(false)]
             public int Count {
                 get {
@@ -3000,7 +3010,8 @@ namespace MVC_QuanLyTHP.Report {
                         string NAME_SOLUONG_TRAHANG, 
                         decimal TONGCONG_TRAHANG, 
                         string NAME_SOLUONG_CONLAI, 
-                        decimal TONGCONG_CONLAI) {
+                        decimal TONGCONG_CONLAI, 
+                        double SOLUONG_MUA) {
                 DanhSachHangHoa_NV_KHRow rowDanhSachHangHoa_NV_KHRow = ((DanhSachHangHoa_NV_KHRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         ID,
@@ -3018,7 +3029,8 @@ namespace MVC_QuanLyTHP.Report {
                         NAME_SOLUONG_TRAHANG,
                         TONGCONG_TRAHANG,
                         NAME_SOLUONG_CONLAI,
-                        TONGCONG_CONLAI};
+                        TONGCONG_CONLAI,
+                        SOLUONG_MUA};
                 rowDanhSachHangHoa_NV_KHRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowDanhSachHangHoa_NV_KHRow);
                 return rowDanhSachHangHoa_NV_KHRow;
@@ -3057,6 +3069,7 @@ namespace MVC_QuanLyTHP.Report {
                 this.columnTONGCONG_TRAHANG = base.Columns["TONGCONG_TRAHANG"];
                 this.columnNAME_SOLUONG_CONLAI = base.Columns["NAME_SOLUONG_CONLAI"];
                 this.columnTONGCONG_CONLAI = base.Columns["TONGCONG_CONLAI"];
+                this.columnSOLUONG_MUA = base.Columns["SOLUONG_MUA"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -3094,6 +3107,8 @@ namespace MVC_QuanLyTHP.Report {
                 base.Columns.Add(this.columnNAME_SOLUONG_CONLAI);
                 this.columnTONGCONG_CONLAI = new global::System.Data.DataColumn("TONGCONG_CONLAI", typeof(decimal), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnTONGCONG_CONLAI);
+                this.columnSOLUONG_MUA = new global::System.Data.DataColumn("SOLUONG_MUA", typeof(double), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnSOLUONG_MUA);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -6022,6 +6037,22 @@ namespace MVC_QuanLyTHP.Report {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public double SOLUONG_MUA {
+                get {
+                    try {
+                        return ((double)(this[this.tableDanhSachHangHoa_NV_KH.SOLUONG_MUAColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'SOLUONG_MUA\' in table \'DanhSachHangHoa_NV_KH\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableDanhSachHangHoa_NV_KH.SOLUONG_MUAColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             public bool IsIDNull() {
                 return this.IsNull(this.tableDanhSachHangHoa_NV_KH.IDColumn);
             }
@@ -6210,6 +6241,18 @@ namespace MVC_QuanLyTHP.Report {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             public void SetTONGCONG_CONLAINull() {
                 this[this.tableDanhSachHangHoa_NV_KH.TONGCONG_CONLAIColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public bool IsSOLUONG_MUANull() {
+                return this.IsNull(this.tableDanhSachHangHoa_NV_KH.SOLUONG_MUAColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public void SetSOLUONG_MUANull() {
+                this[this.tableDanhSachHangHoa_NV_KH.SOLUONG_MUAColumn] = global::System.Convert.DBNull;
             }
         }
         

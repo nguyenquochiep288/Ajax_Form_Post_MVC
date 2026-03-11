@@ -1,0 +1,328 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/Admin.cshtml";
+}
+
+<div class="contentpanel">
+
+    @*<div class="row">
+
+            <div class="col-sm-6 col-md-3">
+                <div class="panel panel-success panel-stat">
+                    <div class="panel-heading">
+
+                        <div class="stat">
+                            <div class="row">
+                                <div class="col-xs-4">
+                                    <img src="@Url.Content("~/images/is-user.png")" alt="" />
+                                </div>
+                                <div class="col-xs-8">
+                                    <small class="stat-label"></small>
+                                    <h3>Thành viên</h3>
+                                </div>
+
+                            </div><!-- row -->
+
+                            <div class="mb15">
+                            </div>
+                            <div class="col-xs-6">
+                                <small class="stat-label">Khách hàng:</small>
+                                <h4>@Html.Raw(ViewBag.nd)</h4>
+                            </div>
+
+                            <div class="col-xs-6">
+                                <small class="stat-label">Nhân viên:</small>
+                                <h4>@Html.Raw(ViewBag.nd1)</h4>
+                            </div>
+                            <div class="row">
+                                <div class="col-xs-6">
+                                    <small class="stat-label"></small>
+                                    <h4></h4>
+                                </div>
+
+                                <div class="col-xs-6">
+                                    <small class="stat-label"></small>
+                                    <h4></h4>
+                                </div>
+                            </div><!-- row -->
+                        </div><!-- stat -->
+
+                    </div><!-- panel-heading -->
+                </div><!-- panel -->
+            </div><!-- col-sm-6 -->
+
+            <div class="col-sm-6 col-md-3">
+                <div class="panel panel-danger panel-stat">
+                    <div class="panel-heading">
+
+                        <div class="stat">
+                            <div class="row">
+                                <div class="col-xs-4">
+                                    <img src="@Url.Content("~/images/is-document.png")" alt="" />
+                                </div>
+                                <div class="col-xs-8">
+                                    <small class="stat-label"></small>
+                                    <h3>Sản phẩm</h3>
+                                </div>
+                            </div><!-- row -->
+
+                            <div class="mb15"></div>
+
+                            <small class="stat-label">Tổng sản phẩm:</small>
+                            <h4>@Html.Raw(ViewBag.sp)</h4>
+
+                        </div><!-- stat -->
+
+                    </div><!-- panel-heading -->
+                </div><!-- panel -->
+            </div><!-- col-sm-6 -->
+
+            <div class="col-sm-6 col-md-3">
+                <div class="panel panel-dark panel-stat">
+                    <div class="panel-heading">
+
+                        <div class="stat">
+                            <div class="row">
+                                <div class="col-xs-4">
+                                    <img src="@Url.Content("~/images/is-money.png")" alt="" />
+                                </div>
+                                <div class="col-xs-8">
+                                    <small class="stat-label"></small>
+                                    <h3>Doanh thu</h3>
+                                </div>
+                            </div><!-- row -->
+
+                            <div class="mb15"></div>
+
+                            <small class="stat-label">Hiện trạng lãi lỗ:</small>
+                            <h4>@String.Format("{0:0,0}", @ViewBag.tong) VNĐ</h4>
+
+                        </div><!-- stat -->
+
+                    </div><!-- panel-heading -->
+                </div><!-- panel -->
+            </div><!-- col-sm-6 -->
+
+            <div class="col-sm-6 col-md-3">
+                <div class="panel panel-primary panel-stat">
+                    <div class="panel-heading">
+
+                        <div class="stat">
+                            <div class="row">
+                                <div class="col-xs-4">
+                                    <img src="@Url.Content("~/images/zeratul_Help.png")" alt="" width="60" height="55" />
+                                </div>
+                                <div class="col-xs-8">
+                                    <small class="stat-label"></small>
+                                    <h3>Help</h3>
+                                </div>
+                            </div><!-- row -->
+
+                            <div class="mb15"></div>
+
+                            <div class="row">
+                                <div class="col-xs-6">
+                                    <small class="stat-label">SĐT:</small>
+                                    <h4>01657.708.636</h4>
+                                </div>
+
+                                <div class="col-xs-6">
+                                    <small class="stat-label"></small>
+                                    <h4></h4>
+                                </div>
+                            </div><!-- row -->
+
+                        </div><!-- stat -->
+
+                    </div><!-- panel-heading -->
+                </div><!-- panel -->
+            </div><!-- col-sm-6 -->
+        </div><!-- row -->
+
+        <div class="row">
+            <div class="col-md-6">
+
+                <div class="panel panel-default" style="width:1200px">
+                    <div class="panel-heading">
+                        <div class="panel-btns">
+                            <a href="#" class="panel-close">&times;</a>
+                            <a href="#" class="minimize">&minus;</a>
+                        </div>
+                        <h4 class="panel-title">BIỂU ĐỒ</h4>
+                    </div>
+                    <div class="panel-body">
+
+                        <div class="col-sm-4" style="width:1100px">
+
+                            @for (int i = 1; i <= int.Parse(DateTime.Today.Month.ToString()); i++)
+                            {
+
+                                <span class="sublabel">Tháng @i</span>
+                                <div class="progress progress-sm" style="margin-top:0px;margin-bottom:0px">
+                                    @if (i == 1)
+                                    {
+                                        <div style="width: @Model.thang1%" aria-valuemax="100" aria-valuemin="0" aria-valuenow="80" role="progressbar" class="progress-bar progress-bar-primary" title="@Model.thang1 % /3 tỷ"></div>
+                                    }
+                                    @if (i == 2)
+                                    {
+                                        <div style="width: @Model.thang2%" aria-valuemax="100" aria-valuemin="0" aria-valuenow="80" role="progressbar" class="progress-bar progress-bar-primary" title="@Model.thang2 % /3 tỷ"></div>
+                                    }
+                                    @if (i == 3)
+                                    {
+                                        <div style="width: @Model.thang3%" aria-valuemax="100" aria-valuemin="0" aria-valuenow="80" role="progressbar" class="progress-bar progress-bar-primary" title="@Model.thang3 % /3 tỷ"></div>
+                                    }
+                                    @if (i == 4)
+                                    {
+                                        <div style="width: @Model.thang4%" aria-valuemax="100" aria-valuemin="0" aria-valuenow="80" role="progressbar" class="progress-bar progress-bar-primary" title="@Model.thang4 % /3 tỷ"></div>
+                                    }
+                                    @if (i == 5)
+                                    {
+                                        <div style="width: @Model.thang5%" aria-valuemax="100" aria-valuemin="0" aria-valuenow="80" role="progressbar" class="progress-bar progress-bar-primary" title="@Model.thang5 % /3 tỷ"></div>
+                                    }
+                                    @if (i == 6)
+                                    {
+                                        <div style="width: @Model.thang6%" aria-valuemax="100" aria-valuemin="0" aria-valuenow="80" role="progressbar" class="progress-bar progress-bar-primary" title="@Model.thang6 % /3 tỷ"></div>
+                                    }
+                                    @if (i == 7)
+                                    {
+                                        <div style="width: @Model.thang7%" aria-valuemax="100" aria-valuemin="0" aria-valuenow="80" role="progressbar" class="progress-bar progress-bar-primary" title="@Model.thang7 % /3 tỷ"></div>
+                                    }
+                                    @if (i == 8)
+                                    {
+                                        <div style="width: @Model.thang8%" aria-valuemax="100" aria-valuemin="0" aria-valuenow="80" role="progressbar" class="progress-bar progress-bar-primary" title="@Model.thang8 % /3 tỷ"></div>
+                                    }
+                                    @if (i == 9)
+                                    {
+                                        <div style="width: @Model.thang9%" aria-valuemax="100" aria-valuemin="0" aria-valuenow="80" role="progressbar" class="progress-bar progress-bar-primary" title="@Model.thang9 % /3 tỷ"></div>
+                                    }
+                                    @if (i == 10)
+                                    {
+                                        <div style="width: @Model.thang10%" aria-valuemax="100" aria-valuemin="0" aria-valuenow="80" role="progressbar" class="progress-bar progress-bar-primary" title="@Model.thang10 % /3 tỷ"></div>
+                                    }
+                                    @if (i == 11)
+                                    {
+                                        <div style="width: @Model.thang11%" aria-valuemax="100" aria-valuemin="0" aria-valuenow="80" role="progressbar" class="progress-bar progress-bar-primary" title="@Model.thang11 % /3 tỷ"></div>
+                                    }
+                                    @if (i == 12)
+                                    {
+                                        <div style="width: @Model.thang12%" aria-valuemax="100" aria-valuemin="0" aria-valuenow="80" role="progressbar" class="progress-bar progress-bar-primary" title="@Model.thang12 % /3 tỷ"></div>
+                                    }
+                                </div><!-- progress -->
+
+
+                                <div class="progress progress-sm" style="margin-top:0px;margin-bottom:0px">
+                                    @if (i == 1)
+                                    {
+                                        <div style="width: @Model.thangn1%" aria-valuemax="100" aria-valuemin="0" aria-valuenow="80" role="progressbar" class="progress-bar progress-bar-danger" title="@Model.thangn1 % /3 tỷ"></div>
+                                    }
+                                    @if (i == 2)
+                                    {
+                                        <div style="width: @Model.thangn2%" aria-valuemax="100" aria-valuemin="0" aria-valuenow="80" role="progressbar" class="progress-bar progress-bar-danger" title="@Model.thangn2 % /3 tỷ"></div>
+                                    }
+                                    @if (i == 3)
+                                    {
+                                        <div style="width: @Model.thangn3%" aria-valuemax="100" aria-valuemin="0" aria-valuenow="80" role="progressbar" class="progress-bar progress-bar-danger" title="@Model.thangn3 % /3 tỷ"></div>
+                                    }
+                                    @if (i == 4)
+                                    {
+                                        <div style="width: @Model.thangn4%" aria-valuemax="100" aria-valuemin="0" aria-valuenow="80" role="progressbar" class="progress-bar progress-bar-danger" title="@Model.thangn4 % /3 tỷ"></div>
+                                    }
+                                    @if (i == 5)
+                                    {
+                                        <div style="width: @Model.thangn5%" aria-valuemax="100" aria-valuemin="0" aria-valuenow="80" role="progressbar" class="progress-bar progress-bar-danger" title="@Model.thangn5 % /3 tỷ"></div>
+                                    }
+                                    @if (i == 6)
+                                    {
+                                        <div style="width: @Model.thangn6%" aria-valuemax="100" aria-valuemin="0" aria-valuenow="80" role="progressbar" class="progress-bar progress-bar-danger" title="@Model.thangn6 % /3 tỷ"></div>
+                                    }
+                                    @if (i == 7)
+                                    {
+                                        <div style="width: @Model.thangn7%" aria-valuemax="100" aria-valuemin="0" aria-valuenow="80" role="progressbar" class="progress-bar progress-bar-danger" title="@Model.thangn7 % /3 tỷ"></div>
+                                    }
+                                    @if (i == 8)
+                                    {
+                                        <div style="width: @Model.thangn8%" aria-valuemax="100" aria-valuemin="0" aria-valuenow="80" role="progressbar" class="progress-bar progress-bar-danger" title="@Model.thangn8 % /3 tỷ"></div>
+                                    }
+                                    @if (i == 9)
+                                    {
+                                        <div style="width: @Model.thangn9%" aria-valuemax="100" aria-valuemin="0" aria-valuenow="80" role="progressbar" class="progress-bar progress-bar-danger" title="@Model.thangn9 % /3 tỷ"></div>
+                                    }
+                                    @if (i == 10)
+                                    {
+                                        <div style="width: @Model.thangn10%" aria-valuemax="100" aria-valuemin="0" aria-valuenow="80" role="progressbar" class="progress-bar progress-bar-danger" title="@Model.thangn10 % /3 tỷ"></div>
+                                    }
+                                    @if (i == 11)
+                                    {
+                                        <div style="width: @Model.thangn11%" aria-valuemax="100" aria-valuemin="0" aria-valuenow="80" role="progressbar" class="progress-bar progress-bar-danger" title="@Model.thangn11 % /3 tỷ"></div>
+                                    }
+                                    @if (i == 12)
+                                    {
+                                        <div style="width: @Model.thangn12%" aria-valuemax="100" aria-valuemin="0" aria-valuenow="80" role="progressbar" class="progress-bar progress-bar-danger" title="@Model.thangn12 % /3 tỷ"></div>
+                                    }
+
+
+                                </div><!-- progress -->
+
+                                <div class="progress progress-sm" style="margin-top:0px;margin-bottom:0px">
+                                    @if (i == 1)
+                                    {
+                                        <div style="width: @Model.thangll1%" aria-valuemax="100" aria-valuemin="0" aria-valuenow="80" role="progressbar" class="progress-bar progress-bar-success" title="@Model.thangll1 % /3 tỷ"></div>
+                                    }
+                                    @if (i == 2)
+                                    {
+                                        <div style="width: @Model.thangll2%" aria-valuemax="100" aria-valuemin="0" aria-valuenow="80" role="progressbar" class="progress-bar progress-bar-success" title="@Model.thangll2 % /3 tỷ"></div>
+                                    }
+                                    @if (i == 3)
+                                    {
+                                        <div style="width: @Model.thangll3%" aria-valuemax="100" aria-valuemin="0" aria-valuenow="80" role="progressbar" class="progress-bar progress-bar-success" title="@Model.thangll3 % /3 tỷ"></div>
+                                    }
+                                    @if (i == 4)
+                                    {
+                                        <div style="width: @Model.thangll4%" aria-valuemax="100" aria-valuemin="0" aria-valuenow="80" role="progressbar" class="progress-bar progress-bar-success" title="@Model.thangll4 % /3 tỷ"></div>
+                                    }
+                                    @if (i == 5)
+                                    {
+                                        <div style="width: @Model.thangll5%" aria-valuemax="100" aria-valuemin="0" aria-valuenow="80" role="progressbar" class="progress-bar progress-bar-success" title="@Model.thangll5 % /3 tỷ"></div>
+                                    }
+                                    @if (i == 6)
+                                    {
+                                        <div style="width: @Model.thangll6%" aria-valuemax="100" aria-valuemin="0" aria-valuenow="80" role="progressbar" class="progress-bar progress-bar-success" title="@Model.thangll6 % /3 tỷ"></div>
+                                    }
+                                    @if (i == 7)
+                                    {
+                                        <div style="width: @Model.thangll7%" aria-valuemax="100" aria-valuemin="0" aria-valuenow="80" role="progressbar" class="progress-bar progress-bar-success" title="@Model.thangll7 % /3 tỷ"></div>
+                                    }
+                                    @if (i == 8)
+                                    {
+                                        <div style="width: @Model.thangll8%" aria-valuemax="100" aria-valuemin="0" aria-valuenow="80" role="progressbar" class="progress-bar progress-bar-success" title="@Model.thangll8 % /3 tỷ"></div>
+                                    }
+                                    @if (i == 9)
+                                    {
+                                        <div style="width: @Model.thangll9%" aria-valuemax="100" aria-valuemin="0" aria-valuenow="80" role="progressbar" class="progress-bar progress-bar-success" title="@Model.thangll9 % /3 tỷ"></div>
+                                    }
+                                    @if (i == 10)
+                                    {
+                                        <div style="width: @Model.thangll10%" aria-valuemax="100" aria-valuemin="0" aria-valuenow="80" role="progressbar" class="progress-bar progress-bar-success" title="@Model.thangll10 % /3 tỷ"></div>
+                                    }
+                                    @if (i == 11)
+                                    {
+                                        <div style="width: @Model.thangll11%" aria-valuemax="100" aria-valuemin="0" aria-valuenow="80" role="progressbar" class="progress-bar progress-bar-success" title="@Model.thangll11 % /3 tỷ"></div>
+                                    }
+                                    @if (i == 12)
+                                    {
+                                        <div style="width: @Model.thangll12%" aria-valuemax="100" aria-valuemin="0" aria-valuenow="80" role="progressbar" class="progress-bar progress-bar-success" title="@Model.thangll12 % /3 tỷ"></div>
+                                    }
+
+                                </div><!-- progress -->
+                            }
+
+
+
+                        </div><!-- panel-body -->
+                    </div><!-- panel -->
+
+                </div>
+            </div>
+        </div>*@
+</div>
+<script src="@Url.Content("~/Content/js/jquery-1.10.2.min.js")"></script>

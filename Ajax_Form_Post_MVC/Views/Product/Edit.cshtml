@@ -228,6 +228,13 @@
                     </div>
                 </div>
                 <div class="form-group">
+                    @Html.Label(@Utility.GetColumnName(@API.dm_HangHoa, "ISKHUYENMAI"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                    <div class="col-sm-5">
+                        @Html.CheckBoxFor(model => model.ISKHUYENMAI, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.ISKHUYENMAI, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
                     @Html.Label(@Utility.GetColumnName(@API.dm_HangHoa, "ISACTIVE"), htmlAttributes: new { @class = "col-sm-2 control-label" })
                     <div class="col-sm-5">
                         @Html.CheckBoxFor(model => model.ISACTIVE, new { htmlAttributes = new { @class = "form-control" } })
@@ -239,6 +246,20 @@
                     <div class="col-sm-5">
                         @Html.CheckBoxFor(model => model.ISKHONGHIENTHITONKHO, new { htmlAttributes = new { @class = "form-control" } })
                         @Html.ValidationMessageFor(model => model.ISKHONGHIENTHITONKHO, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.Label(@Utility.GetColumnName(@API.dm_HangHoa, "ISXUATHOADON"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                    <div class="col-sm-5">
+                        @Html.CheckBoxFor(model => model.ISXUATHOADON, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.ISXUATHOADON, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.Label(@Utility.GetColumnName(@API.dm_HangHoa, "VAT"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                    <div class="col-sm-5">
+                        @Html.EditorFor(model => model.VAT, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.VAT, "", new { @class = "text-danger" })
                     </div>
                 </div>
             </div>
@@ -433,6 +454,13 @@ else
                             </div>
                         </div>
                         <div class="form-group">
+                            @Html.Label(@Utility.GetColumnName(@API.dm_HangHoa, "ISKHUYENMAI"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                            <div class="col-sm-5">
+                                @Html.CheckBoxFor(model => model.ISKHUYENMAI, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.ISKHUYENMAI, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="form-group">
                             @Html.Label(@Utility.GetColumnName(@API.dm_HangHoa, "ISACTIVE"), htmlAttributes: new { @class = "col-sm-2 control-label" })
                             <div class="col-sm-5">
                                 @Html.CheckBoxFor(model => model.ISACTIVE, new { htmlAttributes = new { @class = "form-control" } })
@@ -444,6 +472,20 @@ else
                             <div class="col-sm-5">
                                 @Html.CheckBoxFor(model => model.ISKHONGHIENTHITONKHO, new { htmlAttributes = new { @class = "form-control" } })
                                 @Html.ValidationMessageFor(model => model.ISKHONGHIENTHITONKHO, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.Label(@Utility.GetColumnName(@API.dm_HangHoa, "ISXUATHOADON"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                            <div class="col-sm-5">
+                                @Html.CheckBoxFor(model => model.ISXUATHOADON, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.ISXUATHOADON, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.Label(@Utility.GetColumnName(@API.dm_HangHoa, "VAT"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                            <div class="col-sm-5">
+                                @Html.EditorFor(model => model.VAT, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.VAT, "", new { @class = "text-danger" })
                             </div>
                         </div>
                     </div>
@@ -477,5 +519,7 @@ else
         $("input[type='hidden'][name='STATUS_QD']").remove();
         $("input[type='hidden'][name='BAOGOMTHUESUAT']").remove();
         $("input[type='hidden'][name='ISKHONGHIENTHITONKHO']").remove();
+        $("input[type='hidden'][name='ISKHUYENMAI']").remove();
+        $("input[type='hidden'][name='ISXUATHOADON']").remove();
     });
 </script>

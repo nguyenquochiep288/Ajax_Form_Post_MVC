@@ -1,0 +1,466 @@
+﻿@model MVC_QuanLyTHP.Models.v_v_dm_HangHoa
+@using MVC_QuanLyTHP.Class;
+@using DatabaseTHP.Class;
+@if (Utility.IntWidth == 1)
+{
+    using (Ajax.BeginForm("EditPopup", API.dm_HangHoa, new AjaxOptions { HttpMethod = "POST", InsertionMode = InsertionMode.Replace, UpdateTargetId = "PartialViewPaymentHistory", OnSuccess = "OnSuccessEdit" }, new { id = "frmPayments", enctype = "multipart/form-data" }))
+    {
+        @Html.AntiForgeryToken()
+        <div class="panel-heading" style="padding-top:15px;padding-right: 15px;">
+            <div class="panel-btns">
+                <a onclick='myFunClosed("myModalEdit")'>&times;</a>
+            </div>
+
+            <h1 class="panel-title" style="font-size: 20px;text-align: center "><label id="lblName" name="lblName">@Utility.GetTitleFrom(API.dm_HangHoa)</label></h1>
+            <div class="panel-body" style="padding:5px">
+
+            </div>
+        </div>
+
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div id="ValidationSummary" class="validation-summary-errors text-danger">
+        </div>
+        @Html.HiddenFor(model => model.LOC_ID)
+        @Html.HiddenFor(model => model.ID_NGUOITAO)
+        @Html.HiddenFor(model => model.THOIGIANTHEM)
+        @Html.HiddenFor(model => model.ID)
+        @Html.HiddenFor(model => model.PICTURE)
+        <div class="panel-body panel-body-nopadding">
+            <div class="form-horizontal form-bordered">
+                <div class="form-group">
+                    @Html.Label(@Utility.GetColumnName(@API.dm_HangHoa, "MA"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                    <div class="col-sm-5">
+                        @Html.EditorFor(model => model.MA, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.MA, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.Label(@Utility.GetColumnName(@API.dm_HangHoa, "NAME"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                    <div class="col-sm-5">
+                        @Html.EditorFor(model => model.NAME, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.NAME, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.Label(@Utility.GetColumnName(@API.dm_HangHoa, "BARCODE"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                    <div class="col-sm-5">
+                        @Html.EditorFor(model => model.BARCODE, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.BARCODE, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.Label(@Utility.GetColumnName(@API.dm_HangHoa, "PICTURE"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                    <div class="col-sm-5">
+                        <img alt="" src="~/Images_Upload/@Model.PICTURE" style="width: 150px" id="PICTUREEdit" name="PICTURE" /> <br />
+                        <div class="fileupload fileupload-exists" data-provides="fileupload">
+                            <input type="hidden" value="" name="">
+                            <div class="input-append">
+                                <div class="uneditable-input">
+                                    <i class="glyphicon glyphicon-file fileupload-exists"></i>
+                                    <span class="fileupload-preview"></span>
+                                </div>
+                                <span class="btn btn-default btn-file">
+                                    <input type="file" id="MaHinhEdit" name="MaHinh" onchange="onFileSelected(event, 'PICTUREEdit')" accept="image/*" class="form-control">
+
+                                </span>
+                                <a href="#" class="btn btn-default fileupload-exists" onclick="RemoveFile('MaHinhEdit', 'PICTURE')">Remove</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.Label(@Utility.GetColumnName(@API.dm_HangHoa, "GIA01"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                    <div class="col-sm-2">
+                        @Html.EditorFor(model => model.GIA01, new { htmlAttributes = new { @class = "form-control mask", @type = "number" } })
+                        @Html.ValidationMessageFor(model => model.GIA01, "", new { @class = "text-danger" })
+                    </div>
+                    @Html.Label(@Utility.GetColumnName(@API.dm_HangHoa, "GIA02"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                    <div class="col-sm-2">
+                        @Html.EditorFor(model => model.GIA02, new { htmlAttributes = new { @class = "form-control mask", @type = "number" } })
+                        @Html.ValidationMessageFor(model => model.GIA02, "", new { @class = "text-danger" })
+                    </div>
+                    @Html.Label(@Utility.GetColumnName(@API.dm_HangHoa, "GIA03"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                    <div class="col-sm-2">
+                        @Html.EditorFor(model => model.GIA03, new { htmlAttributes = new { @class = "form-control mask", @type = "number" } })
+                        @Html.ValidationMessageFor(model => model.GIA03, "", new { @class = "text-danger" })
+                    </div>
+
+                </div>
+
+                <div class="form-group">
+                    @Html.Label(@Utility.GetColumnName(@API.dm_HangHoa, "GIAMUA"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                    <div class="col-sm-2">
+                        @Html.EditorFor(model => model.GIAMUA, new { htmlAttributes = new { @class = "form-control mask", @type = "number" } })
+                        @Html.ValidationMessageFor(model => model.GIA01_QD, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.Label(@Utility.GetColumnName(@API.dm_HangHoa, "BAOGOMTHUESUAT"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                    <div class="col-sm-3">
+                        <div class="input-group mb">
+                            <span class="input-group-addon">
+                                @Html.CheckBoxFor(model => model.BAOGOMTHUESUAT)
+                            </span>
+                            @Html.DropDownListFor(model => model.ID_THUESUAT, new SelectList(Model.lstdm_ThueSuat, "ID", "NAME"), !string.IsNullOrEmpty(Model.ID_THUESUAT) ? "" : Utility.GetTitleChon(API.dm_ThueSuat), htmlAttributes: new { @class = "form-control chosen-select", id = "lstdm_ThueSuatEdit" })
+                            @Html.ValidationMessageFor(model => model.ID_THUESUAT, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.Label(@Utility.GetColumnName(@API.dm_HangHoa, "ID_NHOMHANGHOA"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                    <div class="col-sm-5">
+                        <div class="input-group mb15">
+                            <span class="input-group-btn">
+                                <button type="button" class="btn btn-default" onclick="myFunOpenSearch('myModalEdit', '@{@API.dm_NhomHangHoa;}', '@API.Chon1', 'lstdm_NhomHangHoaEdit', '')"><span class="glyphicon glyphicon-search"></span></button>
+                            </span>
+                            @Html.DropDownListFor(model => model.ID_NHOMHANGHOA, new SelectList(Model.lstdm_NhomHangHoa, "ID", "NAME"), !string.IsNullOrEmpty(Model.ID_NHOMHANGHOA) ? "" : Utility.GetTitleChon(API.dm_NhomHangHoa), htmlAttributes: new { @class = "form-control chosen-select", id = "lstdm_NhomHangHoaEdit" })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.ID_NHOMHANGHOA, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.Label(@Utility.GetColumnName(@API.dm_HangHoa, "ID_NCC"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                    <div class="col-sm-5">
+                        <div class="input-group mb15">
+                            <span class="input-group-btn">
+                                <button type="button" class="btn btn-default" onclick="myFunOpenSearch('myModalEdit', '@{@API.dm_NhaCungCap;}', '@API.Chon1', 'lstdm_NhaCungCapEdit', '')"><span class="glyphicon glyphicon-search"></span></button>
+                            </span>
+                            @Html.DropDownListFor(model => model.ID_NCC, new SelectList(Model.lstdm_NhaCungCap, "ID", "NAME"), !string.IsNullOrEmpty(Model.ID_NCC) ? "" : Utility.GetTitleChon(API.dm_NhaCungCap), htmlAttributes: new { @class = "form-control chosen-select", id = "lstdm_NhaCungCapEdit" })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.ID_NCC, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.Label(@Utility.GetColumnName(@API.dm_HangHoa, "LOAIHANGHOA"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                    <div class="col-sm-5">
+                        @Html.DropDownListFor(model => model.LOAIHANGHOA, new SelectList(Model.lstLoaiHangHoa, "ID", "NAME"), !string.IsNullOrEmpty(Model.LOAIHANGHOA) ? "" : Utility.GetTitleChon(API.LoaHangHoa), htmlAttributes: new { @class = "form-control chosen-select", id = "lstLoaiHangHoaEdit", @onchange = "callChangefunc(this.value,'divDVT_QDEdit','divComboEdit')" })
+                        @Html.ValidationMessageFor(model => model.LOAIHANGHOA, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.Label(@Utility.GetColumnName(@API.dm_HangHoa, "ID_DVT"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                    <div class="col-sm-5">
+                        @Html.DropDownListFor(model => model.ID_DVT, new SelectList(Model.lstdm_DonViTinh, "ID", "NAME"), !string.IsNullOrEmpty(Model.ID_DVT) ? "" : Utility.GetTitleChon(API.dm_DonViTinh), htmlAttributes: new { @class = "form-control chosen-select", id = "lstdm_DonViTinhEdit" })
+                        @Html.ValidationMessageFor(model => model.ID_DVT, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div id="divDVT_QDEdit" class="form-group">
+                    <div class="form-group">
+                        @Html.Label(@Utility.GetColumnName(@API.dm_HangHoa, "STATUS_QD"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                        <div class="col-sm-2">
+                            <div class="input-group mb">
+                                <span class="input-group-addon">
+                                    @Html.CheckBoxFor(model => model.STATUS_QD)
+                                </span>
+                                @Html.EditorFor(model => model.TYLE_QD, new { htmlAttributes = new { @class = "form-control", @type = "number" } })
+                                @Html.ValidationMessageFor(model => model.TYLE_QD, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            @Html.DropDownListFor(model => model.ID_DVT_QD, new SelectList(Model.lstdm_DonViTinh, "ID", "NAME"), !string.IsNullOrEmpty(Model.ID_DVT_QD) ? "" : Utility.GetTitleChon(API.dm_DonViTinh), htmlAttributes: new { @class = "form-control chosen-select", id = "lstdm_DonViTinh_QDEdit" })
+                            @Html.ValidationMessageFor(model => model.ID_DVT_QD, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        @Html.Label(@Utility.GetColumnName(@API.dm_HangHoa, "GIA01_QD"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                        <div class="col-sm-2">
+                            @Html.EditorFor(model => model.GIA01_QD, new { htmlAttributes = new { @class = "form-control mask", @type = "number" } })
+                            @Html.ValidationMessageFor(model => model.GIA01_QD, "", new { @class = "text-danger" })
+                        </div>
+                        @Html.Label(@Utility.GetColumnName(@API.dm_HangHoa, "GIA02_QD"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                        <div class="col-sm-2">
+                            @Html.EditorFor(model => model.GIA02_QD, new { htmlAttributes = new { @class = "form-control mask", @type = "number" } })
+                            @Html.ValidationMessageFor(model => model.GIA02_QD, "", new { @class = "text-danger" })
+                        </div>
+                        @Html.Label(@Utility.GetColumnName(@API.dm_HangHoa, "GIA03_QD"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                        <div class="col-sm-2">
+                            @Html.EditorFor(model => model.GIA03_QD, new { htmlAttributes = new { @class = "form-control mask", @type = "number" } })
+                            @Html.ValidationMessageFor(model => model.GIA02_QD, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        @Html.Label(@Utility.GetColumnName(@API.dm_HangHoa, "GIAMUA_QD"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                        <div class="col-sm-2">
+                            @Html.EditorFor(model => model.GIAMUA_QD, new { htmlAttributes = new { @class = "form-control mask", @type = "number" } })
+                            @Html.ValidationMessageFor(model => model.GIAMUA_QD, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="form-group" id="divComboEdit">
+                    <div class="col-sm-5" style="width:100%">
+                        <h5 class="subtitle">Danh sách combo:  @Html.ValidationMessageFor(model => model.lstdm_HangHoa_Combo, "", new { @class = "text-danger" }) <a href="#" class="pull-right" onclick="myFunOpenSearch('myModalAdd', '@{@API.dm_HangHoa;}', '@API.ChonSanPhamCombo', 'tbodyTempItemComboEdit', '')">+ Thêm sản phẩm</a></h5>
+                        <div class="tablescroll" style="overflow-x:auto; Overflow-y:scroll; height: auto;">
+                            <div class="panel-body panel-body-nopadding">
+                                <div class="form-horizontal form-bordered">
+                                    <table class="table table-bordered mb30">
+                                        <thead>
+                                            <tr>
+                                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_HangHoa, "MA")</th>
+                                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_HangHoa, "NAME")</th>
+                                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_HangHoa_Combo, "QTY") </th>
+                                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_HangHoa, "ID_DVT") </th>
+                                                <th>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tbodyTempItemComboEdit">
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.Label(@Utility.GetColumnName(@API.dm_HangHoa, "TRONGLUONG"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                    <div class="col-sm-5">
+                        @Html.EditorFor(model => model.TRONGLUONG, new { htmlAttributes = new { @class = "form-control", @type = "number", @step = "0.01" } })
+                        @Html.ValidationMessageFor(model => model.TRONGLUONG, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.Label(@Utility.GetColumnName(@API.dm_HangHoa, "STATUS_HIENTHI"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                    <div class="col-sm-5">
+                        @Html.CheckBoxFor(model => model.STATUS_HIENTHI, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.STATUS_HIENTHI, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.Label(@Utility.GetColumnName(@API.dm_HangHoa, "ISACTIVE"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                    <div class="col-sm-5">
+                        @Html.CheckBoxFor(model => model.ISACTIVE, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.ISACTIVE, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel-footer">
+            <div class="row">
+                <div class="col-sm-5 col-sm-offset-3">
+                    <button class="btn btn-primary">@Utility.ThucHien</button>
+                    <a class="btn btn-danger" onclick='myFunClosed("myModalEdit")'>@Utility.Dong</a>
+                </div>
+            </div>
+        </div>
+
+    }
+}
+else
+{
+    {
+        ViewBag.Title = API.ViewBagTitle;
+        Layout = "~/Views/Shared/Admin.cshtml";
+    }
+    <hr />
+    using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="panel-group" id="accordion">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h1 class="panel-title" style="text-align:center">
+                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+                            @Utility.GetTitleFrom(API.dm_HangHoa)
+                        </a>
+                    </h1>
+                </div>
+                <hr />
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                @Html.HiddenFor(model => model.LOC_ID)
+                @Html.HiddenFor(model => model.ID_NGUOITAO)
+                @Html.HiddenFor(model => model.THOIGIANTHEM)
+                @Html.HiddenFor(model => model.ID)
+
+                <div id="collapseOne" class="panel-collapse collapse in">
+                    <div class="form-horizontal form-bordered">
+                        <div class="form-group">
+                            @Html.Label(@Utility.GetColumnName(@API.dm_HangHoa, "MA"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                            <div class="col-sm-5">
+                                @Html.EditorFor(model => model.MA, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.MA, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.Label(@Utility.GetColumnName(@API.dm_HangHoa, "NAME"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                            <div class="col-sm-5">
+                                @Html.EditorFor(model => model.NAME, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.NAME, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.Label(@Utility.GetColumnName(@API.dm_HangHoa, "BARCODE"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                            <div class="col-sm-5">
+                                @Html.EditorFor(model => model.BARCODE, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.BARCODE, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.Label(@Utility.GetColumnName(@API.dm_HangHoa, "PICTURE"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                            <div class="col-sm-5">
+                                <img alt="" src="~/Images_Upload/@Model.PICTURE" style="width: 150px" id="PICTUREEdit" name="PICTURE" /> <br />
+                                <div class="fileupload fileupload-exists" data-provides="fileupload">
+                                    <input type="hidden" value="" name="">
+                                    <div class="input-append">
+                                        <div class="uneditable-input">
+                                            <i class="glyphicon glyphicon-file fileupload-exists"></i>
+                                            <span class="fileupload-preview"></span>
+                                        </div>
+                                        <span class="btn btn-default btn-file">
+                                            <input type="file" id="MaHinhEdit" name="MaHinh" onchange="onFileSelected(event, 'PICTUREEdit')" accept="image/*">
+                                            @Html.HiddenFor(model => model.PICTURE)
+                                        </span>
+                                        <a href="#" class="btn btn-default fileupload-exists" onclick="RemoveFile('MaHinhEdit', 'PICTURE')">Remove</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.Label(@Utility.GetColumnName(@API.dm_HangHoa, "GIA01"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                            <div class="col-sm-2">
+                                @Html.EditorFor(model => model.GIA01, new { htmlAttributes = new { @class = "form-control", @type = "number" } })
+                                @Html.ValidationMessageFor(model => model.GIA01, "", new { @class = "text-danger" })
+                            </div>
+                            @Html.Label(@Utility.GetColumnName(@API.dm_HangHoa, "GIA02"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                            <div class="col-sm-2">
+                                @Html.EditorFor(model => model.GIA02, new { htmlAttributes = new { @class = "form-control", @type = "number" } })
+                                @Html.ValidationMessageFor(model => model.GIA02, "", new { @class = "text-danger" })
+                            </div>
+                            @Html.Label(@Utility.GetColumnName(@API.dm_HangHoa, "GIA03"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                            <div class="col-sm-2">
+                                @Html.EditorFor(model => model.GIA03, new { htmlAttributes = new { @class = "form-control", @type = "number" } })
+                                @Html.ValidationMessageFor(model => model.GIA03, "", new { @class = "text-danger" })
+                            </div>
+
+                        </div>
+                        <div class="form-group">
+                            @Html.Label(@Utility.GetColumnName(@API.dm_HangHoa, "GIA01_QD"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                            <div class="col-sm-2">
+                                @Html.EditorFor(model => model.GIA01_QD, new { htmlAttributes = new { @class = "form-control", @type = "number" } })
+                                @Html.ValidationMessageFor(model => model.GIA01_QD, "", new { @class = "text-danger" })
+                            </div>
+                            @Html.Label(@Utility.GetColumnName(@API.dm_HangHoa, "GIA02_QD"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                            <div class="col-sm-2">
+                                @Html.EditorFor(model => model.GIA02_QD, new { htmlAttributes = new { @class = "form-control", @type = "number" } })
+                                @Html.ValidationMessageFor(model => model.GIA02_QD, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.Label(@Utility.GetColumnName(@API.dm_HangHoa, "GIAMUA"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                            <div class="col-sm-5">
+                                @Html.EditorFor(model => model.GIAMUA, new { htmlAttributes = new { @class = "form-control", @type = "number" } })
+                                @Html.ValidationMessageFor(model => model.GIA01_QD, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.Label(@Utility.GetColumnName(@API.dm_HangHoa, "BAOGOMTHUESUAT"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                            <div class="col-sm-2">
+                                <div class="input-group mb">
+                                    <span class="input-group-addon">
+                                        @Html.CheckBoxFor(model => model.BAOGOMTHUESUAT)
+                                    </span>
+                                    @Html.DropDownListFor(model => model.ID_THUESUAT, new SelectList(Model.lstdm_ThueSuat, "ID", "NAME"), !string.IsNullOrEmpty(Model.ID_THUESUAT) ? "" : Utility.GetTitleChon(API.dm_ThueSuat), htmlAttributes: new { @class = "form-control chosen-select", id = "lstdm_ThueSuat" })
+                                    @Html.ValidationMessageFor(model => model.ID_THUESUAT, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.Label(@Utility.GetColumnName(@API.dm_HangHoa, "ID_NHOMHANGHOA"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                            <div class="col-sm-5">
+                                @Html.DropDownListFor(model => model.ID_NHOMHANGHOA, new SelectList(Model.lstdm_NhomHangHoa, "ID", "NAME"), !string.IsNullOrEmpty(Model.ID_NHOMHANGHOA) ? "" : Utility.GetTitleChon(API.dm_NhomHangHoa), htmlAttributes: new { @class = "form-control chosen-select", id = "lstdm_NhomHangHoaEdit" })
+                                @Html.ValidationMessageFor(model => model.ID_NHOMHANGHOA, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.Label(@Utility.GetColumnName(@API.dm_HangHoa, "ID_NCC"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                            <div class="col-sm-5">
+                                @Html.DropDownListFor(model => model.ID_NCC, new SelectList(Model.lstdm_NhaCungCap, "ID", "NAME"), !string.IsNullOrEmpty(Model.ID_NCC) ? "" : Utility.GetTitleChon(API.dm_NhaCungCap), htmlAttributes: new { @class = "form-control chosen-select", id = "lstdm_NhaCungCapEdit" })
+                                @Html.ValidationMessageFor(model => model.ID_NCC, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.Label(@Utility.GetColumnName(@API.dm_HangHoa, "LOAIHANGHOA"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                            <div class="col-sm-5">
+                                @Html.DropDownListFor(model => model.LOAIHANGHOA, new SelectList(Model.lstLoaiHangHoa, "ID", "NAME"), !string.IsNullOrEmpty(Model.LOAIHANGHOA) ? "" : Utility.GetTitleChon(API.LoaHangHoa), htmlAttributes: new { @class = "form-control chosen-select", id = "lstLoaiHangHoaEdit", @onchange = "callChangefunc(this.value,'divLOAIHANGHOAEdit')" })
+                                @Html.ValidationMessageFor(model => model.LOAIHANGHOA, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.Label(@Utility.GetColumnName(@API.dm_HangHoa, "ID_DVT"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                            <div class="col-md-2">
+                                @Html.DropDownListFor(model => model.ID_DVT, new SelectList(Model.lstdm_DonViTinh, "ID", "NAME"), !string.IsNullOrEmpty(Model.ID_DVT) ? "" : Utility.GetTitleChon(API.dm_DonViTinh), htmlAttributes: new { @class = "form-control chosen-select", id = "lstdm_DonViTinhEdit" })
+                                @Html.ValidationMessageFor(model => model.ID_DVT, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="form-group" id="divLOAIHANGHOAEdit">
+                            @Html.Label(@Utility.GetColumnName(@API.dm_HangHoa, "STATUS_QD"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                            <div class="col-sm-2">
+                                <div class="input-group mb">
+                                    <span class="input-group-addon">
+                                        @Html.CheckBoxFor(model => model.STATUS_QD)
+                                    </span>
+                                    @Html.EditorFor(model => model.TYLE_QD, new { htmlAttributes = new { @class = "form-control", @type = "number" } })
+                                    @Html.ValidationMessageFor(model => model.TYLE_QD, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="col-sm-2">
+                                @Html.DropDownListFor(model => model.ID_DVT_QD, new SelectList(Model.lstdm_DonViTinh, "ID", "NAME"), !string.IsNullOrEmpty(Model.ID_DVT_QD) ? "" : Utility.GetTitleChon(API.dm_DonViTinh), htmlAttributes: new { @class = "form-control chosen-select", id = "lstdm_DonViTinh_QDEdit" })
+                                @Html.ValidationMessageFor(model => model.ID_DVT_QD, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.Label(@Utility.GetColumnName(@API.dm_HangHoa, "TRONGLUONG"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                            <div class="col-sm-5">
+                                @Html.EditorFor(model => model.TRONGLUONG, new { htmlAttributes = new { @class = "form-control", @type = "number" } })
+                                @Html.ValidationMessageFor(model => model.TRONGLUONG, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.Label(@Utility.GetColumnName(@API.dm_HangHoa, "STATUS_HIENTHI"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                            <div class="col-sm-5">
+                                @Html.CheckBoxFor(model => model.STATUS_HIENTHI, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.STATUS_HIENTHI, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.Label(@Utility.GetColumnName(@API.dm_HangHoa, "ISACTIVE"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                            <div class="col-sm-5">
+                                @Html.CheckBoxFor(model => model.ISACTIVE, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.ISACTIVE, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="panel-footer">
+                        <div class="row">
+                            <div class="col-sm-5 col-sm-offset-2">
+                                <button class="btn btn-primary">@Utility.ThucHien</button>
+                                @if (Request.UrlReferrer != null)
+                                {
+                                    <a href="@Request.UrlReferrer.ToString()" class="btn btn-danger">@Utility.QuayLai</a>
+                                }
+                                else
+                                {
+
+                                    @Html.ActionLink(Utility.QuayLai, "Index", null, new { @class = "btn btn-danger" })
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}
+<script type="text/javascript">
+    $(function () {
+        // delete extra hidden fields created by checkboxes as the grid links mess this up by doubling the querystring parameters
+        $("input[type='hidden'][name='ISACTIVE']").remove();
+        $("input[type='hidden'][name='STATUS_HIENTHI']").remove();
+        $("input[type='hidden'][name='STATUS_QD']").remove();
+        $("input[type='hidden'][name='BAOGOMTHUESUAT']").remove();
+    });
+</script>

@@ -1,0 +1,209 @@
+@model MVC_QuanLyTHP.Models.v_v_web_Menu
+@using MVC_QuanLyTHP.Class;
+@using DatabaseTHP.Class;
+<script type="text/javascript">
+    jQuery(document).ready(function () {
+        // Basic Slider
+        jQuery('#slider').slider({
+            range: "min",
+            max: 100,
+            value: 50
+        });
+
+        // Chosen Select
+        jQuery(".chosen-select").chosen({ 'width': '100%', 'white-space': 'nowrap' });
+
+        // Date Picker
+        jQuery('#datepicker').datepicker();
+    });
+</script>
+@if (Utility.IntWidth == 1)
+{
+    using (Ajax.BeginForm("EditPopup", API.web_Menu, new AjaxOptions { OnBegin = "OnBegin", OnSuccess = "OnSuccessEdit" }))
+    {
+        @Html.AntiForgeryToken()
+        <div class="panel-heading" style="padding-top:15px;padding-right: 15px;">
+            <div class="panel-btns">
+                <a onclick='myFunClosed("myModalEdit")'>&times;</a>
+            </div>
+            
+            <h1 class="panel-title" style="font-size: 20px;text-align: center "><label id="lblName" name="lblName">@Utility.GetTitleFrom(API.web_Menu)</label></h1>
+            <div class="panel-body" style="padding:5px">
+
+            </div>
+        </div>
+
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div id="ValidationSummary" class="validation-summary-errors text-danger">
+        </div>
+        @Html.HiddenFor(model => model.ID)
+
+        <div class="panel-body panel-body-nopadding">
+            <div class="form-horizontal form-bordered">
+                <div class="form-group">
+                    @Html.Label(@Utility.GetColumnName(@API.web_Menu, "NAME"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                    <div class="col-sm-5">
+                        @Html.TextAreaFor(model => model.NAME, new { @class = "form-control", @rows = "3" })
+                        @Html.ValidationMessageFor(model => model.NAME, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.Label(@Utility.GetColumnName(@API.web_Menu, "ACTIONNAME"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                    <div class="col-sm-5">
+                        @Html.EditorFor(model => model.ACTIONNAME, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.ACTIONNAME, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.Label(@Utility.GetColumnName(@API.web_Menu, "CONTROLLERNAME"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                    <div class="col-sm-5">
+                        @Html.EditorFor(model => model.CONTROLLERNAME, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.CONTROLLERNAME, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.Label(@Utility.GetColumnName(@API.web_Menu, "ID_QUYENCHA"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                    <div class="col-sm-5">
+                        @Html.DropDownListFor(model => model.ID_QUYENCHA, new SelectList(Model.lstweb_Menu, "ID", "NAME", Model.ID_QUYENCHA), !string.IsNullOrEmpty(Model.ID_QUYENCHA) ? "" : Utility.GetTitleChon(API.web_Menu), htmlAttributes: new { @class = "form-control chosen-select", id = "lstweb_MenuEdit" })
+                        @Html.ValidationMessageFor(model => model.ID_QUYENCHA, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.Label(@Utility.GetColumnName(@API.web_Menu, "ICON"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                    <div class="col-sm-5">
+                        @Html.EditorFor(model => model.ICON, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.ICON, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.Label(@Utility.GetColumnName(@API.web_Menu, "STT"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                    <div class="col-sm-5">
+                        @Html.EditorFor(model => model.STT, new { htmlAttributes = new { @class = "form-control", @type = "number" } })
+                        @Html.ValidationMessageFor(model => model.STT, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.Label(@Utility.GetColumnName(@API.web_Menu, "ISACTIVE"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                    <div class="col-sm-5">
+                        @Html.CheckBoxFor(model => model.ISACTIVE, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.ISACTIVE, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel-footer">
+            <div class="row">
+                <div class="col-sm-5 col-sm-offset-3">
+                    <button class="btn btn-primary">@Utility.ThucHien</button>
+                    <a class="btn btn-danger" onclick='myFunClosed("myModalEdit")'>@Utility.Dong</a>
+                </div>
+            </div>
+        </div>
+
+    }
+}
+else
+{
+    {
+        ViewBag.Title = API.ViewBagTitle;
+        Layout = "~/Views/Shared/Admin.cshtml";
+    }
+    <hr />
+    using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="panel-group" id="accordion">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h1 class="panel-title" style="text-align:center">
+                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+                            @Utility.GetTitleFrom(API.web_Menu)
+                        </a>
+                    </h1>
+                </div>
+                <hr />
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                @Html.HiddenFor(model => model.ID)
+
+                <div id="collapseOne" class="panel-collapse collapse in">
+                    <div class="form-horizontal form-bordered">
+                        <div class="form-group">
+                            @Html.Label(@Utility.GetColumnName(@API.web_Menu, "NAME"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                            <div class="col-sm-5">
+                                @Html.TextAreaFor(model => model.NAME, new { @class = "form-control", @rows = "3" })
+                                @Html.ValidationMessageFor(model => model.NAME, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.Label(@Utility.GetColumnName(@API.web_Menu, "ACTIONNAME"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                            <div class="col-sm-5">
+                                @Html.EditorFor(model => model.ACTIONNAME, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.ACTIONNAME, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.Label(@Utility.GetColumnName(@API.web_Menu, "CONTROLLERNAME"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                            <div class="col-sm-5">
+                                @Html.EditorFor(model => model.CONTROLLERNAME, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.CONTROLLERNAME, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.Label(@Utility.GetColumnName(@API.web_Menu, "ID_QUYENCHA"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                            <div class="col-sm-5">
+                                @Html.DropDownListFor(model => model.ID_QUYENCHA, new SelectList(Model.lstweb_Menu, "ID", "NAME"), !string.IsNullOrEmpty(Model.ID_QUYENCHA) ? "" : Utility.GetTitleChon(API.web_Menu), htmlAttributes: new { @class = "form-control chosen-select", id = "lstweb_MenuEdit" })
+                                @Html.ValidationMessageFor(model => model.ID_QUYENCHA, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.Label(@Utility.GetColumnName(@API.web_Menu, "ICON"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                            <div class="col-sm-5">
+                                @Html.EditorFor(model => model.ICON, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.ICON, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.Label(@Utility.GetColumnName(@API.web_Menu, "STT"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                            <div class="col-sm-5">
+                                @Html.EditorFor(model => model.STT, new { htmlAttributes = new { @class = "form-control", @type = "number" } })
+                                @Html.ValidationMessageFor(model => model.STT, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.Label(@Utility.GetColumnName(@API.web_Menu, "ISACTIVE"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                            <div class="col-sm-5">
+                                @Html.CheckBoxFor(model => model.ISACTIVE, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.ISACTIVE, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel-footer">
+                    <div class="row">
+                        <div class="col-sm-5 col-sm-offset-2">
+                            <button class="btn btn-primary">@Utility.ThucHien</button>
+                            @if (Request.UrlReferrer != null)
+                            {
+                                <a href="@Request.UrlReferrer.ToString()" class="btn btn-danger">@Utility.QuayLai</a>
+                            }
+                            else
+                            {
+
+                                @Html.ActionLink(Utility.QuayLai, "Index", null, new { @class = "btn btn-danger" })
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}
+<script type="text/javascript">
+    $(function () {
+        // delete extra hidden fields created by checkboxes as the grid links mess this up by doubling the querystring parameters
+        $("input[type='hidden'][name='ISACTIVE']").remove();
+    });
+</script>

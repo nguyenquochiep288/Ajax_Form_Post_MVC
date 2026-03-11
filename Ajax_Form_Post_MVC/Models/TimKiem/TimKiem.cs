@@ -1,4 +1,5 @@
 ﻿using MVC_QuanLyTHP.Class;
+using MVC_QuanLyTHP.Controllers;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;

@@ -1,0 +1,192 @@
+@model MVC_QuanLyTHP.Models.v_v_dm_KhachHang
+@using DatabaseTHP;
+@using PagedList.Mvc;
+@using DatabaseTHP.Class;
+@using MVC_QuanLyTHP.Class;
+@using MVC_QuanLyTHP.Models;
+@{
+    ViewBag.Title = API.ViewBagTitle;
+    Layout = "~/Views/Shared/Admin.cshtml";
+}
+@Html.Partial("LoadCssDanhMuc")
+<hr />
+<div class="panel-group" id="accordion">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h1 class="panel-title" style="text-align:center">
+                <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+                    @Utility.GetTitleFrom(API.dm_KhachHang)
+                </a>
+            </h1>
+        </div>
+
+
+        <div id="collapseOne" class="panel-collapse collapse in">
+            <div class="form-group">
+                <div class="col-sm-2" style="padding-bottom: 5px;">
+                    @if (ViewBag.PermissionCreate)
+                    {
+                        if (Utility.IntWidth == 1)
+                        {
+                            <button class="btn btn-success" onclick="myFunctionCreate('@{@API.dm_KhachHang;}')"><i class="fa fa-pencil-square-o" style="margin-right:20px"></i>@Utility.Them</button>
+                        }
+                        else
+                        {
+                            <a class="btn btn-success" href="@Url.Action("Create", @API.dm_KhachHang)"><i class="fa fa-pencil-square-o" style="margin-right:20px"></i>@Utility.Them</a>
+                        }
+                    }
+                </div>
+                <div class="col-sm-2" style="padding-bottom: 5px;">
+                    <select class="form-control chosen-select" onchange="show('@{@API.dm_KhachHang;}')" id="Show" name="Show">
+                        @for (int show = 0; show < Utility.arrShow.Length; show++)
+                        {
+                            if (Utility.GetPageSize() == @Utility.arrShow[show])
+                            {
+                                <option value="@Utility.arrShow[show]" selected>@Utility.arrShow[show]</option>
+                            }
+                            else
+                            {
+                                <option value="@Utility.arrShow[show]">@Utility.arrShow[show]</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="col-sm-2" style="padding-bottom: 5px;">
+                    <select class="form-control chosen-select" id="ShowSearchValue" name="ShowSearchValue">
+                        @for (int show = 0; show < Utility.listSearch.Count; show++)
+                        {
+                            if (ViewBag.showsearchValue == Utility.listSearch[show].Item1)
+                            {
+                                <option value="@Utility.listSearch[show].Item1" selected>@Utility.listSearch[show].Item2</option>
+                            }
+                            else
+                            {
+                                <option value="@Utility.listSearch[show].Item1">@Utility.listSearch[show].Item2</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="col-sm-4">
+                    @Html.TextBox("SearchString", (string)ViewBag.searchValue, htmlAttributes: new { @class = "form-control", @style = "width:80%;display:inline-block", @placeholder = Utility.TimKiem })
+                    <button class="btn btn-default" onclick="funSearchItem('@{@API.dm_KhachHang;}')"><span class='glyphicon glyphicon-search'></span></button>
+                </div>
+            </div>
+
+
+
+            <div class="tablescroll" style="overflow-x:auto; Overflow-y:scroll; height: auto;">
+                <div class="panel-body panel-body-nopadding">
+                    <div class="form-horizontal form-bordered">
+                        <table class="table table-bordered mb30">
+                            <thead>
+                                <tr>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KhachHang, "MA")</th>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KhachHang, "NAME")</th>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KhachHang, "ADDRESS")</th>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KhachHang, "TEL")</th>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KhachHang, "FAX")</th>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KhachHang, "EMAIL")</th>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KhachHang, "NGAYSINH")</th>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KhachHang, "DIS")</th>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KhachHang, "RATE")</th>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KhachHang, "ID_NHOMKHACHHANG")</th>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KhachHang, "MAX_CONGNO")</th>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KhachHang, "SONGAY")</th>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KhachHang, "LEVEL_PRICE")</th>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KhachHang, "ID_KHUVUC")</th>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KhachHang, "CONGNODAUKY")</th>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KhachHang, "ISACTIVE")</th>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KhachHang, "ISDEFAULT")</th>
+                                    <th>
+
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbodytmpitem">
+                                @foreach (var item in Model.IPagedList)
+                                {
+                                    string NGAYSINH = item.NGAYSINH != null ? item.NGAYSINH.Value.ToString("dd/MM/yyyy") : "";
+                                    string MAX_CONGNO = item.MAX_CONGNO.ToString("N0");
+                                    string CONGNODAUKY = item.CONGNODAUKY.ToString("N0");
+                                    <tr id="@item.ID">
+                                        <td style="white-space: nowrap; " id="MA"> @Html.DisplayFor(modelItem => item.MA)</td>
+                                        <td style="white-space: nowrap; " id="NAME"> @Html.DisplayFor(modelItem => item.NAME)</td>
+                                        <td style="white-space: nowrap; " id="ADDRESS"> @Html.DisplayFor(modelItem => item.ADDRESS)</td>
+                                        <td style="white-space: nowrap; " id="TEL"> @Html.DisplayFor(modelItem => item.TEL)</td>
+                                        <td style="white-space: nowrap; " id="FAX"> @Html.DisplayFor(modelItem => item.FAX)</td>
+                                        <td style="white-space: nowrap; " id="EMAIL"> @Html.DisplayFor(modelItem => item.EMAIL)</td>
+                                        <td style="white-space: nowrap; " id="NGAYSINH"> @NGAYSINH</td>
+                                        <td style="white-space: nowrap; " id="DIS"> @Html.DisplayFor(modelItem => item.DIS)</td>
+                                        <td style="white-space: nowrap; " id="RATE"> @Html.DisplayFor(modelItem => item.RATE)</td>
+                                        <td style="white-space: nowrap; " id="NAME_NHOMKHACHHANG"> @Html.DisplayFor(modelItem => item.NAME_NHOMKHACHHANG)</td>
+                                        <td style="white-space: nowrap; " id="MAX_CONGNO"> @MAX_CONGNO</td>
+                                        <td style="white-space: nowrap; " id="SONGAY"> @Html.DisplayFor(modelItem => item.SONGAY)</td>
+                                        <td style="white-space: nowrap; " id="LEVEL_PRICE"> @Html.DisplayFor(modelItem => item.LEVEL_PRICE)</td>
+                                        <td style="white-space: nowrap; " id="NAME_KHUVUC"> @Html.DisplayFor(modelItem => item.NAME_KHUVUC)</td>
+                                        <td style="white-space: nowrap; " id="CONGNODAUKY">  @CONGNODAUKY</td>
+                                        <td style="white-space: nowrap; " id="ISACTIVE"> @Html.DisplayFor(modelItem => item.ISACTIVE)</td>
+                                        <td style="white-space: nowrap; " id="ISDEFAULT"> @Html.DisplayFor(modelItem => item.ISDEFAULT)</td>
+
+
+                                        <td style="white-space: nowrap; " class="fix">
+                                            @if (ViewBag.PermissionEdit)
+                                            {
+                                                if (Utility.IntWidth == 1)
+                                                {
+                                                    <a class="label label-primary" onclick="myFunctionEdit('@{@API.dm_KhachHang;}','@item.ID')" href="#"><i class="fa fa-edit" style="margin-right:5px"></i>@Utility.Sua</a>
+                                                }
+                                                else
+                                                {
+                                                    @Html.ActionLink(Utility.Sua, "Edit", new { id = item.ID }, htmlAttributes: new { @class = "label label-primary" });
+                                                }
+                                            }
+                                            @if (ViewBag.PermissionDelete)
+                                            {
+                                                if (Utility.IntWidth == 1)
+                                                {
+                                                    <a class="label label-danger" onclick="myFunctionPopup('@{@API.dm_KhachHang;}','@item.ID')" href="#"><i class="glyphicon glyphicon-trash" style="margin-right:5px" ></i>@Utility.Xoa</a>
+                                                }
+                                                else
+                                                {
+                                                    <a class="label label-danger" onclick="myFunction('@{@API.dm_KhachHang;}','@item.ID')" href="#"><i class="glyphicon glyphicon-trash" style="margin-right:5px" ></i>@Utility.Xoa</a>
+                                                }
+
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div><!-- table-responsive -->
+            </div>
+
+            <div class="panel-footer">
+                @Html.PagedListPager((PagedList.IPagedList<v_dm_KhachHang>)Model.IPagedList, page => Url.Action("Index", new { Page = page, ShowSearchValue = ViewBag.showsearchValue, SearchString = ViewBag.searchValue }))
+            </div>
+        </div>
+    </div>
+</div>
+@if (Utility.IntWidth == 1)
+{
+    if (ViewBag.PermissionCreate)
+    {
+        <button id="myBtnAdd" style="display:none"></button>
+        <div id="myModalAdd" class="modal">
+            <div class="panel panel-default" @Html.Raw(Utility.StypeWidth_Level1)>
+                <!-- The Modal -->
+                @{Html.RenderAction("Create", @API.dm_KhachHang, new { type = 1 });}
+            </div>
+        </div>
+    }
+    if (ViewBag.PermissionEdit)
+    {
+        <button id="myBtnEdit" style="display:none"></button>
+        <div id="myModalEdit" class="modal">
+            <div class="panel panel-default" @Html.Raw(Utility.StypeWidth_Level1)>
+                <!-- The Modal -->
+                @{Html.RenderAction("Edit", @API.dm_KhachHang, new { type = 1 });}
+            </div>
+        </div>
+    }
+}

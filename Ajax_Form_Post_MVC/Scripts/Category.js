@@ -90,8 +90,11 @@ function funSearchItem(Controller)
     {
         var x = document.getElementById("Show");
         var value = x.options[x.selectedIndex].value;
+        var value1 = '';
         var x1 = document.getElementById("ShowSearchValue");
-        var value1 = x1.options[x1.selectedIndex].value;
+        if (x1 != null) {
+            value1 = x1.options[x1.selectedIndex].value;
+        }          
         var z = document.getElementById("SearchString").value;
         location.replace("/" + Controller + "?Page=" + 1 + "&ShowSearchValue=" + value1 + "&SearchString=" + z);
     }
@@ -196,6 +199,15 @@ function OnSuccessLoadEdit(apiResponse)
             var divElem = document.getElementById('myModalEdit');
             var lst = divElem.querySelectorAll("input, select, checkbox, textarea, lable, img, tbody, radio");
             for (i = 0; i < apiResponse.Detail.length; i++) {
+                if (apiResponse.Detail[i].Key == "lblName") {
+                    var xMP = document.querySelectorAll('[id=' + apiResponse.Detail[i].Key + ']');
+                    if (xMP != null && xMP.length > 0) {
+                        for (var k = 0; k < xMP.length; k++) {
+                            xMP[k].innerHTML = apiResponse.Detail[i].Value;
+                        }
+                    }
+                    continue;
+                }
                 if (apiResponse.Detail[i].Key == "myProductEdit") {
                     var myProduct = document.getElementById('myProduct');
                     if (myProduct != null) {
@@ -585,6 +597,25 @@ function myFunctionCreateReceiptDelivery(Controller, ID, ID_LOAIPHIEU, ID_KHACHA
 
 }
 
+function myFunctionCreateInvoiced(Controller, ID_LOAIPHIEU, ID_KHACHAHANG, CHUNGTUKEMTHEO) {
+    try {
+        OpenLoaderCategory();
+        $.ajax({
+            type: "GET",
+            url: "/" + Controller + "/CreatePopup?ID_LOAIPHIEU=" + ID_LOAIPHIEU + "&ID_KHACHAHANG=" + ID_KHACHAHANG + "&CHUNGTUKEMTHEO=" + CHUNGTUKEMTHEO,
+            data: "",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: OnSuccessLoadCreate_LOAIPHIEU,
+            error: OnErrorLoadEdit
+        });
+    }
+    catch (ex) {
+        alert(ex.Message);
+        alert(ex);
+    }
+
+}
 function OnSuccessLoadCreate_LOAIPHIEU(data)
 {
     try {
@@ -741,6 +772,7 @@ function OnSuccessLoadCreate(apiResponse)
     {
         if (apiResponse.Success)
         {
+            var bolChaymaskinput = false;
             var bolError = false;
             var bolErrorISACTIVE = false;
             var i, j, m, n = 0;
@@ -788,7 +820,8 @@ function OnSuccessLoadCreate(apiResponse)
                             }
                             else if (lst[j].localName == "tbody") {
                                 lst[j].innerHTML = apiResponse.Detail[i].Value;
-
+                                if (!bolChaymaskinput)
+                                    bolChaymaskinput = true;
                             }
                             else if (lst[j].type == "radio") {
 
@@ -874,6 +907,34 @@ function OnSuccessLoadCreate(apiResponse)
 
                     }
                 }
+            }
+
+            if (bolChaymaskinput) {
+                $("input.form-control.maskinput").each((ii, ele) => {
+                    let clone = $(ele).clone(false)
+                    clone.attr("type", "text")
+                    let ele1 = $(ele)
+                    clone.val(Number(ele1.val()).toLocaleString("vn"))
+
+                    $(ele).after(clone)
+                    $(ele).hide()
+                    clone.mouseenter(() => {
+
+                        ele1.show()
+                        clone.hide()
+                    })
+                    setInterval(() => {
+                        var newv = Number(ele1.val()).toLocaleString("vn");
+                        if (clone.val() != newv) {
+                            clone.val(newv)
+                        }
+                    }, 10)
+
+                    $(ele).mouseleave(() => {
+                        $(clone).show()
+                        $(ele1).hide()
+                    })
+                })
             }
         }
         else
@@ -1287,40 +1348,49 @@ function OnSuccessSearch(Data)
     }
 }
 
-function myFunSuccess(ID)
-{
-    /*alert(ID)*/
+function myFunSuccess(ID, TEXT) {
     try {
         var ValueFieldSearch = document.getElementById("ValueFieldSearch");
         var MyModalSearch = document.getElementById("MyModalSearch");
 
         var divElem = document.getElementById(MyModalSearch.value);
+        if (!divElem) {
+            console.warn("Không tìm thấy phần tử chứa dropdown.");
+            return;
+        }
+
         var lst = divElem.querySelectorAll("input, select");
-        if (lst != null && lst.length > 0) {
+        if (lst && lst.length > 0) {
             for (var j = 0; j < lst.length; j++) {
-                if (lst[j].id == ValueFieldSearch.value) {
-                    lst[j].value = ID;
-                    //for (let i = 0, len = lst[j].length; i < len; i++) {
-                    //    if (lst[j][i].value == ID) {
-                    //        lst[j].options[i].selected = true;
-                    //    }  
-                    //}
-                    jQuery("#" + lst[j].id).val(ID);
-                    jQuery("#" + lst[j].id).trigger("chosen:updated");
-                    $("#" + lst[j].id).val(ID).change();
-                    $(lst[j]).change();
+                var element = lst[j];
+                if (element.id === ValueFieldSearch.value) {
+                    var $select = $("#" + CSS.escape(element.id));
+
+                    // Nếu là dropdown thì xử lý thêm option nếu chưa có
+                    if ($select.is("select")) {
+                        if ($select.find("option[value='" + ID + "']").length === 0) {
+                            $select.append($('<option>', {
+                                value: ID,
+                                text: TEXT
+                            }));
+                        }
+                        $select.val(ID).trigger("chosen:updated").change();
+                    } else {
+                        // Nếu là input thì gán trực tiếp
+                        element.value = ID;
+                        $(element).change();
+                    }
+
                     myFunClosed('myModalSearch');
                     break;
                 }
             }
         }
+    } catch (ex) {
+        alert("Lỗi: " + ex); // ex là object, không có .Message
     }
-    catch (ex) {
-        alert(ex.Message);
-        alert(ex);
-    } 
-   
 }
+
 
 // Get the modal
 var modalAdd = document.getElementById("myModalAdd");
@@ -2089,6 +2159,29 @@ function ShowHideDivPromotion_YC() {
    
 }
 
+function myFunctionAddProductPriceRange(Controller, id) {
+    $.ajax({
+        type: "POST",
+        url: "/" + Controller + "/AddProductPriceRange",
+        data: "{ID_HANGHOA:'" + id + "'}",
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: OnSuccessProductPromotion_YC,
+        error: OnErrorLoadEdit
+    });
+}
+
+function myFunctionAddProductPriceRangeHangHoa(Controller, id) {
+    $.ajax({
+        type: "POST",
+        url: "/" + Controller + "/AddProductPriceRange",
+        data: "{ID_HANGHOA:'" + id + "'}",
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: OnSuccessProductPromotion_Tang,
+        error: OnErrorLoadEdit
+    });
+}
 
 function OnSuccessProductPromotion_YC(apiResponse) {
     try {
@@ -2957,3 +3050,344 @@ window.myFunClosed = myFunClosed;
 window.gritter = gritter;
 // Gán hàm vào window
 window.CloseLoaderCategory = CloseLoaderCategory;
+
+
+// #region Popup Load Data Create
+function myFunctionChangeCustomer(val, myModal) {
+    try {
+        OpenLoaderCategory();
+        $.ajax({
+            type: "POST",
+            url: "/Invoiced/CallChangeCustomer",
+            data: "{id:'" + val + "', myModal:'" + myModal + "'}",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: OnSuccessLoadChangeCustomer,
+            error: OnErrorLoadEdit
+        });
+    }
+    catch (ex) {
+        alert(ex.Message);
+        alert(ex);
+    }
+}
+
+function OnSuccessLoadChangeCustomer(apiResponse)
+{
+    try {
+        CloseLoaderCategory();
+        if (apiResponse.Success) {
+            var bolChaymaskinput = false;
+            var bolErrorISACTIVE = false;
+            var i, j, m, n, p = 0;
+            var divElem = document.getElementById(apiResponse.NAME);
+            var lst = divElem.querySelectorAll("input, select, checkbox, textarea, lable, img, tbody, radio");
+            for (i = 0; i < apiResponse.Detail.length; i++) {
+                if (apiResponse.Detail[i].Key == "lblName") {
+                    var xMP = document.querySelectorAll('[id=' + apiResponse.Detail[i].Key + ']');
+                    if (xMP != null && xMP.length > 0) {
+                        for (var k = 0; k < xMP.length; k++) {
+                            xMP[k].innerHTML = apiResponse.Detail[i].Value;
+                        }
+                    }
+                    continue;
+                }
+                if (apiResponse.Detail[i].Key == "myProductEdit") {
+                    var myProduct = document.getElementById('myProduct');
+                    if (myProduct != null) {
+                        myProduct.innerHTML = "";
+                    }
+                    var myProductEdit = document.getElementById('myProductEdit');
+                    if (myProductEdit != null) {
+                        myProductEdit.innerHTML = apiResponse.Detail[i].Value;
+                    }
+                    continue;
+                }
+                //var lst = document.getElementById(apiResponse[i].Key);
+                if (lst != null && lst.length > 0) {
+                    for (j = 0; j < lst.length; j++) {
+
+                        if (lst[j].name == apiResponse.Detail[i].Key || lst[j].id == apiResponse.Detail[i].Key || lst[j].name == "MaHinhEdit" || (lst[j].id == "tbodyTempItemdivPromotion_YCEdit" && lst[j].id == apiResponse.Detail[i].Key) || (lst[j].id == "tbodyTempItemdivPromotion_TangEdit" && lst[j].id == apiResponse.Detail[i].Key) || (lst[j].id == "tbodyTempItemComboEdit" && lst[j].id == apiResponse.Detail[i].Key) || (lst[j].id == "tbodyTempItemInputEdit" && lst[j].id == apiResponse.Detail[i].Key)) {
+                            if (lst[j].type == "checkbox")
+                                lst[j].checked = apiResponse.Detail[i].Value;
+                            else if (lst[j].localName == "tbody") {
+                                lst[j].innerHTML = apiResponse.Detail[i].Value;
+                                if (!bolChaymaskinput)
+                                    bolChaymaskinput = true;
+                            }
+                            else if (lst[j].name == "MaHinhEdit") {
+                                lst[j].value = "";
+                            }
+                            else if (lst[j].type == "radio") {
+                                $('input:radio[name=\"' + lst[j].name + '\"][value=\"' + apiResponse.Detail[i].Value + '\"]').prop('checked', true);
+                            }
+                            else if (lst[j].localName == "img") {
+                                var reader = new FileReader();
+
+                                var imgtag = document.getElementById(lst[j].name + "Edit");
+                                imgtag.title = apiResponse.Detail[i].Value;
+                                const imageUrl = apiResponse.PathProduct + apiResponse.Detail[i].Value + `?v=${Date.now()}`;
+                                imgtag.src = imageUrl;
+                                $("#" + lst[j].name + "Edit").attr("src", imageUrl);
+                            }
+                            else if (lst[j].type == "select-one") {
+                                var select = lst[j];
+                                var option1 = select.options[0];
+
+                                $(select).empty();
+                                $(select).append(option1);
+                                for (m = 0; m < apiResponse.Detail.length; m++) {
+                                    if (lst[j].id == (apiResponse.Detail[m].Key + "Edit") && apiResponse.Detail[m].Value != null) {
+                                        for (n = 0; n < apiResponse.Detail[m].Value.length; n++) {
+                                            if (bolErrorISACTIVE == false) {
+                                                try {
+                                                    if (apiResponse.Detail[m].Value[n].ISACTIVE != null) {
+                                                        if (apiResponse.Detail[m].Value[n].ISACTIVE == true) {
+                                                            $(select).append('<option value=' + apiResponse.Detail[m].Value[n].ID + '>' + apiResponse.Detail[m].Value[n].NAME + '</option>');
+                                                        }
+                                                        else {
+                                                            if (apiResponse.Detail[i].Value == apiResponse.Detail[m].Value[n].ID) {
+                                                                $(select).append('<option value=' + apiResponse.Detail[m].Value[n].ID + '>' + apiResponse.Detail[m].Value[n].NAME + '</option>');
+                                                            }
+                                                        }
+                                                    }
+                                                    else {
+                                                        $(select).append('<option value=' + apiResponse.Detail[m].Value[n].ID + '>' + apiResponse.Detail[m].Value[n].NAME + '</option>');
+                                                    }
+                                                }
+                                                catch
+                                                {
+                                                    bolErrorISACTIVE = true;
+                                                    if (apiResponse.Detail[i].Value == apiResponse.Detail[m].Value[n].ID) {
+                                                        $(select).append('<option value=' + apiResponse.Detail[m].Value[n].ID + '>' + apiResponse.Detail[m].Value[n].NAME + '</option>');
+                                                    }
+                                                }
+                                            }
+                                            else {
+                                                $(select).append('<option value=' + apiResponse.Detail[m].Value[n].ID + '>' + apiResponse.Detail[m].Value[n].NAME + '</option>');
+                                            }
+                                        }
+                                        lst[j].value = apiResponse.Detail[i].Value;
+                                        jQuery("#" + lst[j].id).val(apiResponse.Detail[i].Value);
+                                        jQuery("#" + lst[j].id).trigger("chosen:updated");
+                                        $("#" + lst[j].id).val(apiResponse.Detail[i].Value).change();
+                                        break;
+                                    }
+                                }
+                            }
+                            else {
+                                if (lst[j].type == "date") {
+                                    try {
+                                        lst[j].value = apiResponse.Detail[i].Value.split(' ')[0];
+                                    } catch { }
+                                }
+                                else if (lst[j].type == "time") {
+                                    try {
+                                        lst[j].value = apiResponse.Detail[i].Value;
+                                    }
+                                    catch { }
+                                }
+                                else if (lst[j].type == "datetime-local") {
+                                    try {
+                                        lst[j].value = apiResponse.Detail[i].Value.substring(0, 16);
+                                        //lst[j].value = apiResponse.Detail[i].Value;
+                                    }
+                                    catch { }
+                                }
+                                else
+                                    lst[j].value = apiResponse.Detail[i].Value;
+                            }
+                            continue;
+                        }
+
+                    }
+                }
+            }
+
+            if (apiResponse.TYPE == "divNCCEdit") {
+                var imgtagNV = document.getElementById("divNHANVIENEdit");
+                var imgtag = document.getElementById("divKHACHHANGEdit");
+                var imgtagCombo = document.getElementById("divNCCEdit");
+                var imgtagXE = document.getElementById("divXeEdit");
+                if (imgtagNV != null) {
+                    imgtagNV.style.visibility = 'hidden';
+                    // OR
+                    imgtagNV.style.display = 'none';
+                }
+                if (imgtagXE != null) {
+                    imgtagXE.style.visibility = 'hidden';
+                    // OR
+                    imgtagXE.style.display = 'none';
+                }
+                if (imgtag != null) {
+                    imgtag.style.visibility = 'hidden';
+                    // OR
+                    imgtag.style.display = 'none';
+                }
+                if (imgtagCombo != null) {
+                    imgtagCombo.style.visibility = 'visible';
+                    // OR
+                    imgtagCombo.style.display = 'block';
+                }
+            }
+            else if (apiResponse.TYPE == "divKHACHHANGEdit") {
+                var imgtagNV = document.getElementById("divNHANVIENEdit");
+                var imgtag = document.getElementById("divKHACHHANGEdit");
+                var imgtagCombo = document.getElementById("divNCCEdit");
+                var imgtagXE = document.getElementById("divXeEdit");
+
+                if (imgtagNV != null) {
+                    imgtagNV.style.visibility = 'hidden';
+                    // OR
+                    imgtagNV.style.display = 'none';
+                }
+                if (imgtagXE != null) {
+                    imgtagXE.style.visibility = 'hidden';
+                    // OR
+                    imgtagXE.style.display = 'none';
+                }
+                if (imgtag != null) {
+                    imgtag.style.visibility = 'visible';
+                    // OR
+                    imgtag.style.display = 'block';
+                }
+                if (imgtagCombo != null) {
+                    imgtagCombo.style.visibility = 'hidden';
+                    // OR
+                    imgtagCombo.style.display = 'none';
+                }
+            } else if (apiResponse.TYPE == "divNHANVIENEdit") {
+                var imgtagNV = document.getElementById("divNHANVIENEdit");
+                var imgtag = document.getElementById("divKHACHHANGEdit");
+                var imgtagCombo = document.getElementById("divNCCEdit");
+                var imgtagXE = document.getElementById("divXeEdit");
+                if (imgtagNV != null) {
+                    imgtagNV.style.visibility = 'visible';
+                    // OR
+                    imgtagNV.style.display = 'block';
+                }
+                if (imgtagXE != null) {
+                    imgtagXE.style.visibility = 'hidden';
+                    // OR
+                    imgtagXE.style.display = 'none';
+                }
+                if (imgtag != null) {
+                    imgtag.style.visibility = 'hidden';
+                    // OR
+                    imgtag.style.display = 'none';
+                }
+                if (imgtagCombo != null) {
+                    imgtagCombo.style.visibility = 'hidden';
+                    // OR
+                    imgtagCombo.style.display = 'none';
+                }
+            }
+            else if (apiResponse.TYPE == "divXeEdit") {
+                var imgtagNV = document.getElementById("divNHANVIENEdit");
+                var imgtag = document.getElementById("divKHACHHANGEdit");
+                var imgtagCombo = document.getElementById("divNCCEdit");
+                var imgtagXE = document.getElementById("divXeEdit");
+                if (imgtagXE != null) {
+                    imgtagXE.style.visibility = 'visible';
+                    // OR
+                    imgtagXE.style.display = 'block';
+                }
+                if (imgtagNV != null) {
+                    imgtagNV.style.visibility = 'hidden';
+                    // OR
+                    imgtagNV.style.display = 'none';
+                }
+                if (imgtag != null) {
+                    imgtag.style.visibility = 'hidden';
+                    // OR
+                    imgtag.style.display = 'none';
+                }
+                if (imgtagCombo != null) {
+                    imgtagCombo.style.visibility = 'hidden';
+                    // OR
+                    imgtagCombo.style.display = 'none';
+                }
+            }
+
+            if (bolChaymaskinput) {
+                $("input.form-control.maskinput").each((ii, ele) => {
+                    let clone = $(ele).clone(false)
+                    clone.attr("type", "text")
+                    let ele1 = $(ele)
+                    clone.val(Number(ele1.val()).toLocaleString("vn"))
+
+                    $(ele).after(clone)
+                    $(ele).hide()
+                    clone.mouseenter(() => {
+
+                        ele1.show()
+                        clone.hide()
+                    })
+                    setInterval(() => {
+                        var newv = Number(ele1.val()).toLocaleString("vn");
+                        if (clone.val() != newv) {
+                            clone.val(newv)
+                        }
+                    }, 10)
+
+                    $(ele).mouseleave(() => {
+                        $(clone).show()
+                        $(ele1).hide()
+                    })
+                })
+            }
+        }
+        else {
+            if (apiResponse.URL != null && apiResponse.URL != "")
+                window.location.href = apiResponse.URL;
+            else
+                alert(apiResponse.Message);
+        }
+    }
+    catch (ex) {
+        alert(ex.Message);
+        alert(ex);
+    }
+
+}
+
+
+function myFunctionInvoiced(Controller, id) {
+    if (confirm("Bạn muốn thực hiện xuất hóa đơn này không?")) {
+        OpenLoaderCategory();
+        $.post("/" + Controller + "/Invoiced?id=" + id + "", null,
+            function (data)
+            {
+                CloseLoaderCategory();
+                if (data.Success) {
+                    alert(data.Message);
+                    location.reload();
+                }
+                else
+                {
+                    gritter("Thông báo lỗi", data.Message);
+                }
+            });
+    }
+}
+
+// #region Popup Load Data Edit
+function myFunctionGetToken(Controller, id) {
+    try {
+        OpenLoaderCategory();
+        $.ajax({
+            type: "PUT",
+            url: "/" + Controller + "/GetToken?id=" + id,
+            data: "",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: OnSuccessEdit,
+            error: OnErrorLoadEdit
+        });
+    }
+    catch (ex) {
+        alert(ex.Message);
+        alert(ex);
+    }
+
+}

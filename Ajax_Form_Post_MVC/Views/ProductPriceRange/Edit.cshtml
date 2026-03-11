@@ -1,0 +1,159 @@
+﻿@model MVC_QuanLyTHP.Models.v_v_dm_HangHoa_KhungGia_Master
+@using MVC_QuanLyTHP.Class;
+@using DatabaseTHP.Class;
+@if (Utility.IntWidth == 1)
+{
+    using (Ajax.BeginForm("EditPopup", API.dm_HangHoa_KhungGia, new AjaxOptions { HttpMethod = "POST", InsertionMode = InsertionMode.Replace, UpdateTargetId = "PartialViewPaymentHistory", OnSuccess = "OnSuccessEdit" }, new { id = "frmPayments", enctype = "multipart/form-data" }))
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="panel-heading" style="padding-top:15px;padding-right: 15px;">
+            <div class="panel-btns">
+                <a onclick='myFunClosed("myModalEdit")'>&times;</a>
+            </div>
+
+            <h1 class="panel-title" style="font-size: 20px;text-align: center "><label id="lblName" name="lblName">@Utility.GetTitleFrom(API.dm_HangHoa_KhungGia)</label></h1>
+            <div class="panel-body" style="padding:5px">
+            </div>
+        </div>
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div id="ValidationSummary" class="validation-summary-errors text-danger">
+        </div>
+        @Html.HiddenFor(model => model.LOC_ID)
+        @Html.HiddenFor(model => model.ID)
+        <div class="panel-body panel-body-nopadding">
+            <div class="form-horizontal form-bordered">
+                <div class="form-group">
+                    @Html.Label(@Utility.GetColumnName(@API.dm_KhuVuc, "MA"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                    <div class="col-sm-5">
+                        @Html.EditorFor(model => model.MA, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.MA, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.Label(@Utility.GetColumnName(@API.dm_KhuVuc, "NAME"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                    <div class="col-sm-5">
+                        @Html.EditorFor(model => model.NAME, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.NAME, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.Label(@Utility.GetColumnName(@API.dm_HangHoa_KhungGia, "ID_HANGHOA"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                    <div class="col-sm-5">
+
+                        <div class="input-group mb15">
+                            @Html.DropDownListFor(model => model.ID_HANGHOA, new SelectList(Model.lstdm_HangHoa, "ID", "NAME"), !string.IsNullOrEmpty(Model.ID_HANGHOA) ? "" : Utility.GetTitleChon(API.dm_HangHoa), htmlAttributes: new { @class = "form-control chosen-select", id = "lstdm_HangHoaEdit" })
+                            <span class="input-group-btn">
+                                <button type="button" class="btn btn-default" onclick="myFunctionAddProductPriceRangeHangHoa('@{@API.dm_HangHoa_KhungGia;}',document.getElementById('lstdm_HangHoaEdit').value)"><span class="glyphicon glyphicon-log-in"></span></button>
+                            </span>
+                            @Html.ValidationMessageFor(model => model.ID_HANGHOA, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group" id="divPromotion_TangEdit">
+                    <div class="col-sm-5" style="width:100%">
+                        <h5 class="subtitle">Danh sách hàng hóa:  @Html.ValidationMessageFor(model => model.lstdm_HangHoa_KhungGia_HangHoa, "", new { @class = "text-danger" }) </h5>
+                        <div class="tablescroll" style="overflow-x:auto; Overflow-y:scroll; height: auto;">
+                            <div class="panel-body panel-body-nopadding">
+                                <div class="form-horizontal form-bordered">
+                                    <table class="table table-bordered mb30">
+                                        <thead>
+                                            <tr>
+                                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_HangHoa_KhungGia, "MA")</th>
+                                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_HangHoa_KhungGia, "NAME")</th>
+                                                <th>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tbodyTempItemdivPromotion_TangEdit">
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group" id="divPromotion_YCEdit">
+                    <div class="col-sm-5" style="width:100%">
+                        <h5 class="subtitle">Danh sách khung giá:  @Html.ValidationMessageFor(model => model.lstdm_HangHoa_KhungGia, "", new { @class = "text-danger" }) <a href="#" onclick="myFunctionAddProductPriceRange('@{@API.dm_HangHoa_KhungGia;}','')">  + Thêm khung giá</a></h5>
+                        <div class="tablescroll" style="overflow-x:auto; Overflow-y:scroll; height: auto;">
+                            <div class="panel-body panel-body-nopadding">
+                                <div class="form-horizontal form-bordered">
+                                    <table class="table table-bordered mb30">
+                                        <thead>
+                                            <tr>
+                                                @*<th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_HangHoa_KhungGia, "MA")</th>*@
+                                                @*<th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_HangHoa_KhungGia, "NAME")</th>*@
+                                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_HangHoa_KhungGia, "TU") </th>
+                                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_HangHoa_KhungGia, "DEN") </th>
+                                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_HangHoa_KhungGia, "ID_DVT") </th>
+                                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_HangHoa_KhungGia, "DONGIA")</th>
+                                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_HangHoa_KhungGia, "HINHTHUC_TINHKPI")</th>
+                                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_HangHoa_KhungGia, "TIEN_KPI") </th>
+                                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_HangHoa_KhungGia, "CK_KPI") </th>
+                                                <th>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tbodyTempItemdivPromotion_YCEdit">
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <div class="form-group">
+                    @Html.Label(@Utility.GetColumnName(@API.dm_HangHoa_KhungGia, "ISACTIVE"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                    <div class="col-sm-5">
+                        @Html.CheckBoxFor(model => model.ISACTIVE, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.ISACTIVE, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel-footer">
+            <div class="row">
+                <div class="col-sm-5 col-sm-offset-3">
+                    <button class="btn btn-primary" onclick="validatetext()">@Utility.ThucHien</button>
+                    <a class="btn btn-danger" onclick='myFunClosed("myModalEdit")'>@Utility.Dong</a>
+                </div>
+            </div>
+        </div>
+
+    }
+}
+else
+{
+    {
+        ViewBag.Title = API.ViewBagTitle;
+        Layout = "~/Views/Shared/Admin.cshtml";
+    }
+    <hr />
+    using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+
+    }
+    if (ViewBag.ID != null && !string.IsNullOrEmpty(ViewBag.ID))
+    {
+        <script>
+      var x = document.getElementById("ID");
+      x.value = '@ViewBag.ID';
+        </script>
+    }
+}
+<script type="text/javascript">
+    $(function () {
+        // delete extra hidden fields created by checkboxes as the grid links mess this up by doubling the querystring parameters
+        $("input[type='hidden'][name='ISACTIVE']").remove();
+        
+    });
+</script>

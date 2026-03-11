@@ -1,0 +1,20 @@
+﻿@model IList<MVC_QuanLyTHP.Models.PHANLOAI>
+@for (int i = 0; i < Model.Count;i++ )
+{
+           if (i < Model.Count - 1) { 
+               <li  class="seperator">  
+                     <span>@Html.ActionLink(""+ Model[i].TenLoai +"", "Listing", "Home", new {id = Model[i].TenLoai},null)</span>
+                     <ul>
+                        <li><a href="#"></a></li>
+                    </ul>
+                </li>
+           }else{
+                <li>  
+                     <span>@Html.ActionLink(""+ Model[i].TenLoai +"", "Listing", "Home", new {id = Model[i].TenLoai},null)</span>
+                     <ul>
+                        <li><a href="#"></a></li>
+                    </ul>
+                </li>
+           }            
+                 
+}

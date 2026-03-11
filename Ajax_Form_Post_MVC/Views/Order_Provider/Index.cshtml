@@ -9,7 +9,7 @@
     Layout = "~/Views/Shared/Admin.cshtml";
 }
 @Html.Partial("LoadCssDanhMuc")
-<script src="@Url.Content("~/Scripts/InputOutput.js")"></script>
+<script src="@Url.Content("~/Scripts/InputOutput.js"+Utility.VersionJs)"></script>
 <script>
     //vn
     $("input.form-control.mask").each((i, ele) => {
@@ -95,7 +95,21 @@
                         }
                     </select>
                 </div>
-
+                <div class="col-sm-2">
+                    <select class="form-control chosen-select" id="id_depot" name="id_depot">
+                        @foreach (var itm in Model.lstdm_Kho)
+                        {
+                            if (ViewBag.ID_KHO_DF == itm.ID)
+                            {
+                                <option value="@itm.ID" selected>@itm.NAME</option>
+                            }
+                            else
+                            {
+                                <option value="@itm.ID">@itm.NAME</option>
+                            }
+                        }
+                    </select>
+                </div>
 
             </div>
             <div class="form-group">
@@ -212,7 +226,7 @@
         </div>
 
         <div class="panel-footer">
-            @Html.PagedListPager((PagedList.IPagedList<v_ct_PhieuDatHangNCC>)Model.IPagedList, page => Url.Action("Index", new { Page = page, ShowSearchValue = ViewBag.showsearchValue, SearchString = ViewBag.searchValue, FromDate = ViewBag.fromdate, ToDate = ViewBag.todate }))
+            @Html.PagedListPager((PagedList.IPagedList<v_ct_PhieuDatHangNCC>)Model.IPagedList, page => Url.Action("Index", new { Page = page, ShowSearchValue = ViewBag.showsearchValue, SearchString = ViewBag.searchValue, FromDate = ViewBag.fromdate, ToDate = ViewBag.todate, ID_DEPOT = ViewBag.ID_KHO_DF }))
         </div>
     </div>
 

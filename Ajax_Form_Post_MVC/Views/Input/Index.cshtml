@@ -9,7 +9,7 @@
     Layout = "~/Views/Shared/Admin.cshtml";
 }
 @Html.Partial("LoadCssDanhMuc")
-<script src="@Url.Content("~/Scripts/InputOutput.js")"></script>
+<script src="@Url.Content("~/Scripts/InputOutput.js"+Utility.VersionJs)"></script>
 <script>
     //vn
     $("input.form-control.mask").each((i, ele) => {
@@ -77,8 +77,6 @@
                         </div><!-- btn-group -->
                     </div>
                 }
-            </div>
-            <div class="form-group">
                 <div class="col-sm-2" style="padding-bottom: 5px;">
                     <select class="form-control chosen-select" onchange="show('@{@API.ct_PhieuNhap;}')" id="Show" name="Show">
                         @for (int show = 0; show < Utility.arrShow.Length; show++)
@@ -94,9 +92,26 @@
                         }
                     </select>
                 </div>
+                <div class="col-sm-2">
+                    <select class="form-control chosen-select" id="id_depot" name="id_depot">
+                        @foreach (var itm in Model.lstdm_Kho)
+                        {
+                            if (ViewBag.ID_KHO_DF == itm.ID)
+                            {
+                                <option value="@itm.ID" selected>@itm.NAME</option>
+                            }
+                            else
+                            {
+                                <option value="@itm.ID">@itm.NAME</option>
+                            }
+                        }
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                
                 <div class="col-sm-2" style="padding-bottom: 5px;">
                     <input type="date" class="form-control" name="fromdate" id="fromdate" value="@ViewBag.fromdate" />
-
                 </div>
                 <div class="col-sm-2">
                     <input type="date" class="form-control" name="todate" id="todate" value="@ViewBag.todate" />
@@ -111,6 +126,7 @@
                     <table class="table table-bordered mb30" id="example-table">
                         <thead>
                             <tr>
+                               
                                 <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuNhap, "ID_LOAIPHIEUNHAP")</th>
                                 <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuNhap, "ID_KHO")</th>
                                 <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuNhap, "MAPHIEU")</th>
@@ -139,6 +155,7 @@
                                 string TONGTIENVAT = item.TONGTIENVAT.ToString("N0");
                                 string TONGTIEN = item.TONGTIEN.ToString("N0");
                                 <tr id="@item.ID">
+                                   
                                     <td style="white-space: nowrap; " id="NAME_LOAIPHIEUNHAP"> @Html.DisplayFor(modelItem => item.NAME_LOAIPHIEUNHAP)</td>
                                     <td style="white-space: nowrap; " id="NAME_KHO"> @Html.DisplayFor(modelItem => item.NAME_KHO)</td>
                                     <td style="white-space: nowrap; " id="MAPHIEU"> @Html.DisplayFor(modelItem => item.MAPHIEU)</td>
@@ -188,8 +205,9 @@
 
         <div class="panel-footer">
             @ViewBag.TotalSum
-            @Html.PagedListPager((PagedList.IPagedList<v_ct_PhieuNhap>)Model.IPagedList, page => Url.Action("Index", new { Page = page, ShowSearchValue = ViewBag.showsearchValue, SearchString = ViewBag.searchValue, FromDate = ViewBag.fromdate, ToDate = ViewBag.todate }))
-        </div>    </div>
+            @Html.PagedListPager((PagedList.IPagedList<v_ct_PhieuNhap>)Model.IPagedList, page => Url.Action("Index", new { Page = page, ShowSearchValue = ViewBag.showsearchValue, SearchString = ViewBag.searchValue, FromDate = ViewBag.fromdate, ToDate = ViewBag.todate, ID_DEPOT = ViewBag.ID_KHO_DF }))
+        </div>    
+    </div>
 
     
 </div>

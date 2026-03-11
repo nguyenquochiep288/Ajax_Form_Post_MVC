@@ -1,0 +1,16 @@
+﻿<div class="row mb10">
+    <div class="col-sm-5">
+        <select class="form-control chosen-select" onchange="show()" id="show">
+            @for (int show = 50; show <= 200; show += 50)
+            {
+                if (ViewBag.show == show)
+                {
+                    <option value="@show" selected>@show</option>}
+                else
+                {
+                    <option value="@show">@show</option>
+                }
+            }
+        </select>
+    </div>
+</div>

@@ -84,9 +84,6 @@
                                     <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KhachHang, "MA")</th>
                                     <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KhachHang, "NAME")</th>
                                     <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KhachHang, "ADDRESS")</th>
-                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KhachHang, "TEL")</th>
-                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KhachHang, "FAX")</th>
-                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KhachHang, "EMAIL")</th>
                                     <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KhachHang, "NGAYSINH")</th>
                                     <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KhachHang, "DIS")</th>
                                     <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KhachHang, "RATE")</th>
@@ -96,6 +93,13 @@
                                     <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KhachHang, "LEVEL_PRICE")</th>
                                     <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KhachHang, "ID_KHUVUC")</th>
                                     <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KhachHang, "CONGNODAUKY")</th>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KhachHang, "TENKHACHHANG")</th>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KhachHang, "TENDONVI")</th>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KhachHang, "DIACHI")</th>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KhachHang, "MASOTHUE")</th>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KhachHang, "CCCD")</th>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KhachHang, "TEL")</th>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KhachHang, "EMAIL")</th>
                                     <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KhachHang, "ISACTIVE")</th>
                                     <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KhachHang, "ISDEFAULT")</th>
                                     <th>
@@ -113,9 +117,6 @@
                                         <td style="white-space: nowrap; " id="MA"> @Html.DisplayFor(modelItem => item.MA)</td>
                                         <td style="white-space: nowrap; " id="NAME"> @Html.DisplayFor(modelItem => item.NAME)</td>
                                         <td style="white-space: nowrap; " id="ADDRESS"> @Html.DisplayFor(modelItem => item.ADDRESS)</td>
-                                        <td style="white-space: nowrap; " id="TEL"> @Html.DisplayFor(modelItem => item.TEL)</td>
-                                        <td style="white-space: nowrap; " id="FAX"> @Html.DisplayFor(modelItem => item.FAX)</td>
-                                        <td style="white-space: nowrap; " id="EMAIL"> @Html.DisplayFor(modelItem => item.EMAIL)</td>
                                         <td style="white-space: nowrap; " id="NGAYSINH"> @NGAYSINH</td>
                                         <td style="white-space: nowrap; " id="DIS"> @Html.DisplayFor(modelItem => item.DIS)</td>
                                         <td style="white-space: nowrap; " id="RATE"> @Html.DisplayFor(modelItem => item.RATE)</td>
@@ -125,6 +126,13 @@
                                         <td style="white-space: nowrap; " id="LEVEL_PRICE"> @Html.DisplayFor(modelItem => item.LEVEL_PRICE)</td>
                                         <td style="white-space: nowrap; " id="NAME_KHUVUC"> @Html.DisplayFor(modelItem => item.NAME_KHUVUC)</td>
                                         <td style="white-space: nowrap; " id="CONGNODAUKY">  @CONGNODAUKY</td>
+                                        <td style="white-space: nowrap; " id="TENKHACHHANG"> @Html.DisplayFor(modelItem => item.TENKHACHHANG)</td>
+                                        <td style="white-space: nowrap; " id="TENDONVI"> @Html.DisplayFor(modelItem => item.TENDONVI)</td>
+                                        <td style="white-space: nowrap; " id="DIACHI"> @Html.DisplayFor(modelItem => item.DIACHI)</td>
+                                        <td style="white-space: nowrap; " id="MASOTHUE"> @Html.DisplayFor(modelItem => item.MASOTHUE)</td>
+                                        <td style="white-space: nowrap; " id="CCCD"> @Html.DisplayFor(modelItem => item.CCCD)</td>
+                                        <td style="white-space: nowrap; " id="TEL"> @Html.DisplayFor(modelItem => item.TEL)</td>
+                                        <td style="white-space: nowrap; " id="EMAIL"> @Html.DisplayFor(modelItem => item.EMAIL)</td>
                                         <td style="white-space: nowrap; " id="ISACTIVE"> @Html.DisplayFor(modelItem => item.ISACTIVE)</td>
                                         <td style="white-space: nowrap; " id="ISDEFAULT"> @Html.DisplayFor(modelItem => item.ISDEFAULT)</td>
 

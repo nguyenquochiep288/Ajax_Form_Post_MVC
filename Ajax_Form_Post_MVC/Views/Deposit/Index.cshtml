@@ -178,7 +178,7 @@
         }
 </style>
 @Html.Partial("LoadCssDanhMuc")
-<script src="@Url.Content("~/Scripts/Deposit_Temp.js?v=3.0.1")"></script>
+<script src="@Url.Content("~/Scripts/Deposit_Temp.js"+Utility.VersionJs)"></script>
 <div class="panel-group" id="accordion">
     <div class="panel panel-default">
         <div class="panel-heading">
@@ -366,7 +366,7 @@
                         
                         <div class="col-sm-2">
                             <select class="form-control" id="HINHTHUC_THUCHIEN" name="HINHTHUC_THUCHIEN">
-                                <option value="0" )>Hôm nay</option>
+                                <option value="0">Hôm nay</option>
                                 <option value="1">Ngày mai</option>
                                 <option value="2">Ngày mốt</option>
                             </select>

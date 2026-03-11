@@ -469,6 +469,16 @@ function OnSuccessDeposit_Temp(apiResponse) {
             var radiovalue = "";
             var nf = Intl.NumberFormat('vi-VN');
             for (var m = 0; m < apiResponse.Detail.length; m++) {
+                if (apiResponse.Detail[m].Key == "PriceProductDeposit_Temp") {
+                    if (apiResponse.Detail[m].Value != null && apiResponse.Detail[m].Value == true) {
+                        document.getElementById("PriceProductDeposit_Temp").removeAttribute("readonly");                      
+                    }
+                    else {
+                        document.getElementById("PriceProductDeposit_Temp").setAttribute("readonly", "readonly");
+                    }
+                    continue;
+                }
+
                 if (apiResponse.Detail[m].Key == "NAME") {
                     document.getElementById("lblNameDeposit_Temp").innerHTML = apiResponse.Detail[m].Value;
                     continue;
@@ -617,6 +627,8 @@ function OnSuccessProductDeposit_Temp(apiResponse) {
 
 
             })
+            if (apiResponse.Message != null && apiResponse.Message != "" && apiResponse.Message != "Success")
+                 alert(apiResponse.Message);
             myFunClosed("myModalDeposit_Temp");
         }
         else {
@@ -676,6 +688,8 @@ function updateAddProduct(elem) {
             document.getElementById("TotalProductDeposit_Temp").value = data.Detail.TONGCONG;
             document.getElementById("THUESUATProductDeposit_Temp").value = data.Detail.THUESUAT;
             document.getElementById("idDepotDeposit_Temp").value = data.Detail.ID_KHO;
+            if (data.Message != null && data.Message != "" && data.Message != "Success")
+                alert(data.Message);
         });
     }
     catch (ex) {
@@ -763,6 +777,8 @@ function updateDeposit_Temp(ID, elem) {
                         $(ele1).hide()
                     })
                 })
+                if (apiResponse.Message != null && apiResponse.Message != "" && apiResponse.Message != "Success")
+                    alert(apiResponse.Message);
             }
             else {
                 if (apiResponse.URL != null && apiResponse.URL != "")
@@ -1071,6 +1087,7 @@ function OnSubmit() {
                
                 if (cartList != null && cartList.length > 0) {
                     $.ajax({
+                        type: "POST",
                         url: "/Deposit/OnSubmitDeposit",
                         data: { cartOrder: JSON.stringify(cartList), HINHTHUC: value },
                         dataType: "json",
@@ -1117,14 +1134,22 @@ function funSearchItemOrder(Controller) {
         //var x1 = document.getElementById("ShowSearchValue");
         //var value1 = x1.options[x1.selectedIndex].value;
         var value1 = "";
-        var SearchString = document.getElementById("SearchString").value;
+        var SearchString = document.getElementById("SearchString")?.value;
         var fromdate = document.getElementById("fromdate").value;
         var todate = document.getElementById("todate").value;
-        var y = document.getElementById("id_depot");
-        var id_depot = y.options[y.selectedIndex].value;
-        y = document.getElementById("lstID_KHUVUCSEARCH");
-        var ID_KHUVUC = y.options[y.selectedIndex].value;
-        location.replace("/" + Controller + "?Page=" + 1 + "&ID_DEPOT=" + id_depot + "&ID_KHUVUC=" + ID_KHUVUC + "&ShowSearchValue=" + value1 + "&SearchString=" + SearchString + "&FromDate=" + fromdate + "&ToDate=" + todate);
+        var s = document.getElementById("id_depot");
+        var id_depot = s ? s.options[s.selectedIndex].value : "";
+        s = document.getElementById("lstID_KHUVUCSEARCH"); 
+        var ID_KHUVUC = s ? s.options[s.selectedIndex].value : "";
+
+        var srch_ID_KHUVUC = "&SearchString=" + SearchString + "&FromDate=" + fromdate + "&ToDate=" + todate;
+        if (id_depot != null && id_depot != "") {
+            srch_ID_KHUVUC += "&ID_DEPOT=" + id_depot;
+        }
+        if (ID_KHUVUC != null && ID_KHUVUC != "") {
+            srch_ID_KHUVUC += "&ID_KHUVUC=" + ID_KHUVUC;
+        }
+        location.replace("/" + Controller + "?Page=" + 1 + srch_ID_KHUVUC);
     }
     catch (ex) {
         alert(ex.Message);

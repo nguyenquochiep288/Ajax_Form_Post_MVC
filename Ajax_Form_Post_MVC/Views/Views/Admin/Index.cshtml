@@ -1,0 +1,122 @@
+﻿@model MVC_QuanLyTHP.Controllers.Login_Model
+@{
+    ViewBag.Title = "Trang Hiệp Phát";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="shortcut icon" href="images/favicon.png" type="image/png">
+
+    <link href="@Url.Content("~/Content/css/style.default.css")" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+    <script src="js/html5shiv.js"></script>
+    <script src="js/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body class="signin">
+
+    <!-- Preloader -->
+    <div id="preloader">
+        <div id="status"><i class="fa fa-spinner fa-spin"></i></div>
+    </div>
+
+    <section>
+
+        <div class="signinpanel">
+
+            <div class="row">
+
+                <div class="col-md-7">
+
+                    <div class="signin-info">
+                        <div class="logopanel">
+                            <h1><span>T</span> H <span>P</span></h1>
+                        </div><!-- logopanel -->
+
+                        <div class="mb20"></div>
+
+                        <h5><strong>Chào mừng bạn đến với hệ thống quản lý phần mềm kho!</strong></h5>
+                        <ul>
+                            <li><i class="fa fa-arrow-circle-o-right mr5"></i> Kho</li>
+                            <li><i class="fa fa-arrow-circle-o-right mr5"></i> Nhập, xuất</li>
+                            <li><i class="fa fa-arrow-circle-o-right mr5"></i> Đặt hàng</li>
+                            <li><i class="fa fa-arrow-circle-o-right mr5"></i> Công nợ</li>
+                            <li><i class="fa fa-arrow-circle-o-right mr5"></i> và nhiều hơn thế nữa...</li>
+                        </ul>
+                        <div class="mb20"></div>
+                        @*<strong>Not a member? <a href="signup.html">Sign Up</a></strong>*@
+                    </div><!-- signin0-info -->
+
+                </div><!-- col-sm-7 -->
+
+                <div class="col-sm-5">
+
+                    
+                        <h4 class="nomargin">Đăng nhập</h4>
+                        <p class="mt5 mb20">Đăng nhập để truy cập tài khoản của bạn.</p>
+                        @using (Html.BeginForm())
+                        {
+                            @Html.TextBoxFor(model => model.user, new { @class = "form-control uname", @placeholder = "Tên đăng nhập" })
+                            <span style="color:red">@Html.ValidationMessageFor(m => m.user)</span>
+                            @Html.PasswordFor(model => model.pass, new { value = Model.pass, @class = "form-control pword", @placeholder = "Mật khẩu" })
+                            <span style="color:red">@Html.ValidationMessageFor(m => m.pass)</span>
+                            <div><label>@Html.CheckBoxFor(model => model.check, new { htmlAttributes = new { @class = "form-control" } })  Ghi nhớ đăng nhập</label></div>
+                            <span style="color:red">@Html.ValidationSummary(true)</span>
+                            <button class="btn btn-success btn-block">Đăng nhập</button>
+                        }
+                </div><!-- col-sm-5 -->
+
+            </div><!-- row -->
+
+            <div class="signup-footer">
+                <div class="pull-left">
+                    &copy; 2023.
+                </div>
+                <div class="pull-right">
+                    @*Created By: <a href="http://themepixels.com/" target="_blank">ThemePixels</a>*@
+                </div>
+            </div>
+
+        </div><!-- signin -->
+
+    </section>
+
+    <script src="@Url.Content("~/Content/js/jquery-1.10.2.min.js")"></script>
+    <script src="@Url.Content("~/Content/js/jquery-migrate-1.2.1.min.js")"></script>
+    <script src="@Url.Content("~/Content/js/bootstrap.min.js")"></script>
+    <script src="@Url.Content("~/Content/js/modernizr.min.js")"></script>
+    <script src="@Url.Content("~/Content/js/retina.min.js")"></script>
+
+    <script src="@Url.Content("~/Content/js/custom.js")"></script>
+
+</body>
+</html>
+
+<!--<div class="lockedpanel">
+    <div class="locked">
+        <i class="fa fa-lock"></i>
+    </div>
+    <div class="logopanel" style="background-color:#e4e7ea">
+        <h1 style="font-size:80px;margin-left:0%"><i><span>T</span>H<span>P</span></i></h1>
+    </div>--><!-- logopanel -->
+    <!--<div class="logged">
+        <h4>Đăng nhập</h4>
+    </div>
+    @using (Html.BeginForm())
+    {
+        @Html.TextBoxFor(m => m.user, new { @class = "form-control uname", @placeholder = "Tên đăng nhập" })
+        <span style="color:red">@Html.ValidationMessageFor(m => m.user)</span>
+        @Html.PasswordFor(m => m.pass, new { @class = "form-control pword", @placeholder = "Mật khẩu" })
+        <span style="color:red">@Html.ValidationMessageFor(m => m.pass)</span>
+        <div><label>@Html.CheckBoxFor(model => model.check, new { @checked = "checked" })  Ghi nhớ đăng nhập</label></div>
+        <span style="color:red">@Html.ValidationSummary(true)</span>
+        <button class="btn btn-success btn-block">Đăng nhập</button>
+    }
+</div>--><!-- lockedpanel -->

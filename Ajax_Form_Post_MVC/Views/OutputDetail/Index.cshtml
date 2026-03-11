@@ -1,0 +1,191 @@
+﻿@model MVC_QuanLyTHP.Models.v_Sp_Get_DanhSachPhieuXuat_ChiTiet_Result
+@using DatabaseTHP;
+@using PagedList.Mvc;
+@using DatabaseTHP.Class;
+@using MVC_QuanLyTHP.Class;
+@using MVC_QuanLyTHP.Models;
+@using Newtonsoft.Json;
+@{
+    ViewBag.Title = API.ViewBagTitle;
+    Layout = "~/Views/Shared/Admin.cshtml";
+}
+@Html.Partial("LoadCssDanhMuc")
+<hr />
+<div class="panel-group" id="accordion">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h1 class="panel-title" style="text-align:center">
+                <a data-toggle="collapse" data-parent="#accordion" href="#collapseOneDebt">
+                    @Utility.GetTitleFrom(API.ThongKeChiTietPhieuXuat)
+                </a>
+            </h1>
+        </div>
+
+
+        <div id="collapseOneDebt" class="panel-collapse collapse in">
+            <div class="panel-body panel-body-nopadding">
+                <div class="form-horizontal form-bordered">
+                    @using (Html.BeginForm("Index", API.ThongKeChiTietPhieuXuat, FormMethod.Post, new AjaxOptions { OnBegin = "OnBegin", OnSuccess = "OnEnd" }))
+                    {
+                        <div class="form-group">
+                            @Html.Label(@Utility.GetColumnName(@API.ThongKeCongNoKhachHang, "ISTHEOTHOIGIAN"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                            <div class="col-sm-2">
+                                @Html.TextBoxFor(model => model.TUNGAY, (Model.TUNGAY).ToString("yyyy-MM-dd"), new { @class = "form-control hasDatepicker", @placeholder = "dd/MM/yyyy", @type = "date" })
+                                @Html.ValidationMessageFor(model => model.TUNGAY, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="col-sm-2">
+                                @Html.TextBoxFor(model => model.DENNGAY, (Model.DENNGAY).ToString("yyyy-MM-dd"), new { @class = "form-control hasDatepicker", @placeholder = "dd/MM/yyyy", @type = "date" })
+                                @Html.ValidationMessageFor(model => model.DENNGAY, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @Html.Label(@Utility.GetColumnName(@API.ThongKeCongNoKhachHang, "ID_KHUVUC"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                            <div class="col-sm-3">
+                                <div class="input-group mb15">
+                                    <span class="input-group-btn">
+                                        <button type="button" class="btn btn-default" onclick="myFunOpenSearch('collapseOneDebt', '@{@API.dm_KhuVuc;}', '@API.Chon1', 'lstdm_KhuVuc', '')"><span class="glyphicon glyphicon-search"></span></button>
+                                    </span>
+                                    @Html.DropDownListFor(model => model.ID_KHUVUC, new SelectList(Model.lstdm_KhuVuc, "ID", "NAME"), !string.IsNullOrEmpty(Model.ID_KHUVUC) ? "" : Utility.GetTitleChon(API.dm_KhuVuc), htmlAttributes: new { @class = "form-control chosen-select", id = "lstdm_KhuVuc" })
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @Html.Label(@Utility.GetColumnName(@API.ThongKeCongNoKhachHang, "ID_NHOMKHACHHANG"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+
+                            <div class="col-sm-3">
+                                <div class="input-group mb15">
+                                    <span class="input-group-btn">
+                                        <button type="button" class="btn btn-default" onclick="myFunOpenSearch('collapseOneDebt', '@{@API.dm_NhomKhachHang;}', '@API.Chon1', 'lstdm_NhomKhachHang', '')"><span class="glyphicon glyphicon-search"></span></button>
+                                    </span>
+                                    @Html.DropDownListFor(model => model.ID_NHOMKHACHHANG, new SelectList(Model.lstdm_NhomKhachHang, "ID", "NAME"), !string.IsNullOrEmpty(Model.ID_NHOMKHACHHANG) ? "" : Utility.GetTitleChon(API.dm_NhomKhachHang), htmlAttributes: new { @class = "form-control chosen-select", id = "lstdm_NhomKhachHang" })
+                                </div>
+                            </div>
+                            @Html.Label(@Utility.GetColumnName(@API.ThongKeCongNoKhachHang, "ID_KHACHHANG"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                            <div class="col-sm-3">
+                                <div class="input-group mb15">
+                                    <span class="input-group-btn">
+                                        <button type="button" class="btn btn-default" onclick="myFunOpenSearch('collapseOneDebt', '@{@API.dm_KhachHang;}', '@API.Chon1', 'lstdm_KhachHang', '')"><span class="glyphicon glyphicon-search"></span></button>
+                                    </span>
+                                    @Html.DropDownListFor(model => model.ID_KHACHHANG, new SelectList(Model.lstdm_KhachHang, "ID", "NAME"), !string.IsNullOrEmpty(Model.ID_KHACHHANG) ? "" : Utility.GetTitleChon(API.dm_KhachHang), htmlAttributes: new { @class = "form-control chosen-select", id = "lstdm_KhachHang" })
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @Html.Label(@Utility.GetColumnName(@API.ThongKeChiTietPhieuXuat, "TINHTRANGHOADON"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                            <div class="col-sm-4">
+                                @Html.TextBoxFor(model => model.KEY, new { @class = "form-control", @style = "width:80%;display:inline-block", @placeholder = Utility.TimKiem })
+                            </div>
+                        </div>
+                        <div class="panel-footer">
+                            <div class="row">
+                                <div class="col-sm-5 col-sm-offset-2">
+                                    <button class="btn btn-primary">@Utility.TimKiem</button>
+                                    <a id="download-excel" style="background-color: #217346;" class="btn btn-success" onclick="ExportExcel('example-table')"><i class="fa fa-file-text-o" style="margin-right:10px"></i>@Utility.XuatExcel</a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                </div>
+            </div>
+
+
+
+            <div class="tablescroll" style="overflow-x: auto; Overflow-y: scroll; height: 500px;">
+                <div class="panel-body panel-body-nopadding">
+                    <div class="form-horizontal form-bordered">
+                        <table class="table table-bordered mb30" id="example-table">
+                            <thead>
+                                <tr>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuXuat, "NGAYLAP")</th>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuXuat, "MAPHIEU")</th>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KhachHang, "MA")</th>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KhachHang, "NAME")</th>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KhachHang, "DIACHI")</th>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KhachHang, "TENDONVI")</th>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KhachHang, "MASOTHUE")</th>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KhachHang, "TENKHACHHANG")</th>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KhachHang, "CCCD")</th>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ThongKeChiTietPhieuXuat, "MA")</th>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ThongKeChiTietPhieuXuat, "NAME")</th>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ThongKeChiTietPhieuXuat, "NAME_DVT")</th>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuXuat_ChiTiet, "SOLUONG")</th>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuXuat_ChiTiet, "DONGIA")</th>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuXuat_ChiTiet, "THANHTIEN")</th>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuXuat_ChiTiet, "TONGTIENGIAMGIA")</th>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ThongKeChiTietPhieuXuat, "THANHTIENSAUCHIETKHAU")</th>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ThongKeChiTietPhieuXuat, "TINHTRANGHOADON")</th>
+                                </tr>
+                            </thead>
+
+                            @{
+                                if (Model.IPagedList != null && Model.IPagedList.Count() > 0)
+                                {
+                                    <tbody id="tbodytmpitem">
+
+                                        @foreach (var item in Model.IPagedList)
+                                        {
+                                            string NGAYLAP = item.NGAYLAP.ToString("dd/MM/yyyy");
+                                            string DONGIA = item.DONGIA.ToString("N0").Replace(".", ",");
+                                            string THANHTIEN = (item.THANHTIEN + item.TONGTIENGIAMGIA).ToString("N0").Replace(".", ",");
+                                            string TONGTIENGIAMGIA = item.TONGTIENGIAMGIA.ToString("N0").Replace(".", ",");
+                                            string THANHTIENSAUCHIETKHAU = (item.THANHTIEN).ToString("N0").Replace(".", ",");
+                                            <tr id="@item.ID">
+                                                <td style="white-space: nowrap; " id="NGAYLAP"> @NGAYLAP</td>
+                                                <td style="white-space: nowrap; " id="MAPHIEU"> @Html.DisplayFor(modelItem => item.MAPHIEU)</td>
+                                                <td style="white-space: nowrap;" id="MA_KHACHHANG_NCC"> @Html.DisplayFor(modelItem => item.MA_KHACHHANG_NCC)</td>
+                                                <td style="white-space: nowrap;" id="NAME_KHACHHANG_NCC"> @Html.DisplayFor(modelItem => item.NAME_KHACHHANG_NCC)</td>
+                                                <td style="white-space: nowrap;" id="DIACHI">  @Html.DisplayFor(modelItem => item.DIACHI)</td>
+                                                <td style="white-space: nowrap;" id="TENDONVI">  @Html.DisplayFor(modelItem => item.TENDONVI)</td>
+                                                <td style="white-space: nowrap;" id="MASOTHUE_KHACHHANG_NCC">  @Html.DisplayFor(modelItem => item.MASOTHUE_KHACHHANG_NCC)</td>
+                                                <td style="white-space: nowrap;" id="TENKHACHHANG">  @Html.DisplayFor(modelItem => item.TENKHACHHANG)</td>
+                                                <td style="white-space: nowrap;" id="CCCD_KHACHHANG_NCC">  @Html.DisplayFor(modelItem => item.CCCD_KHACHHANG_NCC)</td>
+                                                <td style="white-space: nowrap;" id="MA">  @Html.DisplayFor(modelItem => item.MA)</td>
+                                                <td style="white-space: nowrap;" id="NAME">  @Html.DisplayFor(modelItem => item.NAME)</td>
+                                                <td style="white-space: nowrap;" id="NAME_DVT">  @Html.DisplayFor(modelItem => item.NAME_DVT)</td>
+                                                <td style="white-space: nowrap; text-align: right;" id="SOLUONG">  @Html.DisplayFor(modelItem => item.SOLUONG)</td>
+                                                <td style="white-space: nowrap; text-align: right;" id="DONGIA">  @DONGIA</td>
+                                                <td style="white-space: nowrap; text-align: right;" id="THANHTIEN">  @THANHTIEN</td>
+                                                <td style="white-space: nowrap; text-align: right;" id="TONGTIENGIAMGIA">  @TONGTIENGIAMGIA</td>
+                                                <td style="white-space: nowrap; text-align: right;" id="THANHTIENSAUCHIETKHAU">  @THANHTIENSAUCHIETKHAU</td>
+                                                <td style="white-space: nowrap; text-align: right;" id="TINHTRANGHOADON">   @Html.DisplayFor(modelItem => item.TINHTRANGHOADON)</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                }
+                                @*<thead>
+                                    <tr style="font-weight: bold;">
+                                        <td style="white-space: nowrap; text-align: right;" colspan="2">Tổng:</td>
+                                        <td style="white-space: nowrap; text-align: right;" id="TT_TONGTIENCONGNODAUKY"> @TT_TONGTIENCONGNODAUKY.ToString("N0")</td>
+                                        <td style="white-space: nowrap; text-align: right;" id="TT_TONGTIENPHIEUXUAT"> @TT_TONGTIENPHIEUXUAT.ToString("N0")</td>
+                                        <td style="white-space: nowrap; text-align: right;" id="TT_TONGTIENPHIEUNHAP"> @TT_TONGTIENPHIEUTHU.ToString("N0")</td>
+                                        <td style="white-space: nowrap; text-align: right;" id="TT_TONGTIENPHIEUNHAP"> @TT_TONGTIENPHIEUNHAP.ToString("N0")</td>
+                                        <td style="white-space: nowrap; text-align: right;" id="TT_TONGTIENPHIEUNHAP"> @TT_TONGTIENPHIEUCHI.ToString("N0")</td>
+                                        <td style="white-space: nowrap; text-align: right;" id="TT_TONGTIENPHIEUNHAP"> @TT_TONGTIENCONGNOCUOIKY.ToString("N0")</td>
+                                    </tr>
+                                </thead>*@
+                            }
+                        </table>
+                    </div>
+                </div><!-- table-responsive -->
+            </div>
+
+
+        </div>
+        <div class="panel-footer">
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(function () {
+        // delete extra hidden fields created by checkboxes as the grid links mess this up by doubling the querystring parameters
+        $("input[type='hidden'][name='ISPHATSINHCONGNO']").remove();
+        $("input[type='hidden'][name='ISPHATSINHCONGNOTRONGKY']").remove();
+        $("input[type='hidden'][name='ISCONCONGNO']").remove();
+        $("input[type='hidden'][name='ISTHEOTHOIGIAN']").remove();
+    });
+</script>

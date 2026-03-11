@@ -1,0 +1,183 @@
+﻿@model MVC_QuanLyTHP.Models.v_v_dm_KPI_KinhDoanh
+@using DatabaseTHP;
+@using PagedList.Mvc;
+@using DatabaseTHP.Class;
+@using MVC_QuanLyTHP.Class;
+@using MVC_QuanLyTHP.Models;
+@{
+    ViewBag.Title = API.ViewBagTitle;
+    Layout = "~/Views/Shared/Admin.cshtml";
+}
+@Html.Partial("LoadCssDanhMuc")
+<script src="@Url.Content("~/Scripts/Delivery.js")"></script>
+<hr />
+<div class="panel-group" id="accordion">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h1 class="panel-title" style="text-align:center">
+                <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+                    @Utility.GetTitleFrom(API.dm_KPI_KinhDoanh)
+                </a>
+            </h1>
+        </div>
+
+
+        <div id="collapseOne" class="panel-collapse collapse in">
+            <div class="form-group">
+                <div class="col-sm-2" style="padding-bottom: 5px;">
+                    @if (ViewBag.PermissionCreate)
+                    {
+                        if (Utility.IntWidth == 1)
+                        {
+                            <button class="btn btn-success" onclick="myFunctionCreate('@{@API.dm_KPI_KinhDoanh;}')"><i class="fa fa-pencil-square-o" style="margin-right:20px"></i>@Utility.Them</button>
+                        }
+                        else
+                        {
+                            <a class="btn btn-success" href="@Url.Action("Create", @API.dm_KPI_KinhDoanh)"><i class="fa fa-pencil-square-o" style="margin-right:20px"></i>@Utility.Them</a>
+                        }
+                    }
+                </div>
+                <div class="col-sm-2" style="padding-bottom: 5px;">
+                    <select class="form-control chosen-select" onchange="show('@{@API.dm_KPI_KinhDoanh;}')" id="Show" name="Show">
+                        @for (int show = 0; show < Utility.arrShow.Length; show++)
+                        {
+                            if (Utility.GetPageSize() == @Utility.arrShow[show])
+                            {
+                                <option value="@Utility.arrShow[show]" selected>@Utility.arrShow[show]</option>
+                            }
+                            else
+                            {
+                                <option value="@Utility.arrShow[show]">@Utility.arrShow[show]</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="col-sm-2" style="padding-bottom: 5px;">
+                    <select class="form-control chosen-select" id="ShowSearchValue" name="ShowSearchValue">
+                        @for (int show = 0; show < Utility.listSearch.Count; show++)
+                        {
+                            if (ViewBag.showsearchValue == Utility.listSearch[show].Item1)
+                            {
+                                <option value="@Utility.listSearch[show].Item1" selected>@Utility.listSearch[show].Item2</option>
+                            }
+                            else
+                            {
+                                <option value="@Utility.listSearch[show].Item1">@Utility.listSearch[show].Item2</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="col-sm-4">
+                    @Html.TextBox("SearchString", (string)ViewBag.searchValue, htmlAttributes: new { @class = "form-control", @style = "width:80%;display:inline-block", @placeholder = Utility.TimKiem })
+                    <button class="btn btn-default" onclick="funSearchItem('@{@API.dm_KPI_KinhDoanh;}')"><span class='glyphicon glyphicon-search'></span></button>
+                </div>
+            </div>
+
+
+
+            <div class="tablescroll" style="overflow-x:auto; Overflow-y:scroll; height: auto;">
+                <div class="panel-body panel-body-nopadding">
+                    <table class="table table-bordered mb30">
+                        <thead>
+                            <tr>
+                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KPI_KinhDoanh, "MA")</th>
+                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KPI_KinhDoanh, "NAME")</th>
+                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KPI_KinhDoanh, "TUNGAY")</th>
+                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KPI_KinhDoanh, "DENNGAY")</th>
+                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KPI_KinhDoanh, "CHIETKHAU")</th>
+                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KPI_KinhDoanh, "TIENGIAM")</th>
+                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KPI_KinhDoanh, "IS_YEUCAUCHITIET")</th>
+                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KPI_KinhDoanh, "TONGTIEN_DATKM")</th>
+                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KPI_KinhDoanh, "SOLUONG_DATKM")</th>
+                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KPI_KinhDoanh, "ID_DVT_DATKM")</th>
+                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KPI_KinhDoanh, "CAPDO")</th>
+                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KPI_KinhDoanh, "ISACTIVE")</th>
+
+                                <th>
+
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbodytmpitem">
+                            @foreach (var item in Model.IPagedList)
+                            {
+                                string TUNGAY = item.TUNGAY.ToString("dd/MM/yyyy");
+                                string DENNGAY = item.DENNGAY.ToString("dd/MM/yyyy");
+                                string TIENGIAM = item.TIENGIAM.ToString("N0");
+                                string TONGTIEN_DATKM = item.TONGTIEN_DATKM.ToString("N0");
+                                string SOLUONG_DATKM = item.SOLUONG_DATKM.ToString("N0");
+                                <tr id="@item.ID">
+                                    <td style="white-space: nowrap; " id="MA"> @Html.DisplayFor(modelItem => item.MA)</td>
+                                    <td style="white-space: nowrap; " id="NAME"> @Html.DisplayFor(modelItem => item.NAME)</td>
+                                    <td style="white-space: nowrap; " id="TUNGAY"> @TUNGAY</td>
+                                    <td style="white-space: nowrap; " id="DENNGAY"> @DENNGAY</td>
+                                    <td style="white-space: nowrap; " id="CHIETKHAU"> @Html.DisplayFor(modelItem => item.CHIETKHAU)</td>
+                                    <td style="white-space: nowrap; " id="TIENGIAM"> @TIENGIAM</td>
+                                    <td style="white-space: nowrap; " id="IS_YEUCAUCHITIET"> @Html.DisplayFor(modelItem => item.IS_YEUCAUCHITIET)</td>
+                                    <td style="white-space: nowrap; " id="TONGTIEN_DATKM"> @TONGTIEN_DATKM</td>
+                                    <td style="white-space: nowrap; " id="SOLUONG_DATKM"> @SOLUONG_DATKM</td>
+                                    <td style="white-space: nowrap; " id="NAME_DVT"> @Html.DisplayFor(modelItem => item.NAME_DVT)</td>
+                                    <td style="white-space: nowrap; " id="NAME_DVT"> @Html.DisplayFor(modelItem => item.CAPDO)</td>
+                                    <td style="white-space: nowrap; " id="ISACTIVE"> @Html.DisplayFor(modelItem => item.ISACTIVE)</td>
+
+                                    <td style="white-space: nowrap; " class="fix">
+                                        @if (ViewBag.PermissionEdit)
+                                        {
+                                            if (Utility.IntWidth == 1)
+                                            {
+                                                <a class="label label-primary" onclick="myFunctionEdit('@{@API.dm_KPI_KinhDoanh;}','@item.ID')" href="#"><i class="fa fa-edit" style="margin-right:5px"></i>@Utility.Sua</a>
+                                            }
+                                            else
+                                            {
+                                                @Html.ActionLink(Utility.Sua, "Edit", new { id = item.ID }, htmlAttributes: new { @class = "label label-primary" });
+                                            }
+                                        }
+                                        @if (ViewBag.PermissionDelete)
+                                        {
+                                            if (Utility.IntWidth == 1)
+                                            {
+                                                <a class="label label-danger" onclick="myFunctionPopup('@{@API.dm_KPI_KinhDoanh;}','@item.ID')" href="#"><i class="glyphicon glyphicon-trash" style="margin-right:5px" ></i>@Utility.Xoa</a>
+                                            }
+                                            else
+                                            {
+                                                <a class="label label-danger" onclick="myFunction('@{@API.dm_KPI_KinhDoanh;}','@item.ID')" href="#"><i class="glyphicon glyphicon-trash" style="margin-right:5px" ></i>@Utility.Xoa</a>
+                                            }
+
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                    </table>
+                </div>
+            </div><!-- table-responsive -->
+        </div>
+
+        <div class="panel-footer">
+            @Html.PagedListPager((PagedList.IPagedList<v_dm_KPI_KinhDoanh>)Model.IPagedList, page => Url.Action("Index", new { Page = page, ShowSearchValue = ViewBag.showsearchValue, SearchString = ViewBag.searchValue }))
+        </div>
+    </div>
+</div>
+@if (Utility.IntWidth == 1)
+{
+    if (ViewBag.PermissionCreate)
+    {
+        <button id="myBtnAdd" style="display:none"></button>
+        <div id="myModalAdd" class="modal">
+            <div class="panel panel-default" @Html.Raw(Utility.StypeWidth_Level1)>
+                <!-- The Modal -->
+                @{Html.RenderAction("Create", @API.dm_KPI_KinhDoanh, new { type = 1 });}
+            </div>
+        </div>
+    }
+    if (ViewBag.PermissionEdit)
+    {
+        <button id="myBtnEdit" style="display:none"></button>
+        <div id="myModalEdit" class="modal">
+            <div class="panel panel-default" @Html.Raw(Utility.StypeWidth_Level1)>
+                <!-- The Modal -->
+                @{Html.RenderAction("Edit", @API.dm_KPI_KinhDoanh, new { type = 1 });}
+            </div>
+        </div>
+    }
+}
+

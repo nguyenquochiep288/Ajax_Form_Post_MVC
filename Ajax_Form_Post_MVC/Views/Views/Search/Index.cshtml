@@ -1,0 +1,544 @@
+﻿@model MVC_QuanLyTHP.Models.v_v_Search
+@using MVC_QuanLyTHP.Class;
+@using DatabaseTHP.Class;
+<button id="myBtnSearch" style="display:none"></button>
+<div id="myModalSearch" class="modal">
+    <div class="panel panel-default" @Html.Raw(Utility.StypeWidth_Level2)>
+        <!-- The Modal -->
+        <div class="panel-heading" style="padding-top:15px;padding-right: 15px;">
+            <div class="panel-btns">
+                <a onclick='myFunClosed("myModalSearch")'>&times;</a>
+            </div>
+
+            <h1 class="panel-title" style="font-size: 20px;text-align: center "><label id="lblNameSearch" name="lblNameSearch">@Utility.GetTitleFrom(API.web_Menu)</label></h1>
+            <div class="panel-body" style="padding:5px">
+            </div>
+
+        </div>
+
+        <div class="panel-body panel-body-nopadding">
+
+            <div class="form-horizontal form-bordered">
+                @using (Ajax.BeginForm("Search", API.Search, new AjaxOptions { OnSuccess = "OnSuccessSearch" }))
+                {
+                    <input type="hidden" id="HinhThucTimKiemSearch" name="HinhThucTimKiem" />
+                    <input type="hidden" id="MyModalSearch" name="MyModal" />
+                    <input type="hidden" id="ClassNameSearch" name="ClassName" />
+                    <input type="hidden" id="ValueFieldSearch" name="ValueField" />
+                    <input type="hidden" id="TextFieldSearch" name="TextField" />
+                    <input type="hidden" id="ValueSelectedSearch" name="ValueSelected" />
+                    <input type="hidden" id="ID_KHOSEARCH" name="ID_KHO" />
+                    <div class="form-group">
+                        <div class="col-sm-2" style="padding-bottom: 5px;">
+                            <select class="form-control chosen-select" id="ShowSearchValueSearch" name="ShowSearchValue">
+                                @for (int show = 0; show < Utility.listSearch.Count; show++)
+                                {
+                                    if (ViewBag.showsearchValue == Utility.listSearch[show].Item1)
+                                    {
+                                        <option value="@Utility.listSearch[show].Item1" selected>@Utility.listSearch[show].Item2</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@Utility.listSearch[show].Item1">@Utility.listSearch[show].Item2</option>
+                                    }
+                                }
+                            </select>
+
+                        </div>
+                        <div class="col-sm-4">
+                            @Html.TextBox("SearchString", (string)ViewBag.searchValue, htmlAttributes: new { @class = "form-control", @style = "width:80%;display:inline-block", @placeholder = Utility.TimKiem, id = "SearchStringSearch" })
+                            <button class="btn btn-default" id="ButtonClick"><span class='glyphicon glyphicon-search'></span></button>
+                        </div>
+                    </div>
+                }
+
+                <div style="overflow-x:auto; Overflow-y:scroll; height: 400px;">
+                    <div class="panel-body panel-body-nopadding">
+                        <div class="form-horizontal form-bordered">
+                            <table class="table table-bordered mb30">
+                                <thead>
+                                    <tr id="trSearch">
+
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbodySearch">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div><!-- table-responsive -->
+                </div>
+            </div>
+
+        </div>
+
+        <div class="panel-footer">
+            <div class="row">
+                <div class="col-sm-5 col-sm-offset-3">
+                    <button class="btn btn-primary">@Utility.ThucHien</button>
+                    <a class="btn btn-danger" onclick='myFunClosed("myModalSearch")'>@Utility.Dong</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<button id="myBtnCombo" style="display:none"></button>
+<!-- The Modal -->
+<div id="myModalCombo" class="modal">
+    <div class="panel panel-default" @Html.Raw(Utility.StypeWidth_Level3)>
+        <div class="panel-heading" style="padding-bottom:5px">
+            <div class="panel-btns">
+                <a onclick='myFunClosed("myModalCombo")'>&times;</a>
+            </div>
+            <h1 class="panel-title"><label id="lblNameCombo" name="lblNameCombo" style="font-size: 20px; font-weight: bold;"></label></h1>
+        </div>
+        @using (Ajax.BeginForm("AddProductCombo", API.dm_HangHoa_Combo, new AjaxOptions { OnSuccess = "OnSuccessProductCombo" }))
+        {
+            <div class="panel-body panel-body-nopadding">
+                <div class="form-horizontal form-bordered">
+                    <input type="hidden" name="ID_HANGHOA" id="idProductCombo" />
+                    <input type="hidden" name="PriceProduct" id="PriceProduct" />
+                    <input type="hidden" name="PriceProduct_QD" id="PriceProduct_QD" />
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="disabledinput" style="width:100px">Đơn vị tính:</label>
+                        <div class="col-sm-2">
+                            <input type="radio" id="ID_DVTCombo" name="ID_DVT" value="HTML" onclick="ShowHideDiv()"><label id="lblID_DVTCombo" style="padding-left:10px">HTML</label>
+                        </div>
+                        <div class="col-sm-2">
+                            <input type="radio" id="ID_DVT_QDCombo" name="ID_DVT" value="HTML" onclick="ShowHideDiv()"><label id="lblID_DVT_QDCombo" style="padding-left:10px">HTML</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="disabledinput" style="width:100px">Đơn giá:</label>
+                        <div class="col-sm-2">
+                            <input type="number" class="form-control mask" name="Price" id="PriceProductCombo" disabled="disabled" min="1" step="any" data-type="currency" visibility="" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="disabledinput" style="width:100px">Số lượng:</label>
+                        <div class="col-sm-2">
+                            <input type="number" class="form-control mask" name="QTY" id="QtyProductCombo" min="1" step="any" data-type="currency" />
+                        </div>
+                    </div>
+                </div>
+            </div><!-- panel-body -->
+
+            <div class="panel-footer">
+                <div class="row">
+                    <div class="col-sm-6 col-sm-offset-4">
+                        <button class="btn btn-primary">@Utility.ThucHien</button>
+                        <a class="btn btn-default" onclick='myFunClosed("myModalCombo")'>Cancel</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div><!-- panel -->
+</div>
+
+<!-- The Modal -->
+<div id="myModalPromotion_YC" class="modal">
+    <div class="panel panel-default" @Html.Raw(Utility.StypeWidth_Level3)>
+        <div class="panel-heading" style="padding-bottom:5px">
+            <div class="panel-btns">
+                <a onclick='myFunClosed("myModalPromotion_YC")'>&times;</a>
+            </div>
+            <h1 class="panel-title"><label id="lblNamePromotion_YC" name="lblNamePromotion_YC" style="font-size: 20px; font-weight: bold;"></label></h1>
+        </div>
+        @using (Ajax.BeginForm("AddProductPromotion_YC", (string)@ViewBag.urlAddProductPromotion_YC, new AjaxOptions { OnSuccess = "OnSuccessProductPromotion_YC" }))
+        {
+            <div class="panel-body panel-body-nopadding">
+                <div class="form-horizontal form-bordered">
+                    <input type="hidden" name="ID_HANGHOA" id="idProductPromotion_YC" />
+                    <input type="hidden" name="PricePromotion_YC" id="PricePromotion_YC" />
+                    <input type="hidden" name="PriceProduct_QDPromotion_YC" id="PriceProduct_QDPromotion_YC" />
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="disabledinput" style="width:100px">Đơn vị tính:</label>
+                        <div class="col-sm-2">
+                            <input type="radio" id="ID_DVTPromotion_YC" name="ID_DVT" value="HTML" onclick="ShowHideDiv()"><label id="lblID_DVTPromotion_YC" style="padding-left:10px">HTML</label>
+                        </div>
+                        <div class="col-sm-2">
+                            <input type="radio" id="ID_DVT_QDPromotion_YC" name="ID_DVT" value="HTML" onclick="ShowHideDiv()"><label id="lblID_DVT_QDPromotion_YC" style="padding-left:10px">HTML</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="disabledinput" style="width:100px">Đơn giá:</label>
+                        <div class="col-sm-2">
+                            <input type="number" class="form-control mask" name="Price" id="PriceProductPromotion_YC" disabled="disabled" min="0" step="any" data-type="currency" visibility="" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="disabledinput" style="width:100px">Tổng tiền:</label>
+                        <div class="col-sm-2">
+                            <input type="number" class="form-control mask" name="SOTIEN" id="TotalProductPromotion_YC" min="0" step="any" data-type="currency" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="disabledinput" style="width:100px">Số lượng:</label>
+                        <div class="col-sm-2">
+                            <input type="number" class="form-control mask" name="SOLUONG" id="QtyProductPromotion_YC" min="0" step="any" data-type="currency" />
+                        </div>
+                    </div>
+                </div>
+            </div><!-- panel-body -->
+
+            <div class="panel-footer">
+                <div class="row">
+                    <div class="col-sm-6 col-sm-offset-4">
+                        <button class="btn btn-primary">@Utility.ThucHien</button>
+                        <a class="btn btn-default" onclick='myFunClosed("myModalPromotion_YC")'>Cancel</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div><!-- panel -->
+</div>
+
+<div id="myModalPromotionNHH_YC" class="modal">
+    <div class="panel panel-default" @Html.Raw(Utility.StypeWidth_Level3)>
+        <div class="panel-heading" style="padding-bottom:5px">
+            <div class="panel-btns">
+                <a onclick='myFunClosed("myModalPromotionNHH_YC")'>&times;</a>
+            </div>
+            <h1 class="panel-title"><label id="lblNamePromotionNHH_YC" name="lblNamePromotionNHH_YC" style="font-size: 20px; font-weight: bold;"></label></h1>
+        </div>
+        @using (Ajax.BeginForm("AddProductPromotionNHH_YC", (string)@ViewBag.urlAddProductPromotion_YC, new AjaxOptions { OnSuccess = "OnSuccessProductPromotion_YC" }))
+        {
+            <div class="panel-body panel-body-nopadding">
+                <div class="form-horizontal form-bordered">
+                    <input type="hidden" name="ID_HANGHOA" id="idNhomHangHoa_YC" />
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="disabledinput" style="width:100px">Đơn vị tính:</label>
+                        <div class="col-sm-2">
+                            @Html.DropDownList("ID_DVT", new SelectList(Model.lstdm_DonViTinh, "ID", "NAME"), Utility.GetTitleChon(API.dm_DonViTinh), htmlAttributes: new { @class = "form-control chosen-select", id = "lstdm_DonViTinhNHH_YC" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="disabledinput" style="width:100px">Số lượng:</label>
+                        <div class="col-sm-2">
+                            <input type="number" class="form-control mask" name="SOLUONG" id="QtyProductNHH_YC" min="0" step="any" data-type="currency" />
+                        </div>
+                    </div>
+                </div>
+            </div><!-- panel-body -->
+
+            <div class="panel-footer">
+                <div class="row">
+                    <div class="col-sm-6 col-sm-offset-4">
+                        <button class="btn btn-primary">@Utility.ThucHien</button>
+                        <a class="btn btn-default" onclick='myFunClosed("myModalPromotionNHH_YC")'>Cancel</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div><!-- panel -->
+</div>
+
+
+<div id="myModalPromotion_Tang" class="modal">
+    <div class="panel panel-default" @Html.Raw(Utility.StypeWidth_Level3)>
+        <div class="panel-heading" style="padding-bottom:5px">
+            <div class="panel-btns">
+                <a onclick='myFunClosed("myModalPromotion_Tang")'>&times;</a>
+            </div>
+            <h1 class="panel-title"><label id="lblNamePromotion_Tang" name="lblNamePromotion_Tang" style="font-size: 20px; font-weight: bold;"></label></h1>
+        </div>
+        @using (Ajax.BeginForm("AddProductPromotion_Tang", API.dm_ChuongTrinhKhuyenMai, new AjaxOptions { OnSuccess = "OnSuccessProductPromotion_Tang" }))
+        {
+            <div class="panel-body panel-body-nopadding">
+                <div class="form-horizontal form-bordered">
+                    <input type="hidden" name="ID_HANGHOA" id="idProductPromotion_Tang" />
+                    <input type="hidden" name="PricePromotion_Tang" id="PricePromotion_Tang" />
+                    <input type="hidden" name="PriceProduct_QDPromotion_Tang" id="PriceProduct_QDPromotion_Tang" />
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="disabledinput" style="width:100px">Đơn vị tính:</label>
+                        <div class="col-sm-2">
+                            <input type="radio" id="ID_DVTPromotion_Tang" name="ID_DVT" value="HTML" onclick="ShowHideDiv()"><label id="lblID_DVTPromotion_Tang" style="padding-left:10px">HTML</label>
+                        </div>
+                        <div class="col-sm-2">
+                            <input type="radio" id="ID_DVT_QDPromotion_Tang" name="ID_DVT" value="HTML" onclick="ShowHideDiv()"><label id="lblID_DVT_QDPromotion_Tang" style="padding-left:10px">HTML</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="disabledinput" style="width:100px">Đơn giá:</label>
+                        <div class="col-sm-2">
+                            <input type="number" class="form-control mask" name="Price" id="PriceProductPromotion_Tang" disabled="disabled" min="0" step="any" data-type="currency" visibility="" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="disabledinput" style="width:100px">Số lượng:</label>
+                        <div class="col-sm-2">
+                            <input type="number" class="form-control mask" name="SOLUONG" id="QtyProductPromotion_Tang" min="0" step="any" data-type="currency" />
+                        </div>
+                    </div>
+                </div>
+            </div><!-- panel-body -->
+
+            <div class="panel-footer">
+                <div class="row">
+                    <div class="col-sm-6 col-sm-offset-4">
+                        <button class="btn btn-primary">@Utility.ThucHien</button>
+                        <a class="btn btn-default" onclick='myFunClosed("myModalPromotion_Tang")'>Cancel</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div><!-- panel -->
+</div>
+
+<button id="myBtnInputOutput" style="display:none"></button>
+<!-- The Modal -->
+<div id="myModalInputOutput" class="modal">
+    <div class="panel panel-default" @Html.Raw(Utility.StypeWidth_Level3)>
+        <div class="panel-heading" style="padding-bottom:5px">
+            <div class="panel-btns">
+                <a onclick='myFunClosed("myModalInputOutput")'>&times;</a>
+            </div>
+            <h1 class="panel-title"><label id="lblNameInputOutput" name="lblNameInputOutput" style="font-size: 20px; font-weight: bold;"></label></h1>
+        </div>
+        @using (Ajax.BeginForm("AddProductInputOutput", API.dm_HangHoa, new AjaxOptions { OnSuccess = "OnSuccessProductInputOutput" }))
+        {
+            <div class="panel-body panel-body-nopadding">
+                <div class="form-horizontal form-bordered">
+                    <input type="hidden" name="ID_KHO" id="idDepotInputOutput" />
+                    <input type="hidden" name="ID_HANGHOA" id="idProductInputOutput" />
+                    <input type="hidden" name="ID_HANGHOAKHO" id="idProductKhoInputOutput" />
+                    <input type="hidden" name="DONGIAInputOutput" id="PriceInputOutput" />
+                    <input type="hidden" name="DONGIA_QDInputOutput" id="Price_QDInputOutput" />
+                    <input type="hidden" name="THUESUAT" id="THUESUATProductInputOutput" />
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="disabledinput" style="width:100px">Đơn vị tính:</label>
+                        <div class="col-sm-2">
+                            <input type="radio" id="ID_DVTInputOutput" name="ID_DVT" value="HTML" onclick="ShowHideDivInputOutput()" onchange="updateAddProduct(this)"><label id="lblID_DVTInputOutput" style="padding-left:10px">HTML</label>
+                        </div>
+                        <div class="col-sm-2">
+                            <input type="radio" id="ID_DVT_QDInputOutput" name="ID_DVT" value="HTML" onclick="ShowHideDivInputOutput()" onchange="updateAddProduct(this)"><label id="lblID_DVT_QDInputOutput" style="padding-left:10px">HTML</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="disabledinput" style="width:100px">Số lượng:</label>
+                        <div class="col-sm-2">
+                            <input type="number" class="form-control mask" name="SOLUONG" id="QtyProductInputOutput" min="1" step="any" data-type="currency" onchange="updateAddProduct(this)" required />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="disabledinput" style="width:100px">Đơn giá:</label>
+                        <div class="col-sm-2">
+                            <input type="number" class="form-control mask" name="DONGIA" id="PriceProductInputOutput" min="0" step="any" data-type="currency" onchange="updateAddProduct(this)" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="disabledinput" style="width:100px">%CKGG:</label>
+                        <div class="col-sm-2">
+                            <input type="number" class="form-control mask" name="CHIETKHAU" id="DiscountProductInputOutput" min="0" max="100" step="any" data-type="currency" onchange="updateAddProduct(this)" />
+                        </div>
+                        <label class="col-sm-2 control-label" for="disabledinput" style="width:100px">Tiền CKGG:</label>
+                        <div class="col-sm-2">
+                            <input type="number" class="form-control mask" name="TONGTIENGIAMGIA" id="PriceDiscountProductInputOutput" min="0" step="any" data-type="currency" onchange="updateAddProduct(this)" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="disabledinput" style="width:100px">Thành tiền:</label>
+                        <div class="col-sm-2">
+                            <input type="number" class="form-control mask" name="THANHTIEN" id="IntoMoneyProductInputOutput" min="0" step="any" data-type="currency" readonly="readonly" onchange="updateAddProduct(this)" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="disabledinput" style="width:100px">VAT:</label>
+                        <div class="col-sm-2">
+                            @Html.DropDownList("ID_THUESUAT", new SelectList(Model.lstdm_ThueSuat, "ID", "NAME"), Utility.GetTitleChon(API.dm_ThueSuat), htmlAttributes: new { @class = "form-control chosen-select", id = "lstdm_ThueSuatSearch", onchange = "updateAddProduct(this)" })
+                        </div>
+                        <label class="col-sm-2 control-label" for="disabledinput" style="width:100px">Tiền thuế:</label>
+                        <div class="col-sm-2">
+                            <input type="number" class="form-control mask" name="TONGTIENVAT" id="TaxMoneyProductInputOutput" min="0" step="any" data-type="currency" onchange="updateAddProduct(this)" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="disabledinput" style="width:100px">Tổng tiền:</label>
+                        <div class="col-sm-2">
+                            <input type="number" class="form-control mask" name="TONGCONG" id="TotalProductInputOutput" min="0" step="any" data-type="currency" readonly="readonly" />
+                        </div>
+                    </div>
+                </div>
+            </div><!-- panel-body -->
+
+            <div class="panel-footer">
+                <div class="row">
+                    <div class="col-sm-6 col-sm-offset-4">
+                        <button class="btn btn-primary" onclick="validatetext()">@Utility.ThucHien</button>
+                        <a class="btn btn-default" onclick='myFunClosed("myModalInputOutput")'>Cancel</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div><!-- panel -->
+</div>
+
+<button id="myBtnDeposit_Temp" style="display:none"></button>
+<!-- The Modal -->
+<div id="myModalDeposit_Temp" class="modal">
+    <div class="panel panel-default" @Html.Raw(Utility.StypeWidth_Level2)>
+        <div class="panel-heading" style="padding-bottom:5px">
+            <div class="panel-btns">
+                <a onclick='myFunClosed("myModalDeposit_Temp")'>&times;</a>
+            </div>
+            <h1 class="panel-title"><label id="lblNameDeposit_Temp" name="lblNameDeposit_Temp" style="font-size: 20px; font-weight: bold;"></label></h1>
+        </div>
+        @using (Ajax.BeginForm("AddProductDeposit", API.ct_PhieuDatHang, new AjaxOptions { OnSuccess = "OnSuccessProductDeposit_Temp" }))
+        {
+            <div class="panel-body panel-body-nopadding">
+                <div class="form-horizontal form-bordered">
+                    <input type="hidden" name="ID_KHO" id="idDepotDeposit_Temp" />
+                    <input type="hidden" name="ID_HANGHOA" id="idProductDeposit_Temp" />
+                    <input type="hidden" name="ID_HANGHOAKHO" id="idProductKhoDeposit_Temp" />
+                    <input type="hidden" name="DONGIADeposit_Temp" id="PriceDeposit_Temp" />
+                    <input type="hidden" name="DONGIA_QDDeposit_Temp" id="Price_QDDeposit_Temp" />
+                    <input type="hidden" name="THUESUAT" id="THUESUATProductDeposit_Temp" />
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="disabledinput" style="width:100px">Đơn vị tính:</label>
+                        <div class="col-sm-2">
+                            <input type="radio" id="ID_DVTDeposit_Temp" name="ID_DVT" value="HTML" onclick="ShowHideDivDeposit_Temp()" onchange="updateAddProduct(this)"><label id="lblID_DVTDeposit_Temp" style="padding-left:10px">HTML</label>
+                        </div>
+                        <div class="col-sm-2">
+                            <input type="radio" id="ID_DVT_QDDeposit_Temp" name="ID_DVT" value="HTML" onclick="ShowHideDivDeposit_Temp()" onchange="updateAddProduct(this)"><label id="lblID_DVT_QDDeposit_Temp" style="padding-left:10px">HTML</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="disabledinput" style="width:100px">Số lượng:</label>
+                        <div class="col-sm-2">
+                            <input type="number" class="form-control mask" name="SOLUONG" id="QtyProductDeposit_Temp" min="1" step="any" data-type="currency" onchange="updateAddProduct(this)" required />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="disabledinput" style="width:100px">Đơn giá:</label>
+                        <div class="col-sm-2">
+                            <input type="number" class="form-control mask" name="DONGIA" id="PriceProductDeposit_Temp" min="0" step="any" data-type="currency" onchange="updateAddProduct(this)" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="disabledinput" style="width:100px">%CKGG:</label>
+                        <div class="col-sm-2">
+                            <input type="number" class="form-control mask" name="CHIETKHAU" id="DiscountProductDeposit_Temp" min="0" max="100" step="any" data-type="currency" onchange="updateAddProduct(this)" />
+                        </div>
+                        <label class="col-sm-2 control-label" for="disabledinput" style="width:100px">Tiền CKGG:</label>
+                        <div class="col-sm-2">
+                            <input type="number" class="form-control mask" name="TONGTIENGIAMGIA" id="PriceDiscountProductDeposit_Temp" min="0" step="any" data-type="currency" onchange="updateAddProduct(this)" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="disabledinput" style="width:100px">Thành tiền:</label>
+                        <div class="col-sm-2">
+                            <input type="number" class="form-control mask" name="THANHTIEN" id="IntoMoneyProductDeposit_Temp" min="0" step="any" data-type="currency" readonly="readonly" onchange="updateAddProduct(this)" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="disabledinput" style="width:100px">VAT:</label>
+                        <div class="col-sm-2">
+                            @Html.DropDownList("ID_THUESUAT", new SelectList(Model.lstdm_ThueSuat, "ID", "NAME"), Utility.GetTitleChon(API.dm_ThueSuat), htmlAttributes: new { @class = "form-control chosen-select", id = "lstdm_ThueSuatDeposit", onchange = "updateAddProduct(this)" })
+                        </div>
+                        <label class="col-sm-2 control-label" for="disabledinput" style="width:100px">Tiền thuế:</label>
+                        <div class="col-sm-2">
+                            <input type="number" class="form-control mask" name="TONGTIENVAT" id="TaxMoneyProductDeposit_Temp" min="0" step="any" data-type="currency" onchange="updateAddProduct(this)" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="disabledinput" style="width:100px">Tổng tiền:</label>
+                        <div class="col-sm-2">
+                            <input type="number" class="form-control mask" name="TONGCONG" id="TotalProductDeposit_Temp" min="0" step="any" data-type="currency" readonly="readonly" />
+                        </div>
+                    </div>
+                </div>
+            </div><!-- panel-body -->
+
+            <div class="panel-footer">
+                <div class="row">
+                    <div class="col-sm-6 col-sm-offset-4">
+                        <button class="btn btn-primary" onclick="validatetext()">@Utility.ThucHien</button>
+                        <a class="btn btn-default" onclick='myFunClosed("myModalDeposit_Temp")'>Cancel</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div><!-- panel -->
+</div>
+
+<button id="myBtnViewReport" style="display:none"></button>
+<div id="myModalViewReport" class="modal">
+    <div class="panel panel-default" @Html.Raw(Utility.StypeWidth_Level1)>
+        <!-- The Modal -->
+        <div class="panel-heading" style="padding-top:15px;padding-right: 15px;">
+            <div class="panel-btns">
+                <a onclick='myFunClosed("myModalViewReport")'>&times;</a>
+            </div>
+
+            <h1 class="panel-title" style="font-size: 20px;text-align: center "><label id="lblNameViewReport" name="lblNameViewReport">@Utility.GetTitleFrom(API.web_Menu)</label></h1>
+            <div class="panel-body" style="padding:5px">
+            </div>
+
+        </div>
+
+        <div class="panel-body panel-body-nopadding">
+            <div class="form-horizontal form-bordered">
+                <iframe id="reportViewReport" style="width:100%; height:600px">
+                </iframe>
+            </div>
+        </div>
+
+        <div class="panel-footer">
+            <div class="row">
+                <div class="col-sm-5 col-sm-offset-3">
+                    <button class="btn btn-primary">@Utility.ThucHien</button>
+                    <a class="btn btn-danger" onclick='myFunClosed("myModalViewReport")'>@Utility.Dong</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="myModal1" class="modal" style="">
+    <div id="preloader" style="background-color: #2222"><div id="status"> <i class="fa fa-spinner fa-spin"></i></div></div>
+</div>
+
+<script>
+    //vn
+    $("input.form-control.mask").each((i, ele) => {
+        let clone = $(ele).clone(false)
+        clone.attr("type", "text")
+        let ele1 = $(ele)
+        clone.val(Number(ele1.val()).toLocaleString("vn"))
+
+        $(ele).after(clone)
+        $(ele).hide()
+        clone.mouseenter(() => {
+
+            ele1.show()
+            clone.hide()
+        })
+        setInterval(() => {
+            var newv = Number(ele1.val()).toLocaleString("vn");
+            if (clone.val() != newv) {
+                clone.val(newv)
+            }
+        }, 10)
+
+        $(ele).mouseleave(() => {
+            $(clone).show()
+            $(ele1).hide()
+        })
+    })
+</script>
+
+<script>
+    jQuery(document).ready(function () {
+        //Replaces data-rel attribute to rel.
+        //We use data-rel because of w3c validation issue
+        jQuery('a[data-rel]').each(function () {
+            jQuery(this).attr('rel', jQuery(this).data('rel'));
+        });
+
+        jQuery("a[rel^='prettyPhotoSearch']").prettyPhoto();
+
+    });
+
+</script>
+

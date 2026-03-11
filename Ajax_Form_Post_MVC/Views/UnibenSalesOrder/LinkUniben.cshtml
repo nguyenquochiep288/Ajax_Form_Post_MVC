@@ -1,0 +1,337 @@
+﻿@model MVC_QuanLyTHP.Models.v_v_UnibenOrderListResponse
+@using PagedList.Mvc;
+@using DatabaseTHP.Class;
+@using MVC_QuanLyTHP.Class;
+@using DatabaseTHP;
+@using Newtonsoft.Json;
+@{
+    ViewBag.Title = API.ViewBagTitle;
+    Layout = "~/Views/Shared/Admin.cshtml";
+}
+<style>
+    .treegrid-indent {
+        width: 0px;
+        height: 16px;
+        display: inline-block;
+        position: relative;
+    }
+
+    .treegrid-expander {
+        width: 0px;
+        height: 16px;
+        display: inline-block;
+        position: relative;
+        left: -17px;
+        cursor: pointer;
+    }
+</style>
+@Html.Partial("LoadCssDanhMuc")
+<script src="@Url.Content("~/Scripts/InputOutput.js?" + Utility.VersionJs)"></script>
+@if ((Model.KhachHang != null && Model.KhachHang.Count > 0) || (string)ViewBag.type == "Customer")
+{
+    using (Ajax.BeginForm("CreateCustomer", API.UnibenSalesOrder, new AjaxOptions { OnBegin = "OnBegin", OnSuccess = "OnSuccessCreate" }, new { id = "mainForm" }))
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="panel-group" id="accordion">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h1 class="panel-title" style="text-align:center">
+                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+                            @Utility.GetTitleFrom(API.dm_KhachHang)
+                        </a>
+                    </h1>
+                </div>
+
+                <div class="form-group">               
+                    <div class="col-sm-4">
+                        @Html.Hidden("Type", "Customer")
+                        @Html.TextBox("SearchString", (string)ViewBag.searchValue, htmlAttributes: new { @class = "form-control", @style = "width:80%;display:inline-block", @placeholder = Utility.TimKiem, onkeydown = "if(event.keyCode == 13) { searchCustomer(event); return false; }" })
+                        <button class="btn btn-default" onclick="searchCustomer(event)"><span class='glyphicon glyphicon-search'></span></button>
+                    </div>
+                </div>
+
+                <div id="collapseOne" class="panel-collapse collapse in">
+                    @{
+                        string ShowSearchValue = clsMaHoa.Encrypt(JsonConvert.SerializeObject(Model.KhachHang), clsMaHoa.PassMaHoa);
+
+                        @Html.Hidden("Hidden", ShowSearchValue)
+                    }
+
+
+                    <div class="tablescroll" style="overflow-x:auto; Overflow-y:scroll; height: auto;">
+                        <div class="panel-body panel-body-nopadding">
+                            <table class="table table-bordered mb30" id="example-table">
+                                <thead>
+                                    <tr>
+                                        <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KhachHang, "STT")</th>
+                                        <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KhachHang, "ID")</th>
+                                        <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KhachHang, "MA")</th>
+                                        <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KhachHang, "NAME")</th>
+                                        <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KhachHang, "MASOTHUE")</th>
+                                        @if (Model.KhachHang.Where(e => !string.IsNullOrEmpty(e.DIACHI)).Count() > 0)
+                                        {
+                                            <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KhachHang, "ADDRESS")</th>
+                                        }
+
+
+                                        <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.UnibenSalesOrder, "ID_KHACHHANG")</th>
+                                        <th>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbodytmpitem">
+                                    @if (Model.KhachHang != null)
+                                    {
+                                        int STT = 1;
+                                        foreach (var item in Model.KhachHang)
+                                        {
+
+                                            string Color = "";
+                                            if (string.IsNullOrEmpty(item.ID_KHACHHANG))
+                                            {
+                                                Color = "color: red;";
+                                            }
+
+                                            <tr id="@item.ID_UNIBEN">
+                                                <td>@STT.ToString("N0")</td>
+                                                <td style="white-space: nowrap; @Color" id="ID_UNIBEN"> @Html.DisplayFor(modelItem => item.ID_UNIBEN)</td>
+                                                <td style="@Color" id="MAKHACHHANG"> @Html.DisplayFor(modelItem => item.MAKHACHHANG)</td>
+                                                <td style="width: 200px; @Color" id="TENKHACHHANG"> @Html.DisplayFor(modelItem => item.TENKHACHHANG)</td>
+                                                @if (Model.KhachHang.Where(e => !string.IsNullOrEmpty(e.DIACHI)).Count() > 0)
+                                                {
+                                                    <td style="white-space: nowrap; @Color" id="DIACHI"> @Html.DisplayFor(modelItem => item.DIACHI)</td>
+                                                }
+                                                    <td style="white-space: nowrap; @Color" id="MASOTHUE"> @Html.DisplayFor(modelItem => item.MASOTHUE)</td>
+                                                    <td style="white-space: nowrap;" id="ID_KHACHHANG">
+                                                        <div class="input-group mb15">
+                                                            <span class="input-group-btn">
+                                                                <button type="button" class="btn btn-default" onclick="myFunOpenSearch('accordion', '@{@API.dm_KhachHang;}', '@API.Chon1', 'lstdm_KhachHang|' + @item.ID_UNIBEN, '')"><span class="glyphicon glyphicon-search"></span></button>
+                                                            </span>
+                                                            @Html.DropDownList("lstdm_KhachHang|" + item.ID_UNIBEN, new SelectList(Model.lstdm_KhachHang.Where(s => s.ID == item.ID_KHACHHANG), "ID", "NAME", item.ID_KHACHHANG), Utility.GetTitleChon(API.dm_KhachHang), htmlAttributes: new { @class = "form-control chosen-select", id = "lstdm_KhachHang|" + item.ID_UNIBEN })
+                                                        </div>
+                                                    </td>
+                                                    <td style="white-space: nowrap; " class="fix">
+                                                    </td>
+                                                </tr>
+            STT += 1;
+        }
+    }
+                            </table>
+                        </div>
+                    </div><!-- table-responsive -->
+                </div>
+                <div class="panel-footer">
+                    <div class="row">
+                        <div class="col-sm-5 col-sm-offset-3">
+                            <button class="btn btn-primary">@Utility.ThucHien</button>
+                            <button class="btn btn-warning" onclick="GetUniben(event)">@Utility.LayDuLieu</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}
+
+@if ((Model.HangHoa != null && Model.HangHoa.Count > 0) || (string)ViewBag.type == "Product")
+{
+                using (Ajax.BeginForm("CreateProduct", API.UnibenSalesOrder, new AjaxOptions { OnBegin = "OnBegin", OnSuccess = "OnSuccessCreate" }))
+                {
+                    @Html.AntiForgeryToken()
+
+                    <div class="panel-group" id="accordion1">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h1 class="panel-title" style="text-align:center">
+                        <a data-toggle="collapse" data-parent="#accordion1" href="#collapseOne1">
+                            @Utility.GetTitleFrom(API.dm_HangHoa)
+                        </a>
+                    </h1>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-sm-4">
+                        @Html.Hidden("Type", "Product")
+                        @Html.TextBox("SearchString", (string)ViewBag.searchValue, htmlAttributes: new { @class = "form-control", @style = "width:80%;display:inline-block", @placeholder = Utility.TimKiem, onkeydown = "if(event.keyCode == 13) { searchCustomer(event); return false; }" })
+                        <button class="btn btn-default" onclick="searchCustomer(event)"><span class='glyphicon glyphicon-search'></span></button>
+                    </div>
+                </div>
+               
+                <div id="collapseOne1" class="panel-collapse collapse in">
+                      @{
+     string ShowSearchValue = clsMaHoa.Encrypt(JsonConvert.SerializeObject(Model.HangHoa), clsMaHoa.PassMaHoa);
+
+    @Html.Hidden("Hidden", ShowSearchValue)
+ }
+                    <div class="tablescroll" style="overflow-x:auto; Overflow-y:scroll; height: auto;">
+                        <div class="panel-body panel-body-nopadding">
+                            <table class="table table-bordered mb30" id="example-table">
+                                <thead>
+                                    <tr>
+                                        <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KhachHang, "STT")</th>
+                                        <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_HangHoa, "ID")</th>
+                                        <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_HangHoa, "MA")</th>
+                                        <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_HangHoa, "NAME")</th>
+                                        <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_HangHoa, "ISKHUYENMAI")</th>
+                                        <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.UnibenSalesOrder, "ID_HANGHOA")</th>
+                                        <th>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbodytmpitem">
+                                    @if (Model.KhachHang != null)
+                                    {
+                                        int STT = 1;
+                                        foreach (var item in Model.HangHoa)
+                                        {
+                                            string Color = "";
+                                            if (string.IsNullOrEmpty(item.ID_HANGHOA))
+                                            {
+                                                Color = "color: red;";
+                                            }
+                                            <tr id="@item.ID_UNIBEN">
+                                                 <td>@STT.ToString("N0")</td>
+                                                <td style="white-space: nowrap; @Color" id="ID_UNIBEN"> @Html.DisplayFor(modelItem => item.ID_UNIBEN)</td>
+                                                <td style="white-space: nowrap; @Color" id="MAKHACHHANG"> @Html.DisplayFor(modelItem => item.MAHANGHOA)</td>
+                                                <td style="width: 200px; @Color" id="TENKHACHHANG"> @Html.DisplayFor(modelItem => item.TENHANGHOA)</td>
+                                                <td style="white-space: nowrap; @Color" id="ISKHUYENMAI"> @Html.DisplayFor(modelItem => item.ISKHUYENMAI)</td>
+                                                <td style="white-space: nowrap;" id="ID_HANGHOA">
+                                                    <div class="input-group mb15">
+                                                        <span class="input-group-btn">
+                                                            <button type="button" class="btn btn-default" onclick="myFunOpenSearch('accordion1', '@{@API.dm_HangHoa;}', '@API.Chon1', 'lstdm_HangHoa|' + @item.ID_UNIBEN+ '|' + @(item.ISKHUYENMAI ? "1" : "0"), '')"><span class="glyphicon glyphicon-search"></span></button>
+                                                        </span>
+                                                        @Html.DropDownList("lstdm_HangHoa|" + item.ID_UNIBEN + "|" + item.ISKHUYENMAI, new SelectList(Model.lstdm_HangHoa.Where(s => s.ID == item.ID_HANGHOA), "ID", "NAME", item.ID_HANGHOA), Utility.GetTitleChon(API.dm_HangHoa), htmlAttributes: new { @class = "form-control chosen-select", id = "lstdm_HangHoa|" + item.ID_UNIBEN + "|" + (item.ISKHUYENMAI ? "1" : "0") })
+                                                    </div>
+                                                </td>
+                                                <td style="white-space: nowrap; " class="fix">
+                                                </td>
+                                            </tr>
+            STT += 1;
+        }
+    }
+
+                            </table>
+                        </div>
+                    </div><!-- table-responsive -->
+                </div>
+                <div class="panel-footer">
+                    <div class="row">
+                        <div class="col-sm-5 col-sm-offset-3">
+                            <button class="btn btn-primary">@Utility.ThucHien</button>
+                            <button class="btn btn-warning" onclick="GetUniben(event)">@Utility.LayDuLieu</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}
+
+@if ((Model.NhanVien != null && Model.NhanVien.Count > 0) || (string)ViewBag.type == "Employee")
+{
+    using (Ajax.BeginForm("CreateEmployee", API.UnibenSalesOrder, new AjaxOptions { OnBegin = "OnBegin", OnSuccess = "OnSuccessCreate" }))
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="panel-group" id="accordion2">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h1 class="panel-title" style="text-align:center">
+                        <a data-toggle="collapse" data-parent="#accordion2" href="#collapseOne2">
+                            @Utility.GetTitleFrom(API.AspNetUser)
+                        </a>
+                    </h1>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-sm-4">
+                        @Html.Hidden("Type", "Employee")
+                        @Html.TextBox("Employee", (string)ViewBag.searchValue, htmlAttributes: new { @class = "form-control", @style = "width:80%;display:inline-block", @placeholder = Utility.TimKiem, onkeydown = "if(event.keyCode == 13) { searchCustomer(event); return false; }" })
+                        <button class="btn btn-default" onclick="searchCustomer(event)"><span class='glyphicon glyphicon-search'></span></button>
+                    </div>
+                </div>
+                
+
+                <div id="collapseOne2" class="panel-collapse collapse in">
+                    @{
+                        string ShowSearchValue = clsMaHoa.Encrypt(JsonConvert.SerializeObject(Model.NhanVien), clsMaHoa.PassMaHoa);
+
+                        @Html.Hidden("Hidden", ShowSearchValue)
+                    }
+                    <div class="tablescroll" style="overflow-x:auto; Overflow-y:scroll; height: auto;">
+                        <div class="panel-body panel-body-nopadding">
+                            <table class="table table-bordered mb30" id="example-table">
+                                <thead>
+                                    <tr>
+                                        <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KhachHang, "STT")</th>
+                                        <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_NhanVien, "ID")</th>
+                                        <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_NhanVien, "MA")</th>
+                                        <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_NhanVien, "NAME")</th>
+                                        <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.UnibenSalesOrder, "ID_NHANVIEN")</th>
+                                        <th>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbodytmpitem">
+                                    @if (Model.NhanVien != null)
+                                    {
+                                        int STT = 1;
+                                        foreach (var item in Model.NhanVien)
+                                        {
+                                            string Color = "";
+                                            if (string.IsNullOrEmpty(item.ID_NHANVIEN))
+                                            {
+                                                Color = "color: red;";
+                                            }
+                                            <tr id="@item.ID_UNIBEN">
+                                                <td>@STT.ToString("N0")</td>
+                                                <td style="white-space: nowrap; @Color" id="ID_UNIBEN"> @Html.DisplayFor(modelItem => item.ID_UNIBEN)</td>
+                                                <td style="white-space: nowrap; @Color" id="MANHANVIEN"> @Html.DisplayFor(modelItem => item.MANHANVIEN)</td>
+                                                <td style="width: 200px; @Color" id="TENNHANVIEN"> @Html.DisplayFor(modelItem => item.TENNHANVIEN)</td>
+                                                <td style="white-space: nowrap;" id="ID_NHANVIEN">
+                                                    <div class="col-sm-5">
+                                                        @Html.DropDownList("lstAspNetUsers|" + item.ID_UNIBEN, new SelectList(Model.lstAspNetUsers.Where(s => s.ID == item.ID_NHANVIEN), "ID", "NAME", item.ID_NHANVIEN), Utility.GetTitleChon(API.AspNetUser), htmlAttributes: new { @class = "form-control chosen-select", id = "lstAspNetUsers|" + item.ID_UNIBEN })
+                                                    </div>
+                                                </td>
+                                                <td style="white-space: nowrap; " class="fix">
+                                                </td>
+                                            </tr>
+                                            STT += 1;
+                                        }
+                                    }
+                            </table>
+                        </div>
+                    </div><!-- table-responsive -->
+                </div>
+                <div class="panel-footer">
+                    <div class="row">
+                        <div class="col-sm-5 col-sm-offset-3">
+                            <button class="btn btn-primary">@Utility.ThucHien</button>
+                            <button class="btn btn-warning" onclick="GetUniben(event)">@Utility.LayDuLieu</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}
+
+<script>
+    function searchCustomer(event) {
+        event.preventDefault(); // ⛔ chặn submit form
+        OpenLoaderCategory();
+        var searchValue = $('input[name="SearchString"]').val();
+        var type = $('input[name="Type"]').val();
+        window.location.href = '/UnibenSalesOrder/LinkUniben?Type=' + type + '&SearchString=' + encodeURIComponent(searchValue);
+    }
+
+    function GetUniben(event) {
+        event.preventDefault(); // ⛔ chặn submit form
+        if (confirm("Bạn có chắc chắn muốn lấy dữ liệu Uniben không?")) {
+            OpenLoaderCategory();
+            var type = $('input[name="Type"]').val();
+            window.location.href = '/UnibenSalesOrder/LinkUniben?Type=' + type + '&TypeGet=GetUniben';
+        }
+    }
+</script>

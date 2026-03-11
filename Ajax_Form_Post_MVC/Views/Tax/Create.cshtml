@@ -48,7 +48,7 @@
                 <div class="form-group">
                     @Html.Label(@Utility.GetColumnName(@API.dm_ThueSuat, "GHICHU"), htmlAttributes: new { @class = "col-sm-2 control-label" })
                     <div class="col-sm-5">
-                        @Html.TextAreaFor(model => model.GHICHU, new { @class = "form-control", @rows = "3" })
+                        @Html.TextAreaFor(model => model.GHICHU, new { @class = "form-control", @rows = "5" })
                         @Html.ValidationMessageFor(model => model.GHICHU, "", new { @class = "text-danger" })
                     </div>
                 </div>

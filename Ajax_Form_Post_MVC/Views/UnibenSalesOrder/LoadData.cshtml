@@ -1,0 +1,404 @@
+﻿@model MVC_QuanLyTHP.Models.v_v_UnibenOrderListResponse
+@using PagedList.Mvc;
+@using DatabaseTHP.Class;
+@using MVC_QuanLyTHP.Class;
+@using DatabaseTHP;
+@using Newtonsoft.Json;
+@{
+    ViewBag.Title = API.ViewBagTitle;
+    Layout = "~/Views/Shared/Admin.cshtml";
+}
+<style>
+    .treegrid-indent {
+        width: 0px;
+        height: 16px;
+        display: inline-block;
+        position: relative;
+    }
+
+    .treegrid-expander {
+        width: 0px;
+        height: 16px;
+        display: inline-block;
+        position: relative;
+        left: -17px;
+        cursor: pointer;
+    }
+</style>
+@Html.Partial("LoadCssDanhMuc")
+<script src="@Url.Content("~/Scripts/InputOutput.js?" + Utility.VersionJs)"></script>
+@if (Model.KhachHang != null && Model.KhachHang.Count > 0)
+{
+    using (Ajax.BeginForm("CreateCustomer", API.UnibenSalesOrder, new AjaxOptions { OnBegin = "OnBegin", OnSuccess = "OnSuccessCreate" }))
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="panel-group" id="accordion">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h1 class="panel-title" style="text-align:center">
+                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+                            @Utility.GetTitleFrom(API.dm_KhachHang)
+                        </a>
+                    </h1>
+                </div>
+                @{
+                    string ShowSearchValue = clsMaHoa.Encrypt(JsonConvert.SerializeObject(Model.KhachHang), clsMaHoa.PassMaHoa);
+
+                    @Html.Hidden("Hidden", ShowSearchValue)
+                }
+
+
+                <div id="collapseOne" class="panel-collapse collapse in">
+                    <div class="tablescroll" style="overflow-x:auto; Overflow-y:scroll; height: auto;">
+                        <div class="panel-body panel-body-nopadding">
+                            <table class="table table-bordered mb30" id="example-table">
+                                <thead>
+                                    <tr>
+                                        <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KhachHang, "STT")</th>
+                                        <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KhachHang, "ID")</th>
+                                        <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KhachHang, "MA")</th>
+                                        <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KhachHang, "NAME")</th>
+                                        <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KhachHang, "ADDRESS")</th>
+                                        <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KhachHang, "MASOTHUE")</th>
+                                        <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KhachHang, "ID_KAHCHHANG")</th>
+                                        <th>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbodytmpitem">
+                                    @if (Model.KhachHang != null)
+                                    {
+                                        int STT = 1;
+                                        foreach (var item in Model.KhachHang)
+                                        {
+                                            <tr id="@item.ID_UNIBEN">
+                                                <td>@STT.ToString("N0")</td>
+                                                <td style="white-space: nowrap;" id="ID_UNIBEN"> @Html.DisplayFor(modelItem => item.ID_UNIBEN)</td>
+                                                <td style="white-space: nowrap;" id="MAKHACHHANG"> @Html.DisplayFor(modelItem => item.MAKHACHHANG)</td>
+                                                <td style="white-space: nowrap;" id="TENKHACHHANG"> @Html.DisplayFor(modelItem => item.TENKHACHHANG)</td>
+                                                <td style="white-space: nowrap;" id="DIACHI"> @Html.DisplayFor(modelItem => item.DIACHI) </td>
+                                                <td style="white-space: nowrap;" id="MASOTHUE"> @Html.DisplayFor(modelItem => item.MASOTHUE)</td>
+                                                <td style="white-space: nowrap;" id="ID_KHACHHANG">
+                                                    <div class="input-group mb15">
+                                                        <span class="input-group-btn">
+                                                            <button type="button" class="btn btn-default" onclick="myFunOpenSearch('accordion', '@{@API.dm_KhachHang;}', '@API.Chon1', 'lstdm_KhachHang|' + @item.ID_UNIBEN, '')"><span class="glyphicon glyphicon-search"></span></button>
+                                                        </span>
+                                                        @Html.DropDownList("lstdm_KhachHang|" + item.ID_UNIBEN, new SelectList(Model.KhachHang.Count < 20 ? Model.lstdm_KhachHang : Model.lstdm_KhachHang.Where(e => e.ID == item.ID_KHACHHANG), "ID", "NAME", item.ID_KHACHHANG), !string.IsNullOrEmpty(item.ID_KHACHHANG) ? item.ID_KHACHHANG : Utility.GetTitleChon(API.dm_KhachHang), htmlAttributes: new { @class = "form-control chosen-select", id = "lstdm_KhachHang|" + item.ID_UNIBEN })
+                                                    </div>
+                                                </td>
+                                                <td style="white-space: nowrap; " class="fix">
+                                                </td>
+                                            </tr>
+            STT += 1;
+        }
+    }
+                            </table>
+                        </div>
+                    </div><!-- table-responsive -->
+                </div>
+                <div class="panel-footer">
+                    <div class="row">
+                        <div class="col-sm-5 col-sm-offset-3">
+                            <button class="btn btn-primary">@Utility.ThucHien</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}
+
+@if (Model.HangHoa != null && Model.HangHoa.Count > 0)
+{
+    using (Ajax.BeginForm("CreateProduct", API.UnibenSalesOrder, new AjaxOptions { OnBegin = "OnBegin", OnSuccess = "OnSuccessCreate" }))
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="panel-group" id="accordion1">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h1 class="panel-title" style="text-align:center">
+                        <a data-toggle="collapse" data-parent="#accordion1" href="#collapseOne1">
+                            @Utility.GetTitleFrom(API.dm_HangHoa)
+                        </a>
+                    </h1>
+                </div>
+
+                @{
+                    string ShowSearchValue = clsMaHoa.Encrypt(JsonConvert.SerializeObject(Model.HangHoa), clsMaHoa.PassMaHoa);
+
+                    @Html.Hidden("Hidden", ShowSearchValue)
+                }
+                <div id="collapseOne1" class="panel-collapse collapse in">
+                    <div class="tablescroll" style="overflow-x:auto; Overflow-y:scroll; height: auto;">
+                        <div class="panel-body panel-body-nopadding">
+                            <table class="table table-bordered mb30" id="example-table">
+                                <thead>
+                                    <tr>
+                                        <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_HangHoa, "STT")</th>
+                                        <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_HangHoa, "ID")</th>
+                                        <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_HangHoa, "MA")</th>
+                                        <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_HangHoa, "NAME")</th>
+                                        <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_HangHoa, "ISKHUYENMAI")</th>
+                                        <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_HangHoa, "ID_HANGHOA")</th>
+                                        <th>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbodytmpitem">
+                                    @if (Model.KhachHang != null)
+                                    {
+                                        int STT = 1;
+                                        foreach (var item in Model.HangHoa)
+                                        {
+                                            string idHangHoa = "lstdm_HangHoa|" + @item.ID_UNIBEN + "|" + item.ISKHUYENMAI;
+                                            <tr id="@item.ID_UNIBEN">
+                                                <td>@STT.ToString("N0")</td>
+                                                <td style="white-space: nowrap;" id="ID_UNIBEN"> @Html.DisplayFor(modelItem => item.ID_UNIBEN)</td>
+                                                <td style="white-space: nowrap;" id="MAKHACHHANG"> @Html.DisplayFor(modelItem => item.MAHANGHOA)</td>
+                                                <td style="white-space: nowrap;" id="TENKHACHHANG"> @Html.DisplayFor(modelItem => item.TENHANGHOA)</td>
+                                                <td style="white-space: nowrap;" id="ISKHUYENMAI"> @Html.DisplayFor(modelItem => item.ISKHUYENMAI)</td>
+                                                <td style="white-space: nowrap;" id="ID_HANGHOA">
+                                                    <div class="input-group mb15">
+                                                        <span class="input-group-btn">
+                                                            <button type="button" class="btn btn-default" onclick="myFunOpenSearch('accordion1', '@{@API.dm_HangHoa;}', '@API.Chon1','@idHangHoa', '')"><span class="glyphicon glyphicon-search"></span></button>
+                                                        </span>
+                                                        @Html.DropDownList("lstdm_HangHoa|" + item.ID_UNIBEN + "|" + item.ISKHUYENMAI, new SelectList(Model.HangHoa.Count < 10 ? Model.lstdm_HangHoa : Model.lstdm_HangHoa.Where(e => e.ID == item.ID_HANGHOA), "ID", "NAME", item.ID_HANGHOA), !string.IsNullOrEmpty(item.ID_HANGHOA) ? item.ID_HANGHOA : Utility.GetTitleChon(API.dm_HangHoa), htmlAttributes: new { @class = "form-control chosen-select", id = @idHangHoa })
+                                                    </div>
+                                                </td>
+                                                <td style="white-space: nowrap; " class="fix">
+                                                </td>
+                                            </tr>
+            STT += 1;
+                                                            }
+                                                        }
+
+                            </table>
+                        </div>
+                    </div><!-- table-responsive -->
+                </div>
+                <div class="panel-footer">
+                    <div class="row">
+                        <div class="col-sm-5 col-sm-offset-3">
+                            <button class="btn btn-primary">@Utility.ThucHien</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}
+
+@if (Model.NhanVien != null && Model.NhanVien.Count > 0)
+{
+    using (Ajax.BeginForm("CreateEmployee", API.UnibenSalesOrder, new AjaxOptions { OnBegin = "OnBegin", OnSuccess = "OnSuccessCreate" }))
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="panel-group" id="accordion2">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h1 class="panel-title" style="text-align:center">
+                        <a data-toggle="collapse" data-parent="#accordion2" href="#collapseOne2">
+                            @Utility.GetTitleFrom(API.AspNetUser)
+                        </a>
+                    </h1>
+                </div>
+                @{
+                    string ShowSearchValue = clsMaHoa.Encrypt(JsonConvert.SerializeObject(Model.NhanVien), clsMaHoa.PassMaHoa);
+
+                    @Html.Hidden("Hidden", ShowSearchValue)
+                }
+
+                <div id="collapseOne2" class="panel-collapse collapse in">
+                    <div class="tablescroll" style="overflow-x:auto; Overflow-y:scroll; height: auto;">
+                        <div class="panel-body panel-body-nopadding">
+                            <table class="table table-bordered mb30" id="example-table">
+                                <thead>
+                                    <tr>
+                                        <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_NhanVien, "STT")</th>
+                                        <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_NhanVien, "ID")</th>
+                                        <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_NhanVien, "MA")</th>
+                                        <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_NhanVien, "NAME")</th>
+                                        <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_NhanVien, "ID_NHANVIEN")</th>
+                                        <th>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbodytmpitem">
+                                    @if (Model.NhanVien != null)
+                                    {
+                                        int STT = 1;
+                                        foreach (var item in Model.NhanVien)
+                                        {
+
+                                            <tr id="@item.ID_UNIBEN">
+                                                <td>@STT.ToString("N0")</td>
+                                                <td style="white-space: nowrap;" id="ID_UNIBEN"> @Html.DisplayFor(modelItem => item.ID_UNIBEN)</td>
+                                                <td style="white-space: nowrap;" id="MANHANVIEN"> @Html.DisplayFor(modelItem => item.MANHANVIEN)</td>
+                                                <td style="white-space: nowrap;" id="TENNHANVIEN"> @Html.DisplayFor(modelItem => item.TENNHANVIEN)</td>
+                                                <td style="white-space: nowrap;" id="ID_NHANVIEN">
+                                                    <div class="col-sm-5">
+                                                        @Html.DropDownList("lstAspNetUsers|" + item.ID_UNIBEN, new SelectList(Model.NhanVien.Count < 20 ? Model.lstAspNetUsers : Model.lstAspNetUsers.Where(e => e.ID == item.ID_NHANVIEN), "ID", "NAME", item.ID_NHANVIEN), !string.IsNullOrEmpty(item.ID_NHANVIEN) ? item.ID_NHANVIEN : Utility.GetTitleChon(API.AspNetUser), htmlAttributes: new { @class = "form-control chosen-select", id = "lstAspNetUsers|" + item.ID_UNIBEN })
+                                                    </div>
+                                                </td>
+                                                <td style="white-space: nowrap; " class="fix">
+                                                </td>
+                                            </tr>
+                                            STT += 1;
+                                        }
+                                    }
+                            </table>
+                        </div>
+                    </div><!-- table-responsive -->
+                </div>
+                <div class="panel-footer">
+                    <div class="row">
+                        <div class="col-sm-5 col-sm-offset-3">
+                            <button class="btn btn-primary">@Utility.ThucHien</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}
+
+@if (Model.NhanVien != null && Model.NhanVien.Count == 0
+    && Model.KhachHang != null && Model.KhachHang.Count == 0
+    && Model.HangHoa != null && Model.HangHoa.Count == 0
+     && Model.lstDonHang != null && Model.lstDonHang.Count > 0)
+{
+    using (Ajax.BeginForm("Create" + API.UnibenSalesOrder, API.UnibenSalesOrder, new AjaxOptions { OnBegin = "OnBegin", OnSuccess = "OnSuccessCreateTimekeeping" }))
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="panel-group" id="accordion3">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h1 class="panel-title" style="text-align:center">
+                        <a data-toggle="collapse" data-parent="#accordion3" href="#collapseOne3">
+                            @Utility.GetTitleFrom(API.ct_PhieuDatHang)
+                        </a>
+                    </h1>
+                </div>
+
+
+                <div id="collapseOne3" class="panel-collapse collapse in">
+                    <div class="tablescroll" style="overflow-x:auto; Overflow-y:scroll; height: auto;">
+                        <div class="panel-body panel-body-nopadding">
+                            <table id="tree-table" class="table table-hover table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th style="font-weight: bold; text-align:center; white-space: nowrap;">
+                                            <input type="checkbox" onchange="OnchangeCheckbox(event, 'tbodytmpitem')" />
+                                        </th>
+                                        <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.UnibenSalesOrder, "MAPHIEU")</th>
+                                        <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.UnibenSalesOrder, "NGAYLAP")</th>
+                                        <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.UnibenSalesOrder, "TUYENXE")</th>
+                                        <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.UnibenSalesOrder, "MAKHACHHANG")</th>
+                                        <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.UnibenSalesOrder, "TENKHACHHANG")</th>
+                                        <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.UnibenSalesOrder, "DIACHI")</th>
+
+                                        <th style="font-weight: bold; text-align:center; white-space: nowrap;" class="fix"> @Utility.GetColumnName(@API.UnibenSalesOrder, "THANHTIEN")</th>
+                                        <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.UnibenSalesOrder, "GHICHU")</th>
+                                        <th>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbodytmpitem">
+                                    @if (Model.lstDonHang != null)
+                                    {
+                                        int i = 100;
+                                        foreach (var item in Model.lstDonHang)
+                                        {
+                                            <tr data-id="@item.unibenOrder.orderCode" data-parent="0" data-level="1" id="@item.unibenOrder.orderCode" style="color: #428bca">
+                                                <td style="white-space: nowrap;" id="CHON">
+                                                    @if (!item.DATONTAI)
+                                                    {
+                                                        @Html.CheckBox("chk|" + item.unibenOrder.orderCode, htmlAttributes: new { @class = "form-control", @id = "chk|" + item.unibenOrder.orderCode })
+                                                    }
+                                                </td>
+                                                <td data-column="name">@item.unibenOrder.orderCode</td>
+                                                <td>@item.unibenOrder.orderDate.ToString("dd/MM/yyyy")</td>
+                                                <td>@item.unibenOrder.routeCode - @item.unibenOrder.userName</td>
+                                                <td>@item.unibenOrder.customerId - @item.unibenOrder.customerCode</td>
+                                                <td>@item.unibenOrder.customerName</td>
+                                                <td>@item.unibenOrder.deliveryAddress</td>
+                                                <td>@item.unibenOrder.totalAmount.ToString("N0")</td>
+                                                <td>@item.MAPHIEUDATHANG</td>
+                                            </tr>
+                                            <tr data-id="@i" data-parent="@item.unibenOrder.orderCode" data-level="2" id="@i" style="color: #428bca">
+                                                <td></td>
+                                                <td></td>
+                                                <td>@item.DonDatHang.NGAYLAP.ToString("dd/MM/yyyy")</td>
+                                                <td>@item.DonDatHang.NAME_NHANVIEN</td>
+                                                <td>@item.DonDatHang.MA_KHACHHANG</td>
+                                                <td>@item.DonDatHang.NAME_KHACHHANG</td>
+                                                <td>@item.DonDatHang.DIACHI_KHACHHANG</td>
+                                                <td>@item.DonDatHang.TONGTIEN.ToString("N0")</td>
+                                                <td></td>
+                                            </tr>
+
+                                            <tr data-id="@i" data-parent="@item.unibenOrder.orderCode" data-level="2" id="@i" style="color: #428bca">
+                                                <td></td>
+                                                <td style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_HangHoa, "MA")</td>
+                                                <td style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_HangHoa, "NAME")</td>
+                                                <td style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_HangHoa, "ID_DVT")</td>
+                                                <td style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuDatHang_ChiTiet, "SOLUONG")</td>
+                                                <td style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuDatHang_ChiTiet, "DONGIA")</td>
+                                                <td style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuDatHang_ChiTiet, "TONGTIENGIAMGIA")</td>
+                                                <td style="font-weight: bold; text-align:center; white-space: nowrap;" class="fix"> @Utility.GetColumnName(@API.ct_PhieuDatHang_ChiTiet, "TONGCONG")</td>
+                                                <td>
+                                                </td>
+                                            </tr>
+
+                                            foreach (var it in item.DonDatHang.lstct_PhieuDatHang_ChiTiet)
+                                            {
+                                                <tr data-id="@i" data-parent="@item.unibenOrder.orderCode" data-level="2" id="@i">
+                                                    <td></td>
+                                                    <td>@it.MA</td>
+                                                    <td>@it.NAME</td>
+                                                    <td>@it.NAME_DVT</td>
+                                                    <td>@it.SOLUONG.ToString("N0")</td>
+                                                    <td>@it.DONGIA.ToString("N0")</td>
+                                                    <td>@it.TONGTIENGIAMGIA.ToString("N0")</td>
+                                                    <td>@it.TONGCONG.ToString("N0")</td>
+                                                    <td></td>
+                                                </tr>
+                                            }
+                                            i += 1;
+                                        }
+                                    }
+                            </table>
+                        </div>
+                    </div><!-- table-responsive -->
+                </div>
+                <div class="panel-footer">
+                    <div class="row">
+                        <div class="col-sm-5 col-sm-offset-3">
+                            <button class="btn btn-primary">@Utility.ThucHien</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}
+<script src="@Url.Content("~/Content/js/javascript.js")"></script>
+@if (Model.lstDonHang != null)
+{
+    <script type="text/javascript">
+        $(function () {
+        @foreach(var item in Model.lstDonHang)
+        {
+                // delete extra hidden fields created by checkboxes as the grid links mess this up by doubling the querystring parameters
+                <text>
+                    $("input[type='hidden'][name='chk|@item.unibenOrder.orderCode']").remove();
+                    $("input[type='hidden'][name='chk|@item.unibenOrder.orderCode']").remove();
+                </text>
+        }
+         });
+    </script>
+}

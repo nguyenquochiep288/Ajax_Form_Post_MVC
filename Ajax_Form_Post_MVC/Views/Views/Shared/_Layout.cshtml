@@ -1,0 +1,133 @@
+﻿<!DOCTYPE HTML>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!--CSS-->
+<!--Google Webfont -->
+    <link rel="shortcut icon" href="@Url.Content("~/images/favicon.ico")" type="image/png">
+<link href='http://fonts.googleapis.com/css?family=Istok+Web' rel='stylesheet' type='text/css'>
+<!--Javascript-->
+    <link rel="stylesheet" href="@Url.Content("~/Site-Admin/css/account.css")" type="text/css" />
+     <title>SHome</title>
+    
+
+
+    <link href="@Url.Content("~/Content/css/phantrang.css")" rel="stylesheet">
+
+    <link href="~/Content/base.css" rel="stylesheet" />
+    <link href="@Url.Content("~/Content/styles.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/popup.css")" rel="stylesheet" type="text/css" />
+     <link href="@Url.Content("~/Content/stylefrom.cs")" rel="stylesheet" type="text/css" />
+     <link href="@Url.Content("~/Content/popup.css")" rel="stylesheet" type="text/css" />
+     <link href="@Url.Content("~/Content/popup.css")" rel="stylesheet" type="text/css" />
+     <link href="@Url.Content("~/Content/popup.css")" rel="stylesheet" type="text/css" />
+
+    <script src="@Url.Content("~/Scripts/jquery-1.7.2.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Scripts/jquery.flexslider.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Scripts/jquery.easing.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Scripts/jquery.jcarousel.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Scripts/form_elements.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Scripts/custom.js")" type="text/javascript"></script>
+        @RenderSection("scripts", required: false)
+
+@*<script type="text/javascript" src="js/jquery-1.7.2.min.js" ></script>
+<script type="text/javascript" src="js/jquery.flexslider.js" ></script>*@
+@*<script type="text/javascript" src="js/jquery.easing.js"></script>
+<script type="text/javascript" src="js/jquery.jcarousel.js"></script>
+<script type="text/javascript" src="js/form_elements.js" ></script>
+<script type="text/javascript" src="js/custom.js"></script>*@
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+</head>
+<body>
+  
+
+<div class="wrapper">
+    <div class="header_container">
+        <!--Header Starts-->
+        <header>
+            <div class="top_bar clear">
+                <!--Language Switcher Starts-->
+               
+              
+                <!--Language Switcher Ends-->
+                <!--Top Links Starts-->
+               
+                   @Html.Partial("_Login_Partial")
+            
+                <!--Top Links Ends-->
+            </div>
+            <!--Logo Starts-->
+            <h1 class="logo"> <a href="@Url.Action("Index", "Home")"> <img src="@Url.Content("~/images/logo1.png")"/></a> </h1>
+            <!--Logo Ends-->
+           
+            <!--Search Starts-->
+          
+               <form class="header_search" action="/Home/Timkiem" method="get">
+                <div class="form-search">
+                 <input id="search" type="text" name="key" value="" class="input-text" autocomplete="off" placeholder="Tìm kiếm">
+          <button type="submit" title="Search"></button>
+                </div>
+                   </form>
+            <!--Search Ends-->
+        </header>
+        <!--Header Ends-->
+    </div>
+    <div class="navigation_container">
+        <!--Navigation Starts-->
+        <nav>
+            <ul class="primary_nav">
+                <li class="active">@Html.ActionLink("Home", "Index", "Home")
+                    <!--SUbmenu Starts-->
+                    
+                    <!--SUbmenu Ends-->
+                </li>
+
+                 @*@{Html.RenderAction("Index", "Menu");}*@
+               
+                <li>@Html.ActionLink("Tin tức", "TinTuc","TinTuc")
+                <li>@Html.ActionLink("Thư viện hình ảnh", "Images","Home")
+               </li>
+            </ul>
+            @*@{Html.RenderAction("Index", "ShoppingCart_Layout");}*@
+        </nav>
+        <!--Navigation Ends-->
+    </div>
+        <div class="section_container">
+            @RenderSection("featured", required: false)
+            <section class="content-wrapper main-content clear-fix">
+                @RenderBody()
+            </section>
+        </div>
+    <div class="footer_container">
+        <!--Footer Starts-->
+        <footer>
+            <ul class="footer_links">
+                <li  class="seperator"> <span>@Html.ActionLink("HOME", "Index", "Home")</span>
+                    <ul>
+                        <li><a href="#"></a></li>
+                    </ul>
+                </li>
+                @* @{Html.RenderAction("Menuduoi", "Menu");}*@
+               
+                 
+            </ul>
+            <div class="footer_customblock">
+
+                <div class="shipping_info"> <span>Giao hàng</span><br>
+                    <big>MIỄN PHÍ</big><br>
+                    <small>Hóa đơn từ 2.000.000</small> </div>
+                <div class="contact_info"> <big>01.657.708.636</big> </div>
+            </div>
+            <address>
+            Copyright © 2014 SHome. <img src="@Url.Content("~/images/payment_info.jpg")"/>
+            </address>
+        </footer>
+        <!--Footer Ends-->
+    </div>
+    </div>
+     @Html.Partial("Hotro")
+   
+
+@*<script type='text/javascript'>(function () { var done = false; var script = document.createElement('script'); script.async = true; script.type = 'text/javascript'; script.src = 'https://widget.purechat.com/VisitorWidget/WidgetScript'; document.getElementsByTagName('HEAD').item(0).appendChild(script); script.onreadystatechange = script.onload = function (e) { if (!done && (!this.readyState || this.readyState == 'loaded' || this.readyState == 'complete')) { var w = new PCWidget({ c: 'a00c47c8-a4ab-4991-aebb-e2d291cd5049', f: true }); done = true; } }; })();</script>*@
+</body>
+</html>

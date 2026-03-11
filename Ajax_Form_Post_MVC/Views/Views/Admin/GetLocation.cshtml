@@ -1,0 +1,84 @@
+﻿<!DOCTYPE html>
+<html>
+<body>
+    <style>
+        body {
+            margin: 0;
+            padding: 15px;
+            color: #222;
+            font: normal normal normal 1rem/1.6 Nunito Sans, Helvetica, Arial, sans-serif;
+        }
+
+        div {
+            margin-bottom: 10px;
+        }
+
+        button {
+            background-color: #3da4ab;
+            border: none;
+            color: #fff;
+            padding: 10px;
+            font-size: 1.05rem;
+            border-radius: 2px;
+            cursor: pointer;
+        }
+
+            button:hover {
+                background-color: #0e9aa7;
+            }
+    </style>
+    <div>Vĩ độ: <span id="lat"></span></div>
+    <div>Kinh độ: <span id="lon"></span></div>
+    <div>
+        <button id="currPos">vị trí hiện tại</button>
+    </div>
+    <div id="error"></div>
+
+    <script>
+document.addEventListener("DOMContentLoaded", event => {
+  let $ = document.querySelector.bind(document);
+  let options = {
+    enableHighAccuracy: true,
+    timeout: 5000,
+    maximumAge: 0
+  };
+
+  $("#currPos").addEventListener("click", getLocation);
+
+  function getLocation() {
+    let geolocation = navigator.geolocation;
+    if (geolocation) {
+      geolocation.getCurrentPosition(onGeoSuccess, onGeoError, options);
+    } else {
+      console.log("Trình duyệt của bạn không hỗ trợ Geolocation.");
+    }
+  }
+
+  function onGeoSuccess(position) {
+    $("#lat").innerHTML = position.coords.latitude;
+    $("#lon").innerHTML = position.coords.longitude;
+  }
+
+  function onGeoError(error) {
+    let detailError;
+
+    if(error.code === error.PERMISSION_DENIED) {
+      detailError = "người dùng từ chối chia sẻ vị trí.";
+    }
+    else if(error.code === error.POSITION_UNAVAILABLE) {
+      detailError = "thông tin vị trí không khả dụng.";
+    }
+    else if(error.code === error.TIMEOUT) {
+      detailError = "yêu cầu đã hết thời gian ."
+    }
+    else if(error.code === error.UNKNOWN_ERROR) {
+      detailError = "lỗi không xác định."
+    }
+
+    $("#error").innerHTML = `Error: ${detailError}`;
+  }
+});
+    </script>
+
+</body>
+</html>

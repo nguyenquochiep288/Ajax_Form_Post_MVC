@@ -1,0 +1,293 @@
+﻿@model MVC_QuanLyTHP.Models.v_v_ct_PhieuXuat
+@using DatabaseTHP.Class;
+@using MVC_QuanLyTHP.Class;
+@using DatabaseTHP;
+@if (Utility.IntWidth == 1)
+{
+    using (Ajax.BeginForm("CreatePopup", API.ct_PhieuXuat, new AjaxOptions {OnBegin = "OnBegin", OnSuccess = "OnSuccessCreate" }))
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="panel-heading" style="padding-bottom:5px">
+            <div class="panel-btns">
+                <a onclick='myFunClosed("myModalAdd")'>&times;</a>
+            </div>
+            <h1 class="panel-title" style="font-size: 20px;text-align: center "><label id="lblName" name="lblName">@Utility.GetTitleFrom(API.ct_PhieuXuat)</label></h1>
+            <div class="panel-body" style="padding:5px">
+            </div>
+        </div>
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div id="ValidationSummary" class="validation-summary-errors text-danger">
+        </div>
+        <div id="collapseOneDeposit" class="panel-body panel-body-nopadding">
+            <div class="form-horizontal form-bordered">
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                @Html.HiddenFor(model => model.LOC_ID)
+                @Html.HiddenFor(model => model.ID)
+                @Html.HiddenFor(model => model.SOPHIEU)
+                @Html.HiddenFor(model => model.ID_LOAIPHIEUXUAT)
+                <div class="form-group">
+                    @Html.Label(@Utility.GetColumnName(@API.ct_PhieuXuat, "ID_KHO"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                    <div class="col-sm-5">
+                        @Html.DropDownListFor(model => model.ID_KHO, new SelectList(Model.lstdm_Kho, "ID", "NAME"), Utility.GetTitleChon(API.dm_Kho), htmlAttributes: new { @class = "form-control chosen-select", @id = "lstdm_Kho" })
+                        @Html.ValidationMessageFor(model => model.ID_KHO, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.Label(@Utility.GetColumnName(@API.ct_PhieuXuat, "MAPHIEU"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                    <div class="col-sm-2">
+                        @Html.EditorFor(model => model.MAPHIEU, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                        @Html.ValidationMessageFor(model => model.MAPHIEU, "", new { @class = "text-danger" })
+                    </div>
+                    @Html.Label(@Utility.GetColumnName(@API.ct_PhieuXuat, "NGAYLAP"), htmlAttributes: new { @class = "col-sm-1 control-label" })
+                    <div class="col-sm-2">
+                        @Html.TextBoxFor(model => model.NGAYLAP, (Model.NGAYLAP).ToString("yyyy-MM-dd"), new { @class = "form-control hasDatepicker", @placeholder = "dd/MM/yyyy", @type = "date", @readonly = "readonly" })
+                        @Html.ValidationMessageFor(model => model.NGAYLAP, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group" id="divNCCAdd">
+                    @Html.Label(@Utility.GetColumnName(@API.ct_PhieuNhap, "ID_NHACUNGCAP"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                    <div class="col-sm-5">
+                        <div class="input-group mb15">
+                            <span class="input-group-btn">
+                                <button type="button" class="btn btn-default" onclick="myFunOpenSearch('myModalAdd', '@{@API.dm_NhaCungCap;}', '@API.Chon1', 'lstdm_NhaCungCap', '')"><span class="glyphicon glyphicon-search"></span></button>
+                            </span>
+                            @Html.DropDownListFor(model => model.ID_NHACUNGCAP, new SelectList(Model.lstdm_NhaCungCap, "ID", "NAME"), !string.IsNullOrEmpty(Model.ID_NHACUNGCAP) ? "" : Utility.GetTitleChon(API.dm_NhaCungCap), htmlAttributes: new { @class = "form-control chosen-select", id = "lstdm_NhaCungCap" })
+                        </div>
+
+                        @Html.ValidationMessageFor(model => model.ID_NHACUNGCAP, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group" id="divKHACHHANGAdd">
+                    @Html.Label(@Utility.GetColumnName(@API.ct_PhieuNhap, "ID_KHACHHANG"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                    <div class="col-sm-5">
+                        <div class="input-group mb15">
+                            <span class="input-group-btn">
+                                <button type="button" class="btn btn-default" onclick="myFunOpenSearch('myModalAdd', '@{@API.dm_KhachHang;}', '@API.Chon1', 'lstdm_KhachHang', '')"><span class="glyphicon glyphicon-search"></span></button>
+                            </span>
+                            @Html.DropDownListFor(model => model.ID_KHACHHANG, new SelectList(Model.lstdm_KhachHang, "ID", "NAME"), !string.IsNullOrEmpty(Model.ID_KHACHHANG) ? "" : Utility.GetTitleChon(API.dm_KhachHang), htmlAttributes: new { @class = "form-control chosen-select", id = "lstdm_KhachHang" })
+                        </div>
+
+                        @Html.ValidationMessageFor(model => model.ID_KHACHHANG, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.Label(@Utility.GetColumnName(@API.ct_PhieuNhap, "ID_NHANVIEN"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                    <div class="col-sm-5">
+                        <div class="input-group mb15">
+                            <span class="input-group-btn">
+                                <button type="button" class="btn btn-default" onclick="myFunOpenSearch('myModalAdd', '@{@API.dm_NhanVien;}', '@API.Chon1', 'lstdm_NhanVien', '')"><span class="glyphicon glyphicon-search"></span></button>
+                            </span>
+                            @Html.DropDownListFor(model => model.ID_NHANVIEN, new SelectList(Model.lstdm_NhanVien, "ID", "NAME"), !string.IsNullOrEmpty(Model.ID_NHANVIEN) ? "" : Utility.GetTitleChon(API.dm_NhanVien), htmlAttributes: new { @class = "form-control chosen-select", id = "lstdm_NhanVien" })
+                        </div>
+
+                        @Html.ValidationMessageFor(model => model.ID_NHANVIEN, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.Label(@Utility.GetColumnName(@API.ct_PhieuXuat, "GHICHU"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                    <div class="col-sm-5">
+                        @Html.TextAreaFor(model => model.GHICHU, new { @class = "form-control", @rows = "3" })
+                        @Html.ValidationMessageFor(model => model.GHICHU, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-sm-5" style="width:100%">
+                        <h5 class="subtitle">Danh sách hàng hóa:  @Html.ValidationMessageFor(model => model.lstct_PhieuXuat_ChiTiet, "", new { @class = "text-danger" }) <a href="#" class="pull-right" onclick="myFunOpenSearch('myModalAdd', '@{@API.ct_PhieuXuat;}', '@API.ChonSanPhamNhapXuatChuyen', 'tbodyTempItemInput', '')">+ Thêm sản phẩm</a></h5>
+                        <div style="overflow-x:auto; height: auto;">
+                            <div class="panel-body panel-body-nopadding">
+                                <table class="table table-bordered mb30">
+                                    <thead>
+                                        <tr>
+                                            <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_HangHoa, "MA")</th>
+                                            <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_HangHoa, "NAME")</th>
+                                            <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_HangHoa, "ID_DVT") </th>
+                                            <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuXuat_ChiTiet, "SOLUONG") </th>
+                                            <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuXuat_ChiTiet, "DONGIA") </th>
+                                            <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuXuat_ChiTiet, "CHIETKHAU") </th>
+                                            <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuXuat_ChiTiet, "TONGTIENGIAMGIA") </th>
+                                            <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuXuat_ChiTiet, "THANHTIEN") </th>
+                                            <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuXuat_ChiTiet, "THUESUAT") </th>
+                                            <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuXuat_ChiTiet, "TONGTIENVAT") </th>
+                                            <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuXuat_ChiTiet, "TONGCONG") </th>
+                                            <th>
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tbodyTempItemInput" overflow:"scroll";>
+                                        @Html.Raw(ViewBag.DatHang)
+                                    </tbody>
+                                    <thead>
+                                        <tr>
+                                            <th colspan="1">
+                                                <div>
+                                                    <a class="btn btn-danger btn" onclick="myDeleteAllDeposit_TempProduct()" style="text-align:left">Xóa tất cả</a>
+                                                </div>
+                                            </th>
+                                            <th colspan="1">
+                                               
+                                                <div>
+                                                    <button class="btn btn-info btn" href="#" onclick="validatetext()" style="text-align:left" value="GetPromotion" name="BUTTONTYPE">Khuyến mãi</button>
+                                                </div>
+                                            </th>
+                                            <th colspan="10"></th>
+                                        </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                        </div><!-- table-responsive -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel-footer">
+            <div class="row">
+                <div class="col-sm-5 col-sm-offset-3">
+                    <button class="btn btn-primary" asp-page-handler="Submit" onclick="validatetext()" value="Save" name="BUTTONTYPE">@Utility.ThucHien</button>
+                    <a class="btn btn-danger" onclick='myFunClosed("myModalAdd")'>@Utility.Dong</a>
+                </div>
+            </div>
+        </div>
+    }
+}
+else
+{
+    {
+        ViewBag.Title = API.ViewBagTitle;
+        Layout = "~/Views/Shared/Admin.cshtml";
+    }
+
+    using (Ajax.BeginForm("Create", API.ct_PhieuXuat, new AjaxOptions {OnBegin = "OnBegin", OnSuccess = "OnSuccessCreate" }))
+    {
+        @Html.AntiForgeryToken()
+        <div class="panel-group" id="accordion">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h1 class="panel-title" style="text-align:center">
+                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+                            THÔNG TIN ĐƠN HÀNG
+                        </a>
+                    </h1>
+                </div>
+
+                <div id="collapseOne" class="panel-collapse collapse in">
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                    @Html.HiddenFor(model => model.LOC_ID)
+                    @Html.HiddenFor(model => model.ID)
+                    @Html.HiddenFor(model => model.SOPHIEU)
+                    <div class="form-group">
+                        @Html.Label(@Utility.GetColumnName(@API.ct_PhieuXuat, "ID_KHO"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                        <div class="col-sm-5">
+                            @Html.DropDownListFor(model => model.ID_KHO, new SelectList(Model.lstdm_Kho, "ID", "NAME"), Utility.GetTitleChon(API.dm_Kho), htmlAttributes: new { @class = "form-control chosen-select", @id = "lstdm_Kho" })
+                            @Html.ValidationMessageFor(model => model.ID_KHO, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.Label(@Utility.GetColumnName(@API.ct_PhieuXuat, "MAPHIEU"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                        <div class="col-sm-2">
+                            @Html.EditorFor(model => model.MAPHIEU, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                            @Html.ValidationMessageFor(model => model.MAPHIEU, "", new { @class = "text-danger" })
+                        </div>
+                        @Html.Label(@Utility.GetColumnName(@API.ct_PhieuXuat, "NGAYLAP"), htmlAttributes: new { @class = "col-sm-1 control-label" })
+                        <div class="col-sm-2">
+                            @Html.TextBoxFor(model => model.NGAYLAP, (Model.NGAYLAP).ToString("yyyy-MM-dd"), new { @class = "form-control hasDatepicker", @placeholder = "dd/MM/yyyy", @type = "date", @readonly = "readonly" })
+                            @Html.ValidationMessageFor(model => model.NGAYLAP, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.Label(@Utility.GetColumnName(@API.ct_PhieuXuat, "ID_KHACHHANG"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                        <div class="col-sm-5">
+                            @Html.DropDownListFor(model => model.ID_KHACHHANG, new SelectList(Model.lstdm_KhachHang, "ID", "NAME"), Utility.GetTitleChon(API.dm_KhachHang), htmlAttributes: new { @class = "form-control chosen-select", @id = "lstdm_KhachHang", @onchange = "CallChangeCustomer(this.value)" })
+                            @Html.ValidationMessageFor(model => model.ID_KHACHHANG, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.Label(@Utility.GetColumnName(@API.ct_PhieuXuat, "GHICHU"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                        <div class="col-sm-5">
+                            @Html.TextAreaFor(model => model.GHICHU, new { @class = "form-control", @rows = "3" })
+                            @Html.ValidationMessageFor(model => model.GHICHU, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-sm-5" style="width:100%">
+                            <h5 class="subtitle">Danh sách hàng hóa:  @Html.ValidationMessageFor(model => model.lstct_PhieuXuat_ChiTiet, "", new { @class = "text-danger" })</h5>
+                            <div style="overflow-x:auto; height: auto;">
+                                <div class="panel-body panel-body-nopadding">
+                                    <table class="table table-bordered mb30">
+                                        <thead>
+                                            <tr>
+                                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuXuat_ChiTiet, "MA")</th>
+                                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuXuat_ChiTiet, "NAME")</th>
+                                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuXuat_ChiTiet, "ID_DVT") </th>
+                                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuXuat_ChiTiet, "SOLUONG") </th>
+                                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuXuat_ChiTiet, "DONGIA") </th>
+                                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuXuat_ChiTiet, "CHIETKHAU") </th>
+                                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuXuat_ChiTiet, "TONGTIENGIAMGIA") </th>
+                                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuXuat_ChiTiet, "THANHTIEN") </th>
+                                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuXuat_ChiTiet, "THUESUAT") </th>
+                                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuXuat_ChiTiet, "TONGTIENVAT") </th>
+                                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuXuat_ChiTiet, "TONGCONG") </th>
+                                                <th>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tbodyTempItemInput" overflow:"scroll";>
+                                            @Html.Raw(ViewBag.DatHang)
+                                        </tbody>
+                                        <thead>
+                                            <tr>
+                                                <th colspan="10">
+                                                    <div>
+                                                        <a class="btn btn-danger btn" onclick="myDeleteAllDeposit_TempProduct()" style="text-align:left">Xóa tất cả</a>
+                                                    </div>
+                                                </th>
+                                                <th>
+                                                    <div>
+                                                        <button class="btn btn-info btn" href="#" onclick="validatetext()" style="text-align:left" value="GetPromotion" name="BUTTONTYPE">Khuyến mãi</button>
+                                                    </div>
+                                                </th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                    </table>
+                                </div>
+                            </div><!-- table-responsive -->
+                        </div>
+                    </div>
+                </div>
+                        <div class="panel-footer">
+                            <div class="row">
+                                <div class="col-sm-6 col-sm-offset-3">
+                                    <button class="btn btn-primary" asp-page-handler="Submit" onclick="validatetext()" value="Save" name="BUTTONTYPE">@Utility.ThucHien</button>
+                                    @if (Request.UrlReferrer != null)
+                                    {
+                                        <a href="@Request.UrlReferrer.ToString()" class="btn btn-danger">@Utility.QuayLai</a>
+                                    }
+                                    else
+                                    {
+
+                                        @Html.ActionLink(Utility.QuayLai, "Index", null, new { @class = "btn btn-danger" })
+                                    }
+                                    @*@if (Model.listvwPhieuGoiHang.Count > 0)
+                        { @Html.ActionLink("Download File", "Download")}*@
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+    }
+}
+

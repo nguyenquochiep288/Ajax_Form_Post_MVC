@@ -1,0 +1,13 @@
+﻿@if (Session["dangnhap"] == "true"){
+    @*<div class="language_switch" style="height:50px;margin-top:2px;border:2px;border-color:white"> <img width="40" height="40" src="~/Images_sp/" style="border:2px;border-color:red"/> </div>*@
+               <div class="language_switch" style="font-size:15px;color:white;margin-left:10px"><a href="#" title="" style="font-size:15px;color:white;background-color:#524D48">Chào, @Session["ten"]</a> </div>
+     <ul class="top_links">        
+    <li class="highlight"><a href="/Account_">Tài khoản</a></li>
+            <li class="highlight"><a href="/Logout">Đăng xuất</a></li>
+         </ul>
+} else {
+     <ul class="top_links">
+        <li class="highlight"><a href="/Login">Đăng nhập</a></li>
+        <li class="highlight"><a href="/Dangky">Đăng ký</a></li>
+         </ul>
+}

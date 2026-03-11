@@ -9,7 +9,7 @@
     Layout = "~/Views/Shared/Admin.cshtml";
 }
 @Html.Partial("LoadCssDanhMuc")
-<script src="@Url.Content("~/Scripts/InputOutput.js")"></script>
+<script src="@Url.Content("~/Scripts/InputOutput.js"+Utility.VersionJs)"></script>
 <script>
     //vn
     $("input.form-control.mask").each((i, ele) => {

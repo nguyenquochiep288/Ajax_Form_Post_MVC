@@ -1,0 +1,168 @@
+﻿@model MVC_QuanLyTHP.Models.v_v_UnibenOrderData
+@using PagedList.Mvc;
+@using DatabaseTHP.Class;
+@using MVC_QuanLyTHP.Class;
+@using DatabaseTHP;
+
+@{
+    ViewBag.Title = API.ViewBagTitle;
+    Layout = "~/Views/Shared/Admin.cshtml";
+}
+<style>
+    .treegrid-indent {
+        width: 0px;
+        height: 16px;
+        display: inline-block;
+        position: relative;
+    }
+
+    .treegrid-expander {
+        width: 0px;
+        height: 16px;
+        display: inline-block;
+        position: relative;
+        left: -17px;
+        cursor: pointer;
+    }
+</style>
+@Html.Partial("LoadCssDanhMuc")
+<script src="@Url.Content("~/Scripts/InputOutput.js?"+Utility.VersionJs)"></script>
+<div class="panel-group" id="accordion">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h1 class="panel-title" style="text-align:center">
+                <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+                    @Utility.GetTitleFrom(API.UnibenSalesOrder)
+                </a>
+            </h1>
+        </div>
+
+
+        <div id="collapseOne" class="panel-collapse collapse in">
+            <div class="form-group">
+                <div class="col-sm-5" style="padding-bottom: 5px;">
+                    <button id="download-excel" style="background-color: #217346;" class="btn btn-success" onclick="ExportExcel('example-table')"><i class="fa fa-file-text-o" style="margin-right:10px"></i>@Utility.XuatExcel</button>
+                </div>
+
+                <div class="col-sm-2" style="padding-bottom: 5px;">
+                    <select class="form-control chosen-select" onchange="show('@API.UnibenSalesOrder')" id="Show" name="Show">
+                        @for (int show = 0; show < Utility.arrShow.Length; show++)
+                        {
+                            if (Utility.GetPageSize() == @Utility.arrShow[show])
+                            {
+                        <option value="@Utility.arrShow[show]" selected>@Utility.arrShow[show]</option>
+                            }
+                            else
+                            {
+                        <option value="@Utility.arrShow[show]">@Utility.arrShow[show]</option>
+                            }
+                        }
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-sm-2" style="padding-bottom: 5px;">
+                    <input type="date" class="form-control" name="fromdate" id="fromdate" value="@ViewBag.fromdate" />
+
+                </div>
+                <div class="col-sm-2">
+                    <input type="date" class="form-control" name="todate" id="todate" value="@ViewBag.todate" />
+                </div>
+
+                <div class="col-sm-4">
+                    @Html.TextBox("SearchString", (string)ViewBag.searchValue, htmlAttributes: new { @class = "form-control", @style = "width:80%;display:inline-block", @placeholder = Utility.TimKiem })
+                    <button class="btn btn-default" onclick="funSearchInputOutput('@API.UnibenSalesOrder')"><span class='glyphicon glyphicon-search'></span></button>
+                </div>
+            </div>
+
+
+            <div class="tablescroll" style="overflow-x:auto; Overflow-y:scroll; height: auto;">
+                <div class="panel-body panel-body-nopadding">
+                    <table class="table table-bordered mb30" id="example-table">
+                        <thead>
+                            <tr>
+                                <th style="font-weight: bold; text-align:center; white-space: nowrap;">
+                                    <input type="checkbox" onchange="OnchangeCheckbox(event, 'tbodytmpitem')" />
+                                </th>                             
+                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.UnibenSalesOrder, "MAPHIEU")</th>
+                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.UnibenSalesOrder, "NGAYLAP")</th>
+                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.UnibenSalesOrder, "TUYENXE")</th>
+                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.UnibenSalesOrder, "MAKHACHHANG")</th>
+                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.UnibenSalesOrder, "TENKHACHHANG")</th>
+                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.UnibenSalesOrder, "DIACHI")</th>
+                                <th style="font-weight: bold; text-align:center; white-space: nowrap;" class="fix"> @Utility.GetColumnName(@API.UnibenSalesOrder, "THANHTIEN")</th>
+                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.UnibenSalesOrder, "GHICHU")</th>
+                                <th class="fix">
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbodytmpitem">
+                            @if (Model.IPagedList != null)
+                                        {                                        
+                                            foreach (var item in Model.IPagedList)
+                                            {
+                                                string totalAmount = item.totalAmount.ToString("N0");
+                            <tr id="@item.orderId">
+                                <td style="white-space: nowrap;" id="CHON">
+                                    @if (!item.DATONTAI)
+                                    {
+                                                    @Html.CheckBoxFor(modelItem => item.CHON, htmlAttributes: new { @class = "form-control", @id = item.orderCode })
+                                    }
+                                </td>
+                                <td style="white-space: nowrap;" id="orderCode"> @Html.DisplayFor(modelItem => item.orderCode)</td>
+                                <td style="white-space: nowrap;" id="orderDate"> @item.orderDate.ToString("dd/MM/yy")</td>
+                                <td style="white-space: nowrap;" id="routeFullName"> @Html.DisplayFor(modelItem => item.routeFullName)</td>
+                                <td style="white-space: nowrap;" id="customerCode"> @Html.DisplayFor(modelItem => item.customerCode) </td>
+                                <td style="white-space: nowrap;" id="customerName"> @Html.DisplayFor(modelItem => item.customerName)</td>
+                                <td style="white-space: nowrap;" id="deliveryAddress"> @Html.DisplayFor(modelItem => item.deliveryAddress)</td>
+                                <td style="white-space: nowrap;" id="totalAmount" class="fix"> @totalAmount</td>
+                                <td style="white-space: nowrap;" id="MAPHIEUDATHANG"> @Html.DisplayFor(modelItem => item.MAPHIEUDATHANG)</td>
+                                <td style="white-space: nowrap; " class="fix">
+                                    @{
+                                        DatabaseTHP.Class.Uniben.Uniben.TrangThai trangThai;
+
+                                        if (Enum.TryParse(item.status, out trangThai))
+                                        {
+                                            if (trangThai == DatabaseTHP.Class.Uniben.Uniben.TrangThai.CONFIRMED || trangThai == DatabaseTHP.Class.Uniben.Uniben.TrangThai.CLOSED)
+                                            {
+                                                <a class="label label-primary" href="#">@Utility.GetEnumDescription(trangThai)</a>
+                                            }
+                            }
+                                        else
+                            {
+                                            <a class="label label-danger" href="#">@Utility.GetEnumDescription(trangThai)</a>
+                                        }
+
+                                    }
+                                </td>
+                            </tr>
+                                }
+                            }
+                    </table>
+                </div>
+            </div><!-- table-responsive -->`
+        </div>
+
+        <div class="panel-footer">
+            @Html.Raw(ViewBag.TotalSum)
+            @if (Model.IPagedList != null)
+            {
+                @Html.PagedListPager((PagedList.IPagedList<DatabaseTHP.Class.Uniben.Uniben.UnibenOrderData>)Model.IPagedList, page => Url.Action("Index", new { Page = page, SearchString = ViewBag.searchValue, FromDate = ViewBag.fromdate, ToDate = ViewBag.todate }))
+            }
+           
+            <div class="form-group">
+                <div class="col-sm-2">
+                    <button class="btn btn-primary" onclick="OnSubmitSales('@API.UnibenSalesOrder')">@Utility.DonDatHang</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(function () {
+        // delete extra hidden fields created by checkboxes as the grid links mess this up by doubling the querystring parameters
+        $("input[type='hidden'][name='item.CHON']").remove();
+        $("input[type='hidden'][name='item.CHON']").remove();
+    });
+</script>

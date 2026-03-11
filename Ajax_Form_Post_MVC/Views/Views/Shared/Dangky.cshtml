@@ -1,0 +1,115 @@
+﻿
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <link rel="shortcut icon" href="@Url.Content("~/images/favicon.ico")" type="image/png">
+
+
+
+  <link href="@Url.Content("~/Content/css/style.default.css")" rel="stylesheet">
+
+  <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!--[if lt IE 9]>
+  <script src="js/html5shiv.js"></script>
+  <script src="js/respond.min.js"></script>
+  <![endif]-->
+</head>
+
+<body class="signin">
+
+<!-- Preloader -->
+<div id="preloader">
+    <div id="status"><i class="fa fa-spinner fa-spin"></i></div>
+</div>
+
+<section>
+  
+    <div class="signuppanel">
+        
+        <div class="row">
+            
+            <div class="col-md-6">
+                
+                <div class="signup-info">
+                    <div class="logopanel">
+                        <h1><span>[</span> SHome <span>]</span></h1>
+                    </div><!-- logopanel -->
+                
+                    <div class="mb20"></div>
+                
+                    <h5><strong>Bootstrap 3 Admin Template!</strong></h5>
+                    <p>Bracket is a theme that is perfect if you want to create your own content management, monitoring or any other system for your project.</p>
+                    <p>Below are some of the benefits you can have when purchasing this template.</p>
+                    <div class="mb20"></div>
+                    
+                    <div class="feat-list">
+                        <i class="fa fa-wrench"></i>
+                        <h4 class="text-success">Easy to Customize</h4>
+                        <p>Bracket is made using Bootstrap 3 so you can easily customize any element of this template following the structure of Bootstrap 3.</p>
+                    </div>
+                    
+                    <div class="feat-list">
+                        <i class="fa fa-compress"></i>
+                        <h4 class="text-success">Fully Responsive Layout</h4>
+                        <p>Bracket is design to fit on all browser widths and all resolutions on all mobile devices. Try to scale your browser and see the results.</p>
+                    </div>
+                    
+                    <div class="feat-list mb20">
+                        <i class="fa fa-search-plus"></i>
+                        <h4 class="text-success">Retina Ready</h4>
+                        <p>When a user load a page, a script checks each image on the page to see if there's a high-res version of that image. If a high-res exists, the script will swap that image in place.</p>
+                    </div>
+                    
+                    <h4 class="mb20">and much more...</h4>
+                
+                </div><!-- signup-info -->
+            
+            </div><!-- col-sm-6 -->
+              @RenderBody()
+        </div><!-- row -->
+        
+        <div class="signup-footer">
+            <div class="pull-left">
+                &copy; 2014. All Rights Reserved. Bracket Bootstrap 3 Admin Template
+            </div>
+            <div class="pull-right">
+                Created By: <a href="http://themepixels.com/" target="_blank">ThemePixels</a>
+            </div>
+        </div>
+        
+    </div><!-- signuppanel -->
+  
+</section>
+
+
+<script src="@Url.Content("~/Content/js/jquery-1.10.2.min.js")"></script>
+<script src="@Url.Content("~/Content/js/jquery-migrate-1.2.1.min.js")"></script>
+<script src="@Url.Content("~/Content/js/bootstrap.min.js")"></script>
+<script src="@Url.Content("~/Content/js/modernizr.min.js")"></script>
+<script src="@Url.Content("~/Content/js/retina.min.js")"></script>
+
+<script src="@Url.Content("~/Content/js/chosen.jquery.min.js")"></script>
+
+<script src="@Url.Content("~/Content/js/custom.js")"></script>
+<script>
+    jQuery(document).ready(function () {
+
+        // Chosen Select
+        jQuery(".chosen-select").chosen({
+            'width': '100%',
+            'white-space': 'nowrap',
+            disable_search_threshold: 10
+        });
+
+    });
+</script>
+
+</body>
+</html>
+
+

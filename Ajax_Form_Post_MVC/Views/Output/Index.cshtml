@@ -9,8 +9,9 @@
     Layout = "~/Views/Shared/Admin.cshtml";
 }
 @Html.Partial("LoadCssDanhMuc")
-<script src="@Url.Content("~/Scripts/Deposit_Temp.js")"></script>
-<script src="@Url.Content("~/Scripts/InputOutput.js")"></script>
+<script src="@Url.Content("~/Scripts/Deposit_Temp.js"+Utility.VersionJs)"></script>
+<script src="@Url.Content("~/Scripts/Invoiced.js"+Utility.VersionJs)"></script>
+<script src="@Url.Content("~/Scripts/InputOutput.js"+Utility.VersionJs)"></script>
 <div class="panel-group" id="accordion">
     <div class="panel panel-default">
         <div class="panel-heading">
@@ -63,6 +64,22 @@
                         }
                     </select>
                 </div>
+
+                <div class="col-sm-2">
+                    <select class="form-control chosen-select" id="id_depot" name="id_depot">
+                        @foreach (var itm in Model.lstdm_Kho)
+                        {
+                            if (ViewBag.ID_KHO_DF == itm.ID)
+                            {
+                                <option value="@itm.ID" selected>@itm.NAME</option>
+                            }
+                            else
+                            {
+                                <option value="@itm.ID">@itm.NAME</option>
+                            }
+                        }
+                    </select>
+                </div>
             </div>
 
             <div class="form-group">
@@ -106,6 +123,12 @@
                     <table class="table table-bordered mb30" id="example-table">
                         <thead>
                             <tr>
+                                <th style="font-weight: bold; text-align:center; white-space: nowrap;">
+                                    @if (ViewBag.PermissionCreateInvoiced)
+                                    {
+                                        <input type="checkbox" onchange="OnchangeCheckbox(event, 'tbodytmpitem')" />
+                                    }
+                                </th>
                                 <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuXuat, "ID_LOAIPHIEUXUAT")</th>
                                 <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuXuat, "ID_KHO")</th>
                                 <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuXuat, "MAPHIEU")</th>
@@ -131,6 +154,14 @@
                                 foreach (var item in Model.IPagedList)
                                 {
                                     <tr id="@item.ID">
+                                        @if (ViewBag.PermissionCreateInvoiced && string.IsNullOrEmpty(item.ID_HOADON))
+                                        {
+                                            <td style="white-space: nowrap;" id="CHON"> @Html.CheckBoxFor(modelItem => item.CHON, htmlAttributes: new { @class = "form-control", @id = item.ID })</td>
+                                        }
+                                        else
+                                        {
+                                            <td></td>
+                                        }
                                         <td style="white-space: nowrap; " id="NAME_LOAIPHIEUXUAT"> @Html.DisplayFor(modelItem => item.NAME_LOAIPHIEUXUAT)</td>
                                         <td style="white-space: nowrap;" id="NAME_KHO"> @Html.DisplayFor(modelItem => item.NAME_KHO)</td>
                                         <td style="white-space: nowrap;" id="MAPHIEU"> @Html.DisplayFor(modelItem => item.MAPHIEU)</td>
@@ -153,6 +184,7 @@
                                                 if (Utility.IntWidth == 1)
                                                 {
                                                     <a class="label label-primary" onclick="myFunctionEdit('@{@API.ct_PhieuXuat;}','@item.ID')" href="#"><i class="fa fa-edit" style="margin-right:5px"></i>@Utility.Sua</a>
+
                                                 }
                                                 else
                                                 {
@@ -163,15 +195,45 @@
 
                                             @if (ViewBag.PermissionDelete && !item.ISHOANTAT)
                                             {
-                                                if (Utility.IntWidth == 1)
+                                                if (string.IsNullOrEmpty(item.ID_HOADON))
                                                 {
-                                                    <a class="label label-danger" onclick="myFunctionPopup('@{@API.ct_PhieuXuat;}','@item.ID')" href="#"><i class="glyphicon glyphicon-trash" style="margin-right:5px"></i>@Utility.Xoa</a>
+                                                    if (Utility.IntWidth == 1)
+                                                    {
+                                                        <a class="label label-danger" onclick="myFunctionPopup('@{@API.ct_PhieuXuat;}','@item.ID')" href="#"><i class="glyphicon glyphicon-trash" style="margin-right:5px"></i>@Utility.Xoa</a>
+                                                    }
+                                                    else
+                                                    {
+                                                        <a class="label label-danger" onclick="myFunction('@{@API.ct_PhieuXuat;}','@item.ID')" href="#"><i class="glyphicon glyphicon-trash" style="margin-right:5px"></i>@Utility.Xoa</a>
+                                                    }
+                                                }
+                                            }
+
+                                            @if (!string.IsNullOrEmpty(item.ID_HOADON))
+                                            {
+                                                if (!string.IsNullOrEmpty(item.DANHSACHPHIEUTRAHANG))
+                                                {
+                                                    <a class="label label-danger" href="#" onclick="copyToClipboard('@item.MAPHIEU_HOADON.Trim()')"><i class="fa fa-file-text-o" style="margin-right:5px"></i>@item.MAPHIEU_HOADON - (@item.DANHSACHPHIEUTRAHANG)</a>
                                                 }
                                                 else
                                                 {
-                                                    <a class="label label-danger" onclick="myFunction('@{@API.ct_PhieuXuat;}','@item.ID')" href="#"><i class="glyphicon glyphicon-trash" style="margin-right:5px"></i>@Utility.Xoa</a>
+                                                    <a class="label label-danger" href="#" onclick="copyToClipboard('@item.MAPHIEU_HOADON.Trim()')"><i class="fa fa-file-text-o" style="margin-right:5px"></i>@item.MAPHIEU_HOADON</a>
                                                 }
+                                            }
+                                            else
+                                            {
 
+                                                if (ViewBag.PermissionCreateInvoiced)
+                                                {
+                                                    if (!string.IsNullOrEmpty(item.DANHSACHPHIEUTRAHANG))
+                                                    {
+                                                        <a class="label label-warning" onclick="myFunctionCreateInvoiced('@{@API.ct_HoaDon;}', document.getElementById('HINHTHUC_THUCHIEN').value,'@item.ID_KHACHHANG','@item.MAPHIEU')" href="#"><i class="fa fa-file-text-o" style="margin-right:5px"></i>@Utility.HoaDon - (@item.DANHSACHPHIEUTRAHANG)</a>
+                                                    }
+                                                    else
+                                                    {
+                                                        <a class="label label-success" onclick="myFunctionCreateInvoiced('@{@API.ct_HoaDon;}', document.getElementById('HINHTHUC_THUCHIEN').value,'@item.ID_KHACHHANG','@item.MAPHIEU')" href="#"><i class="fa fa-file-text-o" style="margin-right:5px"></i>@Utility.HoaDon</a>
+                                                    }
+
+                                                }
                                             }
                                         </td>
                                     </tr>
@@ -186,8 +248,28 @@
             @ViewBag.TotalSum
             @if (Model.IPagedList != null)
             {
-                @Html.PagedListPager((PagedList.IPagedList<v_ct_PhieuXuat>)Model.IPagedList, page => Url.Action("Index", new { Page = page, ShowSearchValue = ViewBag.showsearchValue, SearchString = ViewBag.searchValue, FromDate = ViewBag.fromdate, ToDate = ViewBag.todate }))
+                @Html.PagedListPager((PagedList.IPagedList<v_ct_PhieuXuat>)Model.IPagedList, page => Url.Action("Index", new { Page = page, ShowSearchValue = ViewBag.showsearchValue, SearchString = ViewBag.searchValue, FromDate = ViewBag.fromdate, ToDate = ViewBag.todate, ID_DEPOT = ViewBag.ID_KHO_DF }))
             }
+            @if (ViewBag.PermissionCreateInvoiced)
+            {
+            <div class="form-group">
+
+                <div class="col-sm-2">
+                    <select class="form-control" id="HINHTHUC_THUCHIEN" name="HINHTHUC_THUCHIEN">
+                        @foreach (var itm in Model.lstdm_LoaiHoaDon)
+                        {
+                            string selected = @itm.ISDEFAULT ? "selected" : "";
+                            <option value="@itm.ID" @selected>@itm.NAME</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="col-sm-2">
+                    <button class="btn btn-primary" onclick="OnSubmitInvoiced()">@Utility.HoaDon</button>
+                </div>
+            </div>
+            }
+
         </div>
     </div>
 </div>
@@ -222,5 +304,36 @@
         </div>
 
     }
+
+    if (ViewBag.PermissionCreateInvoiced)
+    {
+        <button id="myBtnAdd" style="display:none"></button>
+        <div id="myModalAddInvoiced" class="modal">
+            <div class="panel panel-default" style='width: 90%; margin-left: 5%;'>
+                <!-- The Modal -->
+                @{Html.RenderAction("Create", @API.ct_HoaDon, new { type = 1, myModalAdd = "myModalAddInvoiced" });}
+            </div>
+        </div>
+    }
 }
 @{Html.RenderAction("Image_Input", "FileManager");}
+<script>
+    function OnchangeCheckboxAuto(event) {
+        const isChecked = event.target.checked;
+        // Gán trạng thái cho cả hai checkbox
+        document.getElementById("myCheckbox").checked = isChecked;
+    }
+    $(function () {
+        // delete extra hidden fields created by checkboxes as the grid links mess this up by doubling the querystring parameters       
+        $("input[type='hidden'][name='item.CHON']").remove();
+    });
+    function copyToClipboard(text) {
+    navigator.clipboard.writeText(text)
+        .then(() => {
+            //alert("Đã sao chép: " + text);
+        })
+        .catch(err => {
+            console.error("Lỗi sao chép:", err);
+        });
+}
+</script>

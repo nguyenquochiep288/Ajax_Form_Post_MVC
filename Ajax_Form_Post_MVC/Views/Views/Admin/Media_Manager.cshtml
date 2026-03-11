@@ -1,0 +1,175 @@
+﻿@model MVC_QuanLyTHP.Models.Media_ManagerModel
+@{
+    ViewBag.Title = "Media_Manager";
+    Layout = "~/Views/Shared/Admin.cshtml";
+}
+<script language="JavaScript1.2" type="text/javascript">
+var newwindow;
+var wheight = 0, wwidth = 0;
+
+function popitup5(url, title, iwidth, iheight, colour) {
+var pwidth, pheight;
+
+if ( !newwindow || newwindow.closed ) {
+pwidth=iwidth+30;
+pheight=iheight+30;
+newwindow=window.open('','htmlname','width=' + pwidth +',height=' +pheight + ',resizable=1,top=50,left=10');
+wheight=iheight;
+wwidth=iwidth;
+}
+
+if (wheight!=iheight || wwidth!=iwidth ) {
+pwidth=iwidth+30;
+pheight=iheight+90;
+// The resizeTo needs Javascript 1.2 or higher so the Script should also specify language="JavaScript1.2" 
+if (window.resizeTo) newwindow.resizeTo(pwidth, pheight);
+wheight=iheight;
+wwidth=iwidth;
+}
+
+newwindow.document.clear();
+newwindow.focus();
+newwindow.document.writeln('<html> <head> <title>' + title + '<\/title> <\/head> <body bgcolor= \"' + colour + '\"> <center>');
+newwindow.document.writeln('<img src=' + url + ' title=\"' + title + '\" alt=\"' + title + '\" >');
+newwindow.document.writeln('<\/center> <\/body> <\/html>');
+newwindow.document.close();
+newwindow.focus();
+}
+
+// Routines to tidy up popup windows when page is left
+// Call with an onUnload="tidy5()" in body tag
+
+function tidy5() {
+if (newwindow && !newwindow.closed) { newwindow.close(); }
+}
+
+// Based on JavaScript provided by Peter Curtis at www.pcurtis.com -->
+</script>
+
+
+
+<script type="text/javascript">
+
+    function download(ma) {
+        alert(ma);
+    }
+ </script>
+ <div class="contentpanel">
+      
+      <ul class="filemanager-options">
+       
+      </ul>
+        
+      
+      <div class="row">
+        <div class="col-sm-9">
+          <div class="row filemanager">
+            
+             
+               
+             @if(Model.sanpham.Count >0){
+             foreach (var item1 in Model.sanpham){
+            <div class="col-xs-6 col-sm-4 col-md-3 image">
+              <div class="thmb">
+               
+                <div class="thmb-prev">
+                  <a href="~/Images_sp/@item1.Hinh" data-rel="prettyPhoto" class="thickbox">
+                    <img src="~/Images_sp/@item1.Hinh"  alt="" width="190" height="190"/>
+                  </a>
+                </div>
+                
+                <small class="text-muted">@item1.MaSP: @item1.TenSP</small>
+              </div><!-- thmb -->
+            </div><!-- col-xs-6 -->
+             }
+             }
+            
+             @if(Model.nguoidung.Count >0){
+             foreach (var item2 in Model.nguoidung){
+            <div class="col-xs-6 col-sm-4 col-md-3 image">
+              <div class="thmb">
+                <div class="ckbox ckbox-default">
+                  <label for="check2"></label>
+                </div>
+                <div class="btn-group fm-group">
+                    <button type="button" class="btn btn-default dropdown-toggle fm-toggle" data-toggle="dropdown">
+                      <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu fm-menu" role="menu">
+                      <li><a href="#"><i class="fa fa-share"></i>Share</a></li>
+                      <li><a href="#"><i class="fa fa-envelope-o"></i> Email</a></li>
+                      <li><a href="#"><i class="fa fa-pencil"></i> Edit</a></li>
+                      <li><a href="@Url.Action("GetFileFromDisk", "Admin", new { id = item2.Hinh })"><i class="fa fa-download"></i> Download</a></li>
+                      <li><a href="#"><i class="fa fa-trash-o"></i> Delete</a></li>
+                    </ul>
+                </div><!-- btn-group -->
+                <div class="thmb-prev">
+                  <a href="javascript:popitup5('http://localhost:2034/Images_sp/@item2.Hinh','Temple of Heavenly Bliss', 1330, 747,'white')">
+                    <img src="~/Images_sp/@item2.Hinh"  alt=""  width="190" height="190"/>
+                  </a>
+                </div>
+               
+                <small class="text-muted">@item2.TenKH: @item2.TenDN</small>
+              </div><!-- thmb -->
+            </div><!-- col-xs-6 -->
+             }
+             }
+           
+             @if(Model.tintuc.Count >0){
+             foreach (var item3 in Model.tintuc){
+            <div class="col-xs-6 col-sm-4 col-md-3 image">
+              <div class="thmb">
+                <div class="ckbox ckbox-default">
+                  <label for="check2"></label>
+                </div>
+                <div class="btn-group fm-group">
+                    <button type="button" class="btn btn-default dropdown-toggle fm-toggle" data-toggle="dropdown">
+                      <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu fm-menu" role="menu">
+                      <li><a href="#"><i class="fa fa-share"></i>Share</a></li>
+                      <li><a href="#"><i class="fa fa-envelope-o"></i> Email</a></li>
+                      <li><a href="#"><i class="fa fa-pencil"></i> Edit</a></li>
+                      <li><a href="@Url.Action("GetFileFromDisk", "Admin", new { id = item3.Hinh })"><i class="fa fa-download"></i> Download</a></li>
+                      <li><a href="#"><i class="fa fa-trash-o"></i> Delete</a></li>
+                    </ul>
+                </div><!-- btn-group -->
+                <div class="thmb-prev">
+                  <a href="~/Images_sp/@item3.Hinh" data-rel="prettyPhoto" target="_blank">
+                    <img src="~/Images_sp/@item3.Hinh" alt=""  width="190" height="190"/>
+                  </a>
+                </div>
+                @*<h5 class="fm-title"><a href="#" onclick="download(@item1.MaSP)" id="myImg'@item1.MaSP'"><i class="fa fa-download"></i>Download</a></h5>*@
+                <small class="text-muted">@item3.LOAITINTUC.TenLT: @item3.MaTT : @DateTime.Parse(@item3.NgayDang.ToString()).ToString("dd/MM/yyyy")</small>
+              </div><!-- thmb -->
+            </div><!-- col-xs-6 -->
+             }
+             }
+
+
+
+          </div><!-- row -->
+        </div><!-- col-sm-9 -->
+        <div class="col-sm-3">
+          <div class="fm-sidebar">
+            
+            <button class="btn btn-primary btn-block">Upload</button>
+            
+            <div class="mb30"></div>
+            
+            <h5 class="subtitle">Thư mục:</h5>
+            <ul class="folder-list">
+              <li><a href="@Url.Action("Media_Manager", "Admin", new { id = 2 })"><i class="fa fa-folder-o"></i> Thành viên</a></li>
+              <li><a href="@Url.Action("Media_Manager", "Admin", new { id = 1 })"><i class="fa fa-folder-o"></i> Sản phẩm</a></li>
+              <li><a href="@Url.Action("Media_Manager", "Admin", new { id = 3 })"><i class="fa fa-folder-o"></i> Tin tức</a></li>
+               
+            </ul>
+            
+            <div class="mb30"></div>
+            
+           
+        </div><!-- col-sm-3 -->
+      </div>
+    </div>
+    
+  </div><!-- mainpanel -->

@@ -153,7 +153,7 @@
         const ws = wb.Sheets['Sheet1'];
         for (let cell in ws) {
             if (ws[cell].t === 'n') { // Check if the cell is a number
-                ws[cell].z = '#.##,00'; // Apply VND currency format
+                ws[cell].z = '#,##0.00'; // Apply VND currency format
             }
         }
 
@@ -163,6 +163,13 @@
 
 @{Html.RenderAction("Index", "Search");}
 <script src="@Url.Content("~/Scripts/Footer.js")"></script>
-
+@*<script>
+    document.addEventListener("keydown", function (event) {
+        if (event.key === "Enter") {
+            event.preventDefault();
+            console.log("Phím Enter đã bị chặn!");
+        }
+    });
+</script>*@
 
 

@@ -1,4 +1,4 @@
-@model MVC_QuanLyTHP.Models.v_v_dm_KhachHang
+﻿@model MVC_QuanLyTHP.Models.v_v_dm_KhachHang
 @using MVC_QuanLyTHP.Class;
 @using DatabaseTHP.Class;
 @if (Utility.IntWidth == 1)
@@ -44,27 +44,6 @@
                     <div class="col-sm-5">
                         @Html.TextAreaFor(model => model.ADDRESS, new { @class = "form-control", @rows = "3" })
                         @Html.ValidationMessageFor(model => model.ADDRESS, "", new { @class = "text-danger" })
-                    </div>
-                </div>
-                <div class="form-group">
-                    @Html.Label(@Utility.GetColumnName(@API.dm_KhachHang, "TEL"), htmlAttributes: new { @class = "col-sm-2 control-label" })
-                    <div class="col-sm-5">
-                        @Html.EditorFor(model => model.TEL, new { htmlAttributes = new { @class = "form-control" } })
-                        @Html.ValidationMessageFor(model => model.TEL, "", new { @class = "text-danger" })
-                    </div>
-                </div>
-                <div class="form-group">
-                    @Html.Label(@Utility.GetColumnName(@API.dm_KhachHang, "FAX"), htmlAttributes: new { @class = "col-sm-2 control-label" })
-                    <div class="col-sm-5">
-                        @Html.EditorFor(model => model.FAX, new { htmlAttributes = new { @class = "form-control" } })
-                        @Html.ValidationMessageFor(model => model.FAX, "", new { @class = "text-danger" })
-                    </div>
-                </div>
-                <div class="form-group">
-                    @Html.Label(@Utility.GetColumnName(@API.dm_KhachHang, "EMAIL"), htmlAttributes: new { @class = "col-sm-2 control-label" })
-                    <div class="col-sm-5">
-                        @Html.EditorFor(model => model.EMAIL, new { htmlAttributes = new { @class = "form-control" } })
-                        @Html.ValidationMessageFor(model => model.EMAIL, "", new { @class = "text-danger" })
                     </div>
                 </div>
                 <div class="form-group">
@@ -130,7 +109,7 @@
                             </span>
                             @Html.DropDownListFor(model => model.ID_KHUVUC, new SelectList(Model.lstdm_KhuVuc, "ID", "NAME", Model.ID_KHUVUC), !string.IsNullOrEmpty(Model.ID_KHUVUC) ? "" : Utility.GetTitleChon(API.dm_KhuVuc), htmlAttributes: new { @class = "form-control chosen-select", id = "lstdm_KhuVucEdit" })
                         </div>
-                       
+
                         @Html.ValidationMessageFor(model => model.ID_KHUVUC, "", new { @class = "text-danger" })
                     </div>
                 </div>
@@ -153,6 +132,58 @@
                     <div class="col-sm-5">
                         @Html.EditorFor(model => model.CONGNODAUKY, new { htmlAttributes = new { @class = "form-control", @type = "number" } })
                         @Html.ValidationMessageFor(model => model.CONGNODAUKY, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Utility.ThongTinXuatHoaDon
+                </div>
+                <div class="form-group">
+                    @Html.Label(@Utility.GetColumnName(@API.dm_KhachHang, "TENKHACHHANG"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                    <div class="col-sm-5">
+                        @Html.EditorFor(model => model.TENKHACHHANG, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.TENKHACHHANG, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.Label(@Utility.GetColumnName(@API.dm_KhachHang, "TENDONVI"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                    <div class="col-sm-5">
+                        @Html.EditorFor(model => model.TENDONVI, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.TENDONVI, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.Label(@Utility.GetColumnName(@API.dm_KhachHang, "DIACHI"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                    <div class="col-sm-5">
+                        @Html.EditorFor(model => model.DIACHI, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.DIACHI, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.Label(@Utility.GetColumnName(@API.dm_KhachHang, "MASOTHUE"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                    <div class="col-sm-5">
+                        @Html.EditorFor(model => model.MASOTHUE, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.MASOTHUE, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.Label(@Utility.GetColumnName(@API.dm_KhachHang, "CCCD"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                    <div class="col-sm-5">
+                        @Html.EditorFor(model => model.CCCD, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.CCCD, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.Label(@Utility.GetColumnName(@API.dm_KhachHang, "TEL"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                    <div class="col-sm-5">
+                        @Html.EditorFor(model => model.TEL, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.TEL, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.Label(@Utility.GetColumnName(@API.dm_KhachHang, "EMAIL"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                    <div class="col-sm-5">
+                        @Html.EditorFor(model => model.EMAIL, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.EMAIL, "", new { @class = "text-danger" })
                     </div>
                 </div>
             </div>

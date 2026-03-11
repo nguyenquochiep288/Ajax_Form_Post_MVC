@@ -1,0 +1,247 @@
+﻿@model MVC_QuanLyTHP.Models.v_v_ct_PhieuGiaoHang
+@using PagedList.Mvc;
+@using DatabaseTHP.Class;
+@using MVC_QuanLyTHP.Class;
+@using DatabaseTHP;
+@{
+    ViewBag.Title = API.ViewBagTitle;
+    Layout = "~/Views/Shared/Admin.cshtml";
+}
+@Html.Partial("LoadCssDanhMuc")
+<script src="@Url.Content("~/Scripts/InputOutput.js")"></script>
+<script src="@Url.Content("~/Scripts/Delivery.js")"></script>
+<div class="panel-group" id="accordion">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h1 class="panel-title" style="text-align:center">
+                <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+                    @Utility.GetTitleFrom(API.ct_PhieuGiaoHang)
+                </a>
+            </h1>
+        </div>
+
+
+        <div id="collapseOne" class="panel-collapse collapse in">
+            <div class="form-group">
+                <div class="col-sm-2" style="padding-bottom: 5px;">
+                    @if (ViewBag.PermissionCreate)
+                    {
+                        if (Utility.IntWidth == 1)
+                        {
+                            <button class="btn btn-success" onclick="myFunctionCreate('@{@API.ct_PhieuGiaoHang;}')"><i class="fa fa-pencil-square-o" style="margin-right:20px"></i>@Utility.Them</button>
+                        }
+                        else
+                        {
+                            <a class="btn btn-success" href="@Url.Action("Create", @API.ct_PhieuGiaoHang)"><i class="fa fa-pencil-square-o" style="margin-right:20px"></i>@Utility.Them</a>
+                        }
+                    }
+                </div>
+
+                <div class="col-sm-2" style="padding-bottom: 5px;">
+                    <select class="form-control chosen-select" onchange="show('@API.ct_PhieuGiaoHang')" id="Show" name="Show">
+                        @for (int show = 0; show < Utility.arrShow.Length; show++)
+                        {
+                            if (Utility.GetPageSize() == @Utility.arrShow[show])
+                            {
+                                <option value="@Utility.arrShow[show]" selected>@Utility.arrShow[show]</option>
+                            }
+                            else
+                            {
+                                <option value="@Utility.arrShow[show]">@Utility.arrShow[show]</option>
+                            }
+                        }
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-sm-2" style="padding-bottom: 5px;">
+                    <input type="date" class="form-control" name="fromdate" id="fromdate" value="@ViewBag.fromdate" />
+
+                </div>
+                <div class="col-sm-2">
+                    <input type="date" class="form-control" name="todate" id="todate" value="@ViewBag.todate" />
+                </div>
+                <div class="col-sm-4">
+                    @Html.TextBox("SearchString", (string)ViewBag.searchValue, htmlAttributes: new { @class = "form-control", @style = "width:80%;display:inline-block", @placeholder = Utility.TimKiem })
+                    <button class="btn btn-default" onclick="funSearchInputOutput('@API.ct_PhieuGiaoHang')"><span class='glyphicon glyphicon-search'></span></button>
+                </div>
+            </div>
+
+
+            <div class="tablescroll" style="overflow-x:auto; Overflow-y:scroll; height: auto;">
+                <div class="panel-body panel-body-nopadding">
+                    <table class="table table-bordered mb30">
+                        <thead>
+                            <tr>
+                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuGiaoHang, "MAPHIEU")</th>
+                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuGiaoHang, "NGAYLAP")</th>
+                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuGiaoHang, "ID_XEGIAOHANG")</th>
+                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuGiaoHang, "SOLUONG_DONHANG")</th>
+                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuGiaoHang, "SOTIENGIAOHANG")</th>
+                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuGiaoHang, "ISHOANTAT")</th>
+                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuGiaoHang, "GHICHU")</th>
+                                <th>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbodytmpitem">
+                            @if (Model.IPagedList != null)
+                            {
+                                foreach (var item in Model.IPagedList)
+                                {
+                                    string SOLUONG_DONHANG = item.SOLUONG_DONHANG.ToString("N0");
+                                    string SOTIENGIAOHANG = item.SOTIENGIAOHANG.ToString("N0");
+                                    <tr id="@item.ID">
+                                        <td style="white-space: nowrap;" id="MAPHIEU"> @Html.DisplayFor(modelItem => item.MAPHIEU)</td>
+                                        <td style="white-space: nowrap;" id="NGAYLAP"> @item.NGAYLAP.ToString("dd/MM/yy HH:mm")</td>
+                                        <td style="white-space: nowrap;" id="NAME_XE"> @Html.DisplayFor(model => item.NAME_XE)</td>
+                                        <td style="white-space: nowrap;" id="SOLUONG_DONHANG"> @SOLUONG_DONHANG </td>
+                                        <td style="white-space: nowrap;" id="SOTIENGIAOHANG"> @SOTIENGIAOHANG</td>
+                                        <td style="white-space: nowrap;" id="ISHOANTAT"> @Html.DisplayFor(modelItem => item.ISHOANTAT)</td>
+                                        <td style="white-space: nowrap;" id="GHICHU"> @Html.DisplayFor(modelItem => item.GHICHU)</td>
+                                        <td style="white-space: nowrap; " class="fix">
+                                            <a class="label label-default" onclick="myFunctionViewReport('@{@API.ct_PhieuGiaoHang;}','@item.ID')" href="#"><i class="fa fa-print" style="margin-right:5px"></i>@Utility.In</a>
+                                            @if (ViewBag.PermissionEdit && !item.ISHOANTAT)
+                                            {
+                                                if (Utility.IntWidth == 1)
+                                                {
+                                                    <a class="label label-primary" onclick="myFunctionEdit('@{@API.ct_PhieuGiaoHang;}','@item.ID')" href="#"><i class="fa fa-edit" style="margin-right:5px"></i>@Utility.Sua</a>
+                                                }
+                                                else
+                                                {
+                                                    @Html.ActionLink(Utility.Sua, "Edit", new { id = item.ID }, htmlAttributes: new { @class = "label label-primary" });
+                                                }
+                                            }
+
+
+                                            @if (ViewBag.PermissionDelete && !item.ISHOANTAT)
+                                            {
+                                                if (Utility.IntWidth == 1)
+                                                {
+                                                    <a class="label label-danger" onclick="myFunctionPopup('@{@API.ct_PhieuGiaoHang;}','@item.ID')" href="#"><i class="glyphicon glyphicon-trash" style="margin-right:5px"></i>@Utility.Xoa</a>
+                                                }
+                                                else
+                                                {
+                                                    <a class="label label-danger" onclick="myFunction('@{@API.ct_PhieuGiaoHang;}','@item.ID')" href="#"><i class="glyphicon glyphicon-trash" style="margin-right:5px"></i>@Utility.Xoa</a>
+                                                }
+
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                    </table>
+                </div>
+            </div><!-- table-responsive -->
+        </div>
+
+        <div class="panel-footer">
+            @if (Model.IPagedList != null)
+            {
+                @Html.PagedListPager((PagedList.IPagedList<v_ct_PhieuGiaoHang>)Model.IPagedList, page => Url.Action("Index", new { Page = page, ShowSearchValue = ViewBag.showsearchValue, SearchString = ViewBag.searchValue }))
+            }
+        </div>
+    </div>
+</div>
+
+@if (Utility.IntWidth == 1)
+{
+    if (ViewBag.PermissionCreate)
+    {
+        <button id="myBtnAdd" style="display:none"></button>
+        <div id="myModalAdd" class="modal" style="">
+            <div class="panel panel-default" @Html.Raw(Utility.StypeWidth_Level1)>
+                <!-- The Modal -->
+                @{Html.RenderAction("Create", @API.ct_PhieuGiaoHang, new { type = 1 });}
+
+                <div id="myProduct">
+                </div>
+            </div>
+        </div>
+    }
+
+    if (ViewBag.PermissionEdit)
+    {
+
+        <button id="myBtnEdit" style="display:none"></button>
+        <div id="myModalEdit" class="modal" style="">
+            <div class="panel panel-default" @Html.Raw(Utility.StypeWidth_Level1)>
+                <!-- The Modal -->
+                @{Html.RenderAction("Edit", @API.ct_PhieuGiaoHang, new { type = 1 });}
+
+                <div id="myProductEdit">
+                </div>
+            </div>
+        </div>
+    }
+}
+
+<div id="myModalSearchDelivery" class="modal">
+    <div class="panel panel-default" @Html.Raw(Utility.StypeWidth_Level2)>
+        <!-- The Modal -->
+        <div class="panel-heading" style="padding-top:15px;padding-right: 15px;">
+            <div class="panel-btns">
+                <a onclick='myFunClosed("myModalSearchDelivery")'>&times;</a>
+            </div>
+
+            <h1 class="panel-title" style="font-size: 20px;text-align: center "><label id="lblNameSearchDelivery" name="lblNameSearchDelivery">@Utility.GetTitleFrom(API.ct_PhieuXuat)</label></h1>
+            <div class="panel-body" style="padding:5px">
+            </div>
+        </div>
+
+        <div class="panel-body panel-body-nopadding">
+
+            <div class="form-horizontal form-bordered">
+                @using (Ajax.BeginForm("Search", API.ct_PhieuGiaoHang, new AjaxOptions { OnSuccess = "OnSuccessLoadDelivery" }))
+                {
+                    <div class="form-group">
+                        <div class="col-sm-2">
+                            <input type="date" class="form-control" name="fromdate" id="fromdate" value="@ViewBag.fromdate" />
+                        </div>
+
+                        <div class="col-sm-2">
+                            <input type="date" class="form-control" name="todate" id="todate" value="@ViewBag.todate" />
+                        </div>
+
+                        <div class="col-sm-3">
+                            @Html.DropDownListFor(model => model.ID_KHUVUC, new SelectList(Model.lstdm_KhuVuc, "ID", "NAME"), !string.IsNullOrEmpty(Model.ID_KHUVUC) ? "" : Utility.GetTitleChon(API.dm_KhuVuc), htmlAttributes: new { @class = "form-control chosen-select", id = "lstdm_KhuVuc" })
+                        </div>
+
+                        <div class="col-sm-4">
+                            @Html.TextBox("SearchString", (string)ViewBag.searchValue, htmlAttributes: new { @class = "form-control", @style = "width:80%;display:inline-block", @placeholder = Utility.TimKiem, id = "SearchStringSearch" })
+                            <button class="btn btn-default" id="ButtonClick"><span class='glyphicon glyphicon-search'></span></button>
+                        </div>
+                    </div>
+                }
+
+                <div style="overflow-x:auto; Overflow-y:scroll; height: 400px;">
+                    <div class="panel-body panel-body-nopadding">
+                        <div class="form-horizontal form-bordered">
+                            <table class="table table-bordered mb30">
+                                <thead>
+                                    <tr id="trSearchDelivery">
+
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbodySearchDelivery">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div><!-- table-responsive -->
+                </div>
+            </div>
+
+        </div>
+
+        <div class="panel-footer">
+            <div class="row">
+                <div class="col-sm-5 col-sm-offset-3">
+                    <button class="btn btn-primary" onclick="OnSubmitDelivery()">@Utility.ThucHien</button>
+                    <a class="btn btn-danger" onclick='myFunClosed("myModalSearchDelivery")'>@Utility.Dong</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

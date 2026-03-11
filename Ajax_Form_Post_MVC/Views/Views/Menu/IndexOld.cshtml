@@ -1,0 +1,51 @@
+﻿@model MVC_QuanLyTHP.Models.MenuModel
+@*<li>@Html.ActionLink("Chủ đê", "Listing", "Home", new { id = Model[i].MaL }, null)*@
+<li>@Html.ActionLink("CHỦ ĐỀ HOA", "Index", "Home")
+    
+     @{int so = Model.phanloai.Count / 3; int tong = 0; int page = Model.phanloai.Count / 5;} 
+
+                    <!--SUbmenu Starts-->
+   
+                    <ul class="sub_menu">
+
+                        @for (int i = 1; i <= page + 1; i ++ ){
+                            if (so - 5 > 5) { 
+                              tong = 5 * i;
+                            }
+                            <li>
+                                <ul>
+                         @for (int j = (i*5) - 5; j < Model.phanloai.Count - tong; j ++ ){
+                            
+                            <li>@Html.ActionLink("" + Model.phanloai[j].TenLoai + "", "Listing", "Home", new { id = Model.phanloai[j].MaL}, null)</li> 
+                           
+                        }
+                                     </ul>
+                                </li>
+                        }
+                    </ul>
+                    <!--SUbmenu Ends-->
+ </li>
+<li>@Html.ActionLink("NƠI TRỒNG HOA", "Index", "Home")
+     @{ so = Model.xuatxu.Count / 3; tong = 0; page = Model.xuatxu.Count / 5;} 
+
+                    <!--SUbmenu Starts-->
+   
+                    <ul class="sub_menu">
+
+                        @for (int i = 1; i <= page + 1; i ++ ){
+                            if (so - 5 > 5) { 
+                              tong = 5 * i;
+                            }
+                            <li>
+                                <ul>
+                         @for (int j = (i*5) - 5; j < Model.xuatxu.Count - tong; j ++ ){
+                            
+                            <li>@Html.ActionLink("" + Model.xuatxu[j].NoiXuatXu + "", "Xuatxu", "Home", new { id = Model.xuatxu[j].MaXX}, null)</li> 
+                           
+                        }
+                                     </ul>
+                                </li>
+                        }
+                    </ul>
+                    <!--SUbmenu Ends-->
+ </li>

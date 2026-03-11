@@ -1,0 +1,132 @@
+﻿
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="shortcut icon" href="@Url.Content("~/images/favicon.ico")" type="image/png">
+
+    <title>Trang Hiệp Phát</title>
+
+    <link href="@Url.Content("~/Content/css/style.default.css")" rel="stylesheet">
+    <link href="@Url.Content("~/Content/css/jquery.datatables.css")" rel="stylesheet">
+    <link href="@Url.Content("~/Content/css/jquery.gritter.css")" rel="stylesheet">
+    <link href="@Url.Content("~/Content/css/prettyPhoto.css")" rel="stylesheet">
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+    <script src="js/html5shiv.js"></script>
+    <script src="js/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body style="overflow:auto" class="stickyheader" onload="GetWidth();">
+    @*class="stickyheader"*@
+    <!-- Preloader -->
+    <div id="Loadpreloader">
+    </div>
+
+    <div id="preloader">
+        <div id="status"><i class="fa fa-spinner fa-spin"></i></div>
+    </div>
+
+
+
+    <div class="leftpanel">
+
+        <div class="logopanel">
+            <h1 style="margin-left:70px"><i><span>T</span>H<span>P</span></i></h1>
+        </div><!-- logopanel -->
+
+        <div class="leftpanelinner">
+
+            <!-- This is only visible to small devices -->
+            <div class="visible-xs hidden-sm hidden-md hidden-lg">
+                @{Html.RenderAction("Home", "Partial_admin");}
+            </div>
+
+            <h5 class="sidebartitle">DANH MỤC</h5>
+            @{Html.RenderAction("Index", "LoadMenu");}
+
+        </div><!-- leftpanelinner -->
+    </div><!-- leftpanel -->
+
+    <div class="mainpanel">
+
+        <div class="headerbar">
+
+            <a class="menutoggle"><i class="fa fa-bars"></i></a>
+
+            @*<form class="searchform" action="http://themepixels.com/demo/webpage/bracket/index.html" method="post">
+                  <input type="text" class="form-control" name="keyword" placeholder=Utility.TimKiem />
+                </form>*@
+
+            <div class="header-right">
+                <ul class="headermenu">
+                    <li>
+                        <div class="btn-group">
+                            @{Html.RenderAction("Index", "Partial_admin");}
+                        </div>
+                    </li>
+
+                </ul>
+            </div><!-- header-right -->
+
+        </div><!-- headerbar -->
+        <!-- footer -->
+        @RenderSection("featured", required: false)
+        @RenderBody()
+        <!-- footer -->
+    </div>
+
+    <script src="@Url.Content("~/Content/js/jquery-1.10.2.min.js")"></script>
+    <script src="@Url.Content("~/Content/js/jquery-migrate-1.2.1.min.js")"></script>
+    <script src="@Url.Content("~/Content/js/bootstrap.min.js")"></script>
+    <script src="@Url.Content("~/Content/js/modernizr.min.js")"></script>
+    <script src="@Url.Content("~/Content/js/jquery.sparkline.min.js")"></script>
+    <script src="@Url.Content("~/Content/js/toggles.min.js")"></script>
+    <script src="@Url.Content("~/Content/js/retina.min.js")"></script>
+    <script src="@Url.Content("~/Content/js/jquery.cookies.js")"></script>
+
+    <script src="@Url.Content("~/Content/js/flot/flot.min.js")"></script>
+    <script src="@Url.Content("~/Content/js/flot/flot.resize.min.js")"></script>
+    <script src="@Url.Content("~/Content/js/morris.min.js")"></script>
+    <script src="@Url.Content("~/Content/js/raphael-2.1.0.min.js")"></script>
+    <script src="@Url.Content("~/Content/js/jquery-ui-1.10.3.min.js")"></script>
+    <script src="@Url.Content("~/Content/js/jquery.datatables.min.js")"></script>
+    <script src="@Url.Content("~/Content/js/chosen.jquery.min.js")"></script>
+
+    <script src="@Url.Content("~/Content/js/custom.js")"></script>
+    <script src="@Url.Content("~/Content/js/dashboard.js")"></script>
+    <script src="@Url.Content("~/Content/js/jquery.gritter.min.js")"></script>
+    <script src="@Url.Content("~/Content/js/jquery.prettyPhoto.js")"></script>
+</body>
+</html>
+<script type="text/javascript">
+    function GetWidth() {
+        $.post("/" + "Admin/GetWidth", { "Width": $(window).width() }, function (data) {
+        });
+
+        // Basic Slider
+        jQuery('#slider').slider({
+            range: "min",
+            max: 100,
+            value: 50
+        });
+
+        // Chosen Select
+        jQuery(".chosen-select").chosen({ 'width': '100%', 'white-space': 'nowrap' });
+
+        // Date Picker
+        jQuery('#datepicker').datepicker();
+
+    };
+</script>
+
+@{Html.RenderAction("Index", "Search");}
+<script src="@Url.Content("~/Scripts/Footer.js")"></script>
+
+
+

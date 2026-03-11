@@ -96,6 +96,12 @@
                                     @Html.Label(@Utility.GetColumnName(@API.ThongKeTonKhoHangHoa, "ISCONCONGNO"), htmlAttributes: new { @for = "ISCONCONGNO" })
                                 </div>
                             </div>
+                            <div class="col-sm-2">
+                                <div class="ckbox ckbox-primary">
+                                    @Html.CheckBoxFor(model => model.ISCHITIET)
+                                    @Html.Label(@Utility.GetColumnName(@API.ThongKeTonKhoHangHoa, "ISCHITIET"), htmlAttributes: new { @for = "ISCHITIET" })
+                                </div>
+                            </div>
                         </div>
 
                         <div class="panel-footer">
@@ -118,8 +124,13 @@
                                 <tr>
                                     <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KhachHang, "MA")</th>
                                     <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KhachHang, "NAME")</th>
+                                    @if (Model.ISCHITIET)
+                                    {
+                                        <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ThongKeChiTietPhieuXuat, "NAME_DVT")</th>
+                                    }
                                     <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ThongKeTonKhoHangHoa, "TONGTIENCONGNODAUKY")</th>
                                     <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ThongKeTonKhoHangHoa, "TONGTIENPHIEUNHAP")</th>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ThongKeTonKhoHangHoa, "TONGTIENPHIEUNHAPTRAHANG")</th>
                                     <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ThongKeTonKhoHangHoa, "TONGTIENPHIEUDATHANG")</th>
                                     <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ThongKeTonKhoHangHoa, "TONGTIENPHIEUXUAT")</th>
                                     <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ThongKeTonKhoHangHoa, "TONGTIENCONGNOCUOIKY")</th>
@@ -130,7 +141,7 @@
 
                             @{
                                 string strLoi = "";
-                                double TT_GIATRITONKHOHIENTAI = 0, TT_TONKHOHIENTAI = 0, TT_TONGTIENCONGNODAUKY = 0, TT_TONGTIENPHIEUDATHANG = 0, TT_TONGTIENPHIEUXUAT = 0, TT_TONGTIENPHIEUNHAP = 0, TT_TONGTIENPHIEUTHU = 0, TT_TONGTIENPHIEUCHI = 0, TT_TONGTIENCONGNOCUOIKY = 0;
+                                double TT_GIATRITONKHOHIENTAI = 0, TT_TONKHOHIENTAI = 0, TT_TONGTIENCONGNODAUKY = 0, TT_TONGTIENPHIEUDATHANG = 0, TT_TONGTIENPHIEUXUAT = 0, TT_TONGTIENPHIEUNHAP = 0, TT_TONGTIENPHIEUNHAPTRAHANG = 0, TT_TONGTIENPHIEUTHU = 0, TT_TONGTIENPHIEUCHI = 0, TT_TONGTIENCONGNOCUOIKY = 0;
                                 if (Model.IPagedList != null && Model.IPagedList.Count() != 0)
                                 {
                                     <tbody id="tbodytmpitem">
@@ -142,46 +153,67 @@
                                             string strQtyDHTK = "";
                                             string strQtyXuatTK = "";
                                             string strQtyNhapTK = "";
+                                            string strQtyNhapTraHangTK = "";
                                             string strQtyCK = "";
                                             string strQtyHT = "";
                                             string strTTHT = "";
                                             string Mau = "";
-                                            if (item.TYLE_QD > 1)
+                                            if(item.ISCHITIET)
                                             {
-                                                PhanNguyen = Convert.ToInt32(item.TONGTIENPHIEUDATHANG) / Convert.ToInt32(item.TYLE_QD);
-                                                strQtyDHTK = (PhanNguyen != 0 ? PhanNguyen.ToString("N0") + " " + item.NAME_DVT : "") + ((item.TONGTIENPHIEUDATHANG - (PhanNguyen * item.TYLE_QD)) != 0 ? " " + (item.TONGTIENPHIEUDATHANG - (PhanNguyen * item.TYLE_QD)).ToString("N0") + " " + item.NAME_DVT_QD : "");
-                                                PhanNguyen = Convert.ToInt32(item.TONGTIENCONGNODAUKY) / Convert.ToInt32(item.TYLE_QD);
-                                                strQtyDK = (PhanNguyen != 0 ? PhanNguyen.ToString("N0") + " " + item.NAME_DVT : "") + ((item.TONGTIENCONGNODAUKY - (PhanNguyen * item.TYLE_QD)) != 0 ? " " + (item.TONGTIENCONGNODAUKY - (PhanNguyen * item.TYLE_QD)).ToString("N0") + " " + item.NAME_DVT_QD : "");
-                                                PhanNguyen = Convert.ToInt32(item.TONGTIENPHIEUXUAT) / Convert.ToInt32(item.TYLE_QD);
-                                                strQtyXuatTK = (PhanNguyen != 0 ? PhanNguyen.ToString("N0") + " " + item.NAME_DVT : "") + ((item.TONGTIENPHIEUXUAT - (PhanNguyen * item.TYLE_QD)) != 0 ? " " + (item.TONGTIENPHIEUXUAT - (PhanNguyen * item.TYLE_QD)).ToString("N0") + " " + item.NAME_DVT_QD : "");
-                                                PhanNguyen = Convert.ToInt32(item.TONGTIENPHIEUNHAP) / Convert.ToInt32(item.TYLE_QD);
-                                                strQtyNhapTK = (PhanNguyen != 0 ? PhanNguyen.ToString("N0") + " " + item.NAME_DVT : "") + ((item.TONGTIENPHIEUNHAP - (PhanNguyen * item.TYLE_QD)) != 0 ? " " + (item.TONGTIENPHIEUNHAP - (PhanNguyen * item.TYLE_QD)).ToString("N0") + " " + item.NAME_DVT_QD : "");
-                                                PhanNguyen = Convert.ToInt32(item.TONGTIENCONGNOCUOIKY) / Convert.ToInt32(item.TYLE_QD);
-                                                strQtyCK = (PhanNguyen != 0 ? PhanNguyen.ToString("N0") + " " + item.NAME_DVT : "") + ((item.TONGTIENCONGNOCUOIKY - (PhanNguyen * item.TYLE_QD)) != 0 ? " " + (item.TONGTIENCONGNOCUOIKY - (PhanNguyen * item.TYLE_QD)).ToString("N0") + " " + item.NAME_DVT_QD : "");
-                                                PhanNguyen = Convert.ToInt32(item.TONKHOHIENTAI) / Convert.ToInt32(item.TYLE_QD);
-                                                strQtyHT = (PhanNguyen != 0 ? PhanNguyen.ToString("N0") + " " + item.NAME_DVT : "") + ((item.TONKHOHIENTAI - (PhanNguyen * item.TYLE_QD)) != 0 ? " " + (item.TONKHOHIENTAI - (PhanNguyen * item.TYLE_QD)).ToString("N0") + " " + item.NAME_DVT_QD : "");
-                                                double GiaTriHangTon = PhanNguyen * item.GIA;
-                                                GiaTriHangTon += ((item.TONKHOHIENTAI - (PhanNguyen * item.TYLE_QD)) * item.GIA01);
-                                                strTTHT = GiaTriHangTon.ToString("N0");
-                                                TT_GIATRITONKHOHIENTAI += GiaTriHangTon;
+                                                strQtyDK = item.TONGTIENCONGNODAUKY.ToString("N0").Replace(".", ",");
+                                                strQtyNhapTK = item.TONGTIENPHIEUNHAP.ToString("N0").Replace(".", ",");
+                                                strQtyNhapTraHangTK = item.TONGTIENPHIEUNHAPTRAHANG.ToString("N0").Replace(".", ",");
+                                                strQtyDHTK = item.TONGTIENPHIEUDATHANG.ToString("N0").Replace(".", ",");
+                                                strQtyXuatTK = item.TONGTIENPHIEUXUAT.ToString("N0").Replace(".", ",");
+                                                strQtyCK = item.TONGTIENCONGNOCUOIKY.ToString("N0").Replace(".", ",");
+                                                strQtyHT = item.TONKHOHIENTAI.ToString("N0").Replace(".", ",");
+                                                double GiaTriHangTon = (item.TONKHOHIENTAI * (string.IsNullOrEmpty(item.NAME_DVT_QD) ? item.GIA : item.GIA_QD));
+                                                strTTHT = GiaTriHangTon.ToString("N0").Replace(".", ",");
                                             }
                                             else
                                             {
-                                                strQtyDK = item.TONGTIENCONGNODAUKY != 0 ? item.TONGTIENCONGNODAUKY.ToString("N0") + " " + item.NAME_DVT : "";
-                                                strQtyDHTK = item.TONGTIENPHIEUDATHANG != 0 ? item.TONGTIENPHIEUDATHANG.ToString("N0") + " " + item.NAME_DVT : "";
-                                                strQtyXuatTK = item.TONGTIENPHIEUXUAT != 0 ? item.TONGTIENPHIEUXUAT.ToString("N0") + " " + item.NAME_DVT : "";
-                                                strQtyNhapTK = item.TONGTIENPHIEUNHAP != 0 ? item.TONGTIENPHIEUNHAP.ToString("N0") + " " + item.NAME_DVT : "";
-                                                strQtyCK = item.TONGTIENCONGNOCUOIKY != 0 ? item.TONGTIENCONGNOCUOIKY.ToString("N0") + " " + item.NAME_DVT : "";
-                                                strQtyHT = item.TONKHOHIENTAI != 0 ? item.TONKHOHIENTAI.ToString("N0") + " " + item.NAME_DVT : "";
-                                                double GiaTriHangTon = (item.TONKHOHIENTAI * item.GIA);
-                                                strTTHT = GiaTriHangTon.ToString("N0");
-                                                TT_GIATRITONKHOHIENTAI += GiaTriHangTon;
+                                                if (item.TYLE_QD > 1)
+                                                {
+                                                    PhanNguyen = Convert.ToInt32(item.TONGTIENPHIEUDATHANG) / Convert.ToInt32(item.TYLE_QD);
+                                                    strQtyDHTK = (PhanNguyen != 0 ? PhanNguyen.ToString("N0") + " " + item.NAME_DVT : "") + ((item.TONGTIENPHIEUDATHANG - (PhanNguyen * item.TYLE_QD)) != 0 ? " " + (item.TONGTIENPHIEUDATHANG - (PhanNguyen * item.TYLE_QD)).ToString("N0") + " " + item.NAME_DVT_QD : "");
+                                                    PhanNguyen = Convert.ToInt32(item.TONGTIENCONGNODAUKY) / Convert.ToInt32(item.TYLE_QD);
+                                                    strQtyDK = (PhanNguyen != 0 ? PhanNguyen.ToString("N0") + " " + item.NAME_DVT : "") + ((item.TONGTIENCONGNODAUKY - (PhanNguyen * item.TYLE_QD)) != 0 ? " " + (item.TONGTIENCONGNODAUKY - (PhanNguyen * item.TYLE_QD)).ToString("N0") + " " + item.NAME_DVT_QD : "");
+                                                    PhanNguyen = Convert.ToInt32(item.TONGTIENPHIEUXUAT) / Convert.ToInt32(item.TYLE_QD);
+                                                    strQtyXuatTK = (PhanNguyen != 0 ? PhanNguyen.ToString("N0") + " " + item.NAME_DVT : "") + ((item.TONGTIENPHIEUXUAT - (PhanNguyen * item.TYLE_QD)) != 0 ? " " + (item.TONGTIENPHIEUXUAT - (PhanNguyen * item.TYLE_QD)).ToString("N0") + " " + item.NAME_DVT_QD : "");
+                                                    PhanNguyen = Convert.ToInt32(item.TONGTIENPHIEUNHAP) / Convert.ToInt32(item.TYLE_QD);
+                                                    strQtyNhapTK = (PhanNguyen != 0 ? PhanNguyen.ToString("N0") + " " + item.NAME_DVT : "") + ((item.TONGTIENPHIEUNHAP - (PhanNguyen * item.TYLE_QD)) != 0 ? " " + (item.TONGTIENPHIEUNHAP - (PhanNguyen * item.TYLE_QD)).ToString("N0") + " " + item.NAME_DVT_QD : "");
+                                                    PhanNguyen = Convert.ToInt32(item.TONGTIENPHIEUNHAPTRAHANG) / Convert.ToInt32(item.TYLE_QD);
+                                                    strQtyNhapTraHangTK = (PhanNguyen != 0 ? PhanNguyen.ToString("N0") + " " + item.NAME_DVT : "") + ((item.TONGTIENPHIEUNHAPTRAHANG - (PhanNguyen * item.TYLE_QD)) != 0 ? " " + (item.TONGTIENPHIEUNHAPTRAHANG - (PhanNguyen * item.TYLE_QD)).ToString("N0") + " " + item.NAME_DVT_QD : "");
+                                                    PhanNguyen = Convert.ToInt32(item.TONGTIENCONGNOCUOIKY) / Convert.ToInt32(item.TYLE_QD);
+                                                    strQtyCK = (PhanNguyen != 0 ? PhanNguyen.ToString("N0") + " " + item.NAME_DVT : "") + ((item.TONGTIENCONGNOCUOIKY - (PhanNguyen * item.TYLE_QD)) != 0 ? " " + (item.TONGTIENCONGNOCUOIKY - (PhanNguyen * item.TYLE_QD)).ToString("N0") + " " + item.NAME_DVT_QD : "");
+                                                    PhanNguyen = Convert.ToInt32(item.TONKHOHIENTAI) / Convert.ToInt32(item.TYLE_QD);
+                                                    strQtyHT = (PhanNguyen != 0 ? PhanNguyen.ToString("N0") + " " + item.NAME_DVT : "") + ((item.TONKHOHIENTAI - (PhanNguyen * item.TYLE_QD)) != 0 ? " " + (item.TONKHOHIENTAI - (PhanNguyen * item.TYLE_QD)).ToString("N0") + " " + item.NAME_DVT_QD : "");
+                                                    double GiaTriHangTon = PhanNguyen * item.GIA;
+                                                    GiaTriHangTon += ((item.TONKHOHIENTAI - (PhanNguyen * item.TYLE_QD)) * item.GIA_QD);
+                                                    strTTHT = GiaTriHangTon.ToString("N0");
+                                                    TT_GIATRITONKHOHIENTAI += GiaTriHangTon;
+                                                }
+                                                else
+                                                {
+                                                    strQtyDK = item.TONGTIENCONGNODAUKY != 0 ? item.TONGTIENCONGNODAUKY.ToString("N0") + " " + item.NAME_DVT : "";
+                                                    strQtyDHTK = item.TONGTIENPHIEUDATHANG != 0 ? item.TONGTIENPHIEUDATHANG.ToString("N0") + " " + item.NAME_DVT : "";
+                                                    strQtyXuatTK = item.TONGTIENPHIEUXUAT != 0 ? item.TONGTIENPHIEUXUAT.ToString("N0") + " " + item.NAME_DVT : "";
+                                                    strQtyNhapTK = item.TONGTIENPHIEUNHAP != 0 ? item.TONGTIENPHIEUNHAP.ToString("N0") + " " + item.NAME_DVT : "";
+                                                    strQtyNhapTraHangTK = item.TONGTIENPHIEUNHAPTRAHANG != 0 ? item.TONGTIENPHIEUNHAPTRAHANG.ToString("N0") + " " + item.NAME_DVT : "";
+                                                    strQtyCK = item.TONGTIENCONGNOCUOIKY != 0 ? item.TONGTIENCONGNOCUOIKY.ToString("N0") + " " + item.NAME_DVT : "";
+                                                    strQtyHT = item.TONKHOHIENTAI != 0 ? item.TONKHOHIENTAI.ToString("N0") + " " + item.NAME_DVT : "";
+                                                    double GiaTriHangTon = (item.TONKHOHIENTAI * item.GIA);
+                                                    strTTHT = GiaTriHangTon.ToString("N0");
+                                                    TT_GIATRITONKHOHIENTAI += GiaTriHangTon;
+                                                }
                                             }
+
 
                                             TT_TONGTIENCONGNODAUKY += item.TONGTIENCONGNODAUKY;
                                             TT_TONGTIENPHIEUDATHANG += item.TONGTIENPHIEUDATHANG;
                                             TT_TONGTIENPHIEUXUAT += item.TONGTIENPHIEUXUAT;
                                             TT_TONGTIENPHIEUNHAP += item.TONGTIENPHIEUNHAP;
+                                            TT_TONGTIENPHIEUNHAPTRAHANG += item.TONGTIENPHIEUNHAPTRAHANG;
                                             TT_TONGTIENPHIEUTHU += item.TONGTIENPHIEUTHU;
                                             TT_TONGTIENPHIEUCHI += item.TONGTIENPHIEUCHI;
                                             TT_TONGTIENCONGNOCUOIKY += item.TONGTIENCONGNOCUOIKY;
@@ -207,8 +239,14 @@
                                             <tr id="@item.ID">
                                                 <td style="white-space: nowrap; " id="MA"> @Html.DisplayFor(modelItem => item.MA)</td>
                                                 <td style="white-space: nowrap; " id="NAME"> @Html.DisplayFor(modelItem => item.NAME)</td>
+                                                @if (item.ISCHITIET)
+                                                {
+                                                    string NAME_DVT = string.IsNullOrEmpty(item.NAME_DVT_QD) ? item.NAME_DVT : item.NAME_DVT_QD;
+                                                    <td style="white-space: nowrap; " id="NAME_DVT">@NAME_DVT</td>
+                                                }
                                                 <td style="white-space: nowrap; text-align: right;" id="TONGTIENCONGNODAUKY"> @strQtyDK</td>
                                                 <td style="white-space: nowrap; text-align: right;" id="TONGTIENPHIEUNHAP"> @strQtyNhapTK</td>
+                                                <td style="white-space: nowrap; text-align: right;" id="TONGTIENPHIEUNHAPTRAHANG"> @strQtyNhapTraHangTK</td>
                                                 <td style="white-space: nowrap; text-align: right;" id="TONGTIENPHIEUDATHANG"> @strQtyDHTK</td>
                                                 <td style="white-space: nowrap; text-align: right;" id="TONGTIENPHIEUXUAT"> @strQtyXuatTK</td>
                                                 <td style="white-space: nowrap; text-align: right;" id="TONGTIENCONGNOCUOIKY"> @strQtyCK</td>
@@ -244,5 +282,6 @@
         $("input[type='hidden'][name='ISPHATSINHCONGNOTRONGKY']").remove();
         $("input[type='hidden'][name='ISCONCONGNO']").remove();
         $("input[type='hidden'][name='ISTHEOTHOIGIAN']").remove();
+        $("input[type='hidden'][name='ISCHITIET']").remove();
     });
 </script>
