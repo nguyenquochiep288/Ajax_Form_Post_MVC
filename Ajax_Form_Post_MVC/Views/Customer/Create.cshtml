@@ -3,7 +3,7 @@
 @using DatabaseTHP.Class;
 @if (Utility.IntWidth == 1)
 {
-    using (Ajax.BeginForm("CreatePopup", API.dm_KhachHang, new AjaxOptions {OnBegin = "OnBegin", OnSuccess = "OnSuccessCreate" }))
+    using (Ajax.BeginForm("CreatePopup", API.dm_KhachHang, new AjaxOptions { HttpMethod = "POST", InsertionMode = InsertionMode.Replace, UpdateTargetId = "PartialViewPaymentHistory", OnSuccess = "OnSuccessCreate" }, new { id = "frmPayments", enctype = "multipart/form-data" }))
     {
         @Html.AntiForgeryToken()
 
@@ -36,6 +36,26 @@
                     <div class="col-sm-5">
                         @Html.TextAreaFor(model => model.NAME, new { @class = "form-control", @rows = "3" })
                         @Html.ValidationMessageFor(model => model.NAME, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.Label(@Utility.GetColumnName(@API.dm_HangHoa, "PICTURE"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                    <div class="col-sm-5">
+                        <img alt="" src="~/Images_Upload/@Model.PICTURE" style="width: 150px" id="PICTUREAdd" name="PICTURE" /> <br />
+                        <div class="fileupload fileupload-exists" data-provides="fileupload">
+                            <input type="hidden" value="" name="">
+                            <div class="input-append">
+                                <div class="uneditable-input">
+                                    <i class="glyphicon glyphicon-file fileupload-exists"></i>
+                                    <span class="fileupload-preview"></span>
+                                </div>
+                                <span class="btn btn-default btn-file">
+                                    <input type="file" id="MaHinhAdd" name="MaHinh" onchange="onFileSelected(event, 'PICTUREAdd')" accept="image/*" class="form-control">
+
+                                </span>
+                                <a href="#" class="btn btn-default fileupload-exists" onclick="RemoveFile('MaHinhAdd', 'PICTURE')">Remove</a>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="form-group">

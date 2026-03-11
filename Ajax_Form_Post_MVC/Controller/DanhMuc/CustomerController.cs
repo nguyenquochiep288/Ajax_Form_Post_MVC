@@ -1,13 +1,14 @@
-using System;
-using System.Collections.Generic;
-using System.Reflection;
-using System.Web.Mvc;
 using DatabaseTHP;
 using DatabaseTHP.Class;
 using MVC_QuanLyTHP.Class;
 using MVC_QuanLyTHP.Models;
 using Newtonsoft.Json;
 using PagedList;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
+using System.Web.Mvc;
 
 namespace MVC_QuanLyTHP.Controllers
 {
@@ -311,7 +312,7 @@ namespace MVC_QuanLyTHP.Controllers
 		[HttpPost]
 		[ValidateInput(false)]
 		[ValidateAntiForgeryToken]
-		public ActionResult CreatePopup([Bind(Include = "LOC_ID,ID,MA,NAME,ADDRESS,TEL,FAX,EMAIL,NGAYSINH,DIS,RATE,ID_NHOMKHACHHANG,MAX_CONGNO,SONGAY,MAHANG_KH_LK,LEVEL_PRICE,ID_KHUVUC,ISACTIVE,ISDEFAULT,CONGNODAUKY,THOIGIANSUA,ID_NGUOISUA,THOIGIANTHEM,ID_NGUOITAO,TENKHACHHANG,TENDONVI,DIACHI,MASOTHUE,CCCD")] v_v_dm_KhachHang dm_KhachHang)
+		public ActionResult CreatePopup([Bind(Include = "PICTURE,LOC_ID,ID,MA,NAME,ADDRESS,TEL,FAX,EMAIL,NGAYSINH,DIS,RATE,ID_NHOMKHACHHANG,MAX_CONGNO,SONGAY,MAHANG_KH_LK,LEVEL_PRICE,ID_KHUVUC,ISACTIVE,ISDEFAULT,CONGNODAUKY,THOIGIANSUA,ID_NGUOISUA,THOIGIANTHEM,ID_NGUOITAO,TENKHACHHANG,TENDONVI,DIACHI,MASOTHUE,CCCD")] v_v_dm_KhachHang dm_KhachHang)
 		{
 			ApiResponse apiResponse = new ApiResponse();
 			try
@@ -344,7 +345,25 @@ namespace MVC_QuanLyTHP.Controllers
 					dm_KhachHang.LOC_ID = Utility.LOC_ID;
 					dm_KhachHang.ID_NGUOITAO = base.Session["idUser"].ToString();
 					dm_KhachHang.THOIGIANTHEM = Utility.CurrentTime;
-					apiResponse = Utility.Create((dm_KhachHang)dm_KhachHang, "Customer");
+                    if (base.Request.Files["MaHinh"] != null)
+                    {
+                        string fileName = base.Request.Files["MaHinh"].FileName;
+                        if (fileName != "")
+                        {
+                            string text = Guid.NewGuid().ToString() + "." + fileName.Split('.')[1];
+                            string text2 = Path.Combine(base.Server.MapPath("~/Images_Upload/Customer/"), text);
+                            if (!Directory.Exists(base.Server.MapPath("~/Images_Upload/Customer/")))
+                            {
+                                Directory.CreateDirectory(base.Server.MapPath("~/Images_Upload/Customer/"));
+                            }
+                            base.Request.Files["MaHinh"].SaveAs(text2);
+                            dm_KhachHang.PICTURE = text;
+                            byte[] inArray = System.IO.File.ReadAllBytes(text2);
+                            string fILEBASE = Convert.ToBase64String(inArray);
+                            dm_KhachHang.FILEBASE64 = fILEBASE;
+                        }
+                    }
+                    apiResponse = Utility.Create(dm_KhachHang, "Customer");
 					if (apiResponse.Success)
 					{
 						apiResponse.NewID = Guid.NewGuid().ToString();
@@ -447,7 +466,8 @@ namespace MVC_QuanLyTHP.Controllers
 				v_v_dm_KhachHang2.lstdm_NhomKhachHang = Utility.GetListData<v_dm_NhomKhachHang>("GroupCustomer", "", "", Utility.LOC_ID).Data as List<v_dm_NhomKhachHang>;
 				apiResponse.Success = true;
 				apiResponse.Detail = Utility.ConvertobjectTo((dm_KhachHang)v_v_dm_KhachHang2, "yyyy-MM-dd HH:mm:ss");
-				return new JsonResult
+                apiResponse.PathProduct = "/Images_Upload/Customer/";
+                return new JsonResult
 				{
 					Data = apiResponse,
 					JsonRequestBehavior = JsonRequestBehavior.AllowGet,
@@ -473,7 +493,7 @@ namespace MVC_QuanLyTHP.Controllers
 		[HttpPost]
 		[ValidateInput(false)]
 		[ValidateAntiForgeryToken]
-		public ActionResult EditPopup([Bind(Include = "LOC_ID,ID,MA,NAME,ADDRESS,TEL,FAX,EMAIL,NGAYSINH,DIS,RATE,ID_NHOMKHACHHANG,MAX_CONGNO,SONGAY,MAHANG_KH_LK,LEVEL_PRICE,ID_KHUVUC,ISACTIVE,ISDEFAULT,CONGNODAUKY,THOIGIANSUA,ID_NGUOISUA,THOIGIANTHEM,ID_NGUOITAO,TENKHACHHANG,TENDONVI,DIACHI,MASOTHUE,CCCD")] v_v_dm_KhachHang dm_KhachHang)
+		public ActionResult EditPopup([Bind(Include = "PICTURE,LOC_ID,ID,MA,NAME,ADDRESS,TEL,FAX,EMAIL,NGAYSINH,DIS,RATE,ID_NHOMKHACHHANG,MAX_CONGNO,SONGAY,MAHANG_KH_LK,LEVEL_PRICE,ID_KHUVUC,ISACTIVE,ISDEFAULT,CONGNODAUKY,THOIGIANSUA,ID_NGUOISUA,THOIGIANTHEM,ID_NGUOITAO,TENKHACHHANG,TENDONVI,DIACHI,MASOTHUE,CCCD")] v_v_dm_KhachHang dm_KhachHang)
 		{
 			ApiResponse apiResponse = new ApiResponse();
 			try
@@ -506,7 +526,30 @@ namespace MVC_QuanLyTHP.Controllers
 					dm_KhachHang.LOC_ID = Utility.LOC_ID;
 					dm_KhachHang.ID_NGUOISUA = base.Session["idUser"].ToString();
 					dm_KhachHang.THOIGIANSUA = Utility.CurrentTime;
-					apiResponse = Utility.Edit(Utility.LOC_ID + "/" + dm_KhachHang.MA, (v_dm_KhachHang)dm_KhachHang, "Customer");
+                    if (base.Request.Files["MaHinh"] != null)
+                    {
+                        string fileName = base.Request.Files["MaHinh"].FileName;
+                        if (fileName != "")
+                        {
+                            string text = dm_KhachHang.ID.Trim() + "." + fileName.Split('.')[1];
+                            string text2 = Path.Combine(base.Server.MapPath("~/Images_Upload/Customer/"), text);
+                            if (!Directory.Exists(base.Server.MapPath("~/Images_Upload/Customer/")))
+                            {
+                                Directory.CreateDirectory(base.Server.MapPath("~/Images_Upload/Customer/"));
+                            }
+                            if (System.IO.File.Exists(text2))
+                            {
+                                System.IO.File.Delete(text2);
+                            }
+                            base.Request.Files["MaHinh"].SaveAs(text2);
+                            dm_KhachHang.PICTURE = text;
+                            byte[] inArray = System.IO.File.ReadAllBytes(text2);
+                            string fILEBASE = Convert.ToBase64String(inArray);
+                            dm_KhachHang.FILEBASE64 = fILEBASE;
+                            dm_KhachHang.FILENEW = true;
+                        }
+                    }
+                    apiResponse = Utility.Edit(Utility.LOC_ID + "/" + dm_KhachHang.MA, (v_dm_KhachHang)dm_KhachHang, "Customer");
 					if (apiResponse.Success)
 					{
 						apiResponse.ID = dm_KhachHang.ID;

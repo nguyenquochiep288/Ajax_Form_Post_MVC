@@ -10,6 +10,87 @@
 }
 @Html.Partial("LoadCssDanhMuc")
 <hr />
+<script>
+    jQuery(document).ready(function () {
+        //Replaces data-rel attribute to rel.
+        //We use data-rel because of w3c validation issue
+        jQuery('a[data-rel]').each(function () {
+            jQuery(this).attr('rel', jQuery(this).data('rel'));
+        });
+
+        jQuery("a[rel^='prettyPhoto']").prettyPhoto();
+
+    });
+
+</script>
+<script>
+
+    function onFileSelected(event, name) {
+        var selectedFile = event.target.files[0];
+        var reader = new FileReader();
+
+        var imgtag = document.getElementById(name);
+        imgtag.title = selectedFile.name;
+
+        reader.onload = function (event) {
+            imgtag.src = event.target.result;
+        };
+
+        reader.readAsDataURL(selectedFile);
+    }
+    function callChangefunc(val, nameDVT, nameCombo) {
+        if (val != null) {
+            var imgtag = document.getElementById(nameDVT);
+            var imgtagCombo = document.getElementById(nameCombo);
+            if (val == 2) {
+                // hide
+                imgtag.style.visibility = 'block';
+                // OR
+                imgtag.style.display = 'visible';
+
+                imgtagCombo.style.visibility = 'hidden';
+                // OR
+                imgtagCombo.style.display = 'none';
+            }
+            else if (val != 0) {
+                // hide
+                imgtag.style.visibility = 'hidden';
+                // OR
+                imgtag.style.display = 'none';
+
+                imgtagCombo.style.visibility = 'visible';
+                // OR
+                imgtagCombo.style.display = 'block';
+            }
+            else {
+                imgtag.style.visibility = 'visible';
+                // OR
+                imgtag.style.display = 'block';
+
+                // hide
+                imgtagCombo.style.visibility = 'hidden';
+                // OR
+                imgtagCombo.style.display = 'none';
+            }
+        }
+    }
+    function RemoveFile(nameID, name) {
+        var input = document.querySelector('#' + nameID);
+        input.outerHTML = input.outerHTML;
+        var imgtag = document.getElementsByName(name);
+        if (imgtag != null && imgtag.length > 0) {
+            for (var i = 0; i < imgtag.length; i++) {
+                if (imgtag[i].localName == "img") {
+                    imgtag[i].title = "";
+                    imgtag[i].src = "";
+                }
+                else {
+                    imgtag[i].value = "";
+                }
+            }
+        }
+    }
+</script>
 <div class="panel-group" id="accordion">
     <div class="panel panel-default">
         <div class="panel-heading">
@@ -83,6 +164,7 @@
                                 <tr>
                                     <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KhachHang, "MA")</th>
                                     <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KhachHang, "NAME")</th>
+                                    <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_HangHoa, "PICTURE")</th>
                                     <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KhachHang, "ADDRESS")</th>
                                     <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KhachHang, "NGAYSINH")</th>
                                     <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KhachHang, "DIS")</th>
@@ -116,6 +198,16 @@
                                     <tr id="@item.ID">
                                         <td style="white-space: nowrap; " id="MA"> @Html.DisplayFor(modelItem => item.MA)</td>
                                         <td style="white-space: nowrap; " id="NAME"> @Html.DisplayFor(modelItem => item.NAME)</td>
+                                        <td style="white-space: nowrap; " id="PICTURE">
+                                            <div class="thmb-prev">
+                                                @if (!string.IsNullOrEmpty(item.PICTURE))
+                                                {
+                                                    <a href="@API.PathProduct@Html.DisplayFor(modelItem => item.PICTURE)?v=@DateTime.Now.Ticks" data-rel="prettyPhoto" rel="prettyPhoto">
+                                                        <img src="@API.PathCustomer@Html.DisplayFor(modelItem => item.PICTURE)?v=@DateTime.Now.Ticks" class="img-responsive" alt="">
+                                                    </a>
+                                                }
+                                            </div>
+                                        </td>
                                         <td style="white-space: nowrap; " id="ADDRESS"> @Html.DisplayFor(modelItem => item.ADDRESS)</td>
                                         <td style="white-space: nowrap; " id="NGAYSINH"> @NGAYSINH</td>
                                         <td style="white-space: nowrap; " id="DIS"> @Html.DisplayFor(modelItem => item.DIS)</td>
