@@ -1224,6 +1224,7 @@
     <Compile Include="Controller\NghiepVu\PhepNam\AnnualLeaveController.cs" />
     <Compile Include="Controller\NghiepVu\PhieuGiaoHang\Delivery_ImageController.cs" />
     <Compile Include="Controller\NghiepVu\ThongKeBaoCaoNhanVien\ReportEmployeeController.cs" />
+    <Compile Include="Controller\NghiepVu\Uniben\UnibenSalesOrderController.cs" />
     <Compile Include="Controller\WifiController.cs" />
     <Compile Include="Controller\DanhMuc\MonthlySalaryController.cs" />
     <Compile Include="Controller\DanhMuc\TestController.cs" />
@@ -1315,6 +1316,8 @@
     <Compile Include="Models\View\v_v_ct_HoaDon.cs" />
     <Compile Include="Models\View\v_v_ct_HoaDon_ChiTiet.cs" />
     <Compile Include="Models\View\v_v_dm_DiaDiemChamCong.cs" />
+    <Compile Include="Models\View\v_v_dm_HangHoa_KhungGia.cs" />
+    <Compile Include="Models\View\v_v_dm_HangHoa_KhungGia_HangHoa.cs" />
     <Compile Include="Models\View\v_v_dm_HangHoa_KhungGia_Master.cs" />
     <Compile Include="Models\View\v_v_dm_LoaiHoaDon.cs" />
     <Compile Include="Models\View\v_v_dm_TaiKhoan_Misa.cs" />
@@ -1344,6 +1347,12 @@
     <Compile Include="Models\View\v_v_ct_PhieuGiaoHang.cs" />
     <Compile Include="Models\View\v_v_dm_Xe.cs" />
     <Compile Include="Models\View\v_v_dm_BangLuong.cs" />
+    <Compile Include="Models\View\v_v_UnibenOrder.cs" />
+    <Compile Include="Models\View\v_v_UnibenOrderListResponse.cs" />
+    <Compile Include="Models\View\v_v_uniben_dm_LienKet_HangHoa.cs" />
+    <Compile Include="Models\View\v_v_uniben_dm_LienKet_KhachHang.cs" />
+    <Compile Include="Models\View\v_v_uniben_dm_LienKet_NhanVien.cs" />
+    <Compile Include="Models\View\v_v_view_dm_HangHoa_KhungGia.cs" />
     <Compile Include="Models\View\v_v_web_Report.cs" />
     <Compile Include="Models\View\v_v_web_Parameter.cs" />
     <Compile Include="Models\View\v_v_ct_PhieuDatHang.cs" />
