@@ -1751,6 +1751,27 @@
     <Content Include="Views\CategoryPayroll\Index.cshtml" />
     <Content Include="Views\ReportEmployee\Index.cshtml" />
     <Content Include="Views\Payroll_KPI_Sale_Temp\Index.cshtml" />
+    <Content Include="Views\OutputDetail\Index.cshtml" />
+    <Content Include="Views\Invoiced\Create.cshtml" />
+    <Content Include="Views\Invoiced\Edit.cshtml" />
+    <Content Include="Views\Invoiced\Index.cshtml" />
+    <Content Include="Views\AccountMisa\Create.cshtml" />
+    <Content Include="Views\AccountMisa\Edit.cshtml" />
+    <Content Include="Views\AccountMisa\Index.cshtml" />
+    <Content Include="Views\AccountUniben\Create.cshtml" />
+    <Content Include="Views\AccountUniben\Edit.cshtml" />
+    <Content Include="Views\AccountUniben\Index.cshtml" />
+    <Content Include="Views\ProductPriceRange\Create.cshtml" />
+    <Content Include="Views\ProductPriceRange\Edit.cshtml" />
+    <Content Include="Views\ProductPriceRange\Index.cshtml" />
+    <Content Include="Views\TypeInvoiced\Create.cshtml" />
+    <Content Include="Views\TypeInvoiced\Edit.cshtml" />
+    <Content Include="Views\TypeInvoiced\Index.cshtml" />
+    <Content Include="Views\UnibenSalesOrder\Create.cshtml" />
+    <Content Include="Views\UnibenSalesOrder\Edit.cshtml" />
+    <Content Include="Views\UnibenSalesOrder\Index.cshtml" />
+    <Content Include="Views\UnibenSalesOrder\LinkUniben.cshtml" />
+    <Content Include="Views\UnibenSalesOrder\LoadData.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

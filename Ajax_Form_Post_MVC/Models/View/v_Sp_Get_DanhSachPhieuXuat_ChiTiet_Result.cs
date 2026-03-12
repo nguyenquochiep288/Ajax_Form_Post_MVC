@@ -4,28 +4,30 @@ using System;
 using System.Collections.Generic;
 using DatabaseTHP;
 using DatabaseTHP.StoredProcedure;
-
-public class v_Sp_Get_DanhSachPhieuXuat_ChiTiet_Result : Sp_Get_DanhSachPhieuXuat_ChiTiet_Result
+namespace MVC_QuanLyTHP.Models
 {
-    public List<Sp_Get_DanhSachPhieuXuat_ChiTiet_Result> IPagedList { get; set; }
+    public class v_Sp_Get_DanhSachPhieuXuat_ChiTiet_Result : Sp_Get_DanhSachPhieuXuat_ChiTiet_Result
+    {
+        public List<Sp_Get_DanhSachPhieuXuat_ChiTiet_Result> IPagedList { get; set; }
 
-    public List<v_dm_KhachHang> lstdm_KhachHang { get; set; }
+        public List<v_dm_KhachHang> lstdm_KhachHang { get; set; }
 
-    public List<v_dm_KhuVuc> lstdm_KhuVuc { get; set; }
+        public List<v_dm_KhuVuc> lstdm_KhuVuc { get; set; }
 
-    public List<v_dm_NhomKhachHang> lstdm_NhomKhachHang { get; set; }
+        public List<v_dm_NhomKhachHang> lstdm_NhomKhachHang { get; set; }
 
-    public bool ISTHEOTHOIGIAN { get; set; }
+        public bool ISTHEOTHOIGIAN { get; set; }
 
-    public DateTime TUNGAY { get; set; }
+        public DateTime TUNGAY { get; set; }
 
-    public DateTime DENNGAY { get; set; }
+        public DateTime DENNGAY { get; set; }
 
-    public string ID_KHACHHANG { get; set; }
+        public string ID_KHACHHANG { get; set; }
 
-    public string ID_NHOMKHACHHANG { get; set; }
+        public string ID_NHOMKHACHHANG { get; set; }
 
-    public string ID_KHUVUC { get; set; }
+        public string ID_KHUVUC { get; set; }
 
-    public string KEY { get; set; }
+        public string KEY { get; set; }
+    }
 }
