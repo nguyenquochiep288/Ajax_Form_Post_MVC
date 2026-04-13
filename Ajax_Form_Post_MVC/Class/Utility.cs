@@ -2100,7 +2100,7 @@ namespace MVC_QuanLyTHP.Class
 					{
 						if (Type.GetTypeCode(value.GetType()).ToString().Contains("Int"))
 						{
-							valueEdit.Value = ((int)value).ToString("N0");
+							valueEdit.Value = ((int)value).ToString("N0").Replace(".", ",");
 						}
 						else if (value.ToString().Contains(","))
 						{
@@ -2109,7 +2109,7 @@ namespace MVC_QuanLyTHP.Class
 						}
 						else
 						{
-							valueEdit.Value = ((double)value).ToString("N0");
+							valueEdit.Value = ((double)value).ToString("N0").Replace(".", ",");
 						}
 					}
 					else
