@@ -113,7 +113,7 @@ namespace MVC_QuanLyTHP.Controllers
 				{
 					return RedirectToAction("Index", "Admin");
 				}
-				if (!Utility.KiemTraQuyen("Payment", "Create"))
+				if (!Utility.KiemTraQuyen("Payment", "Create") && !Utility.KiemTraQuyen("Delivery", "Delivery_CreateReceipt"))
 				{
 					base.TempData["TitleError"] = "Bạn không có quyền truy cập chức năng!";
 					return RedirectToAction("Index", "Notfound");

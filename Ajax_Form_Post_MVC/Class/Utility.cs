@@ -1836,7 +1836,15 @@ namespace MVC_QuanLyTHP.Class
 			return false;
 		}
 
-		public static bool KiemTraQuyen(string MaForm, string MaQuyen, v_web_Menu web_Menu = null)
+		public static bool KiemTraAdmin()
+		{
+			if (HttpContext.Current.Session["idNhomQuyen"] != null && HttpContext.Current.Session["idNhomQuyen"].ToString() == "-1")
+			{
+				return true;
+			}
+			return false;
+        }
+        public static bool KiemTraQuyen(string MaForm, string MaQuyen, v_web_Menu web_Menu = null)
 		{
 			if (HttpContext.Current.Session["idNhomQuyen"] != null && HttpContext.Current.Session["idNhomQuyen"].ToString() == "-1")
 			{
@@ -3294,17 +3302,21 @@ namespace MVC_QuanLyTHP.Class
 			}
 		}
 
-		public static ApiResponse Get_DanhSachPhieuGiaoHang<T>(string ID_KHO, DateTime? TUNGAY, DateTime? DENNAY, string SearchString = "", string TypeSearch = "")
+		public static ApiResponse Get_DanhSachPhieuGiaoHang<T>(string ID_KHO, DateTime? TUNGAY, DateTime? DENNAY, string SearchString = "", string ID_USER = "")
 		{
 			ApiResponse apiResponse = new ApiResponse();
 			try
 			{
-				SP_Parameter sP_Parameter = new SP_Parameter();
+               
+                SP_Parameter sP_Parameter = new SP_Parameter();
 				sP_Parameter.LOC_ID = LOC_ID;
 				sP_Parameter.TUNGAY = TUNGAY;
 				sP_Parameter.DENNGAY = DENNAY;
 				sP_Parameter.KEY = SearchString;
-				return ExecuteStoredProc<T>(sP_Parameter, "Sp_Get_DanhSachPhieuGiaoHang");
+				if(!string.IsNullOrEmpty(ID_USER))
+					sP_Parameter.ID_NHANVIEN = ID_USER;
+
+                return ExecuteStoredProc<T>(sP_Parameter, "Sp_Get_DanhSachPhieuGiaoHang");
 			}
 			catch (Exception ex)
 			{

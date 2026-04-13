@@ -97,7 +97,7 @@
                             <span class="input-group-btn">
                                 <button type="button" class="btn btn-default" onclick="myFunOpenSearch('myModalEdit', '@{@API.web_NhomQuyen;}', '@API.Chon1', 'lstweb_NhomQuyenEdit', '')"><span class="glyphicon glyphicon-search"></span></button>
                             </span>
-                            @Html.DropDownListFor(model => model.ID_NHOMQUYEN, new SelectList(Model.lstweb_NhomQuyen, "ID", "NAME"), Utility.GetTitleChon(API.web_NhomQuyen), htmlAttributes: new { @class = "form-control", id = "lstweb_NhomQuyenEdit" })
+                            @Html.DropDownListFor(model => model.ID_NHOMQUYEN, new SelectList(Model.lstweb_NhomQuyen, "ID", "NAME"), Utility.GetTitleChon(API.web_NhomQuyen), htmlAttributes: new { @class = "form-control chosen-select", id = "lstweb_NhomQuyenEdit" })
                         </div>
 
                         @Html.ValidationMessageFor(model => model.ID_NHOMQUYEN, "", new { @class = "text-danger" })

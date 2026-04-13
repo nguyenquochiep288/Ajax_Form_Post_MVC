@@ -46,9 +46,14 @@ namespace MVC_QuanLyTHP.Controllers
 					{
 						apiResponse = Utility.Get_DanhSachPhieuGiaoHang<v_ct_PhieuGiaoHang>("", null, null, MAPHIEU, IDCODE);
 					}
+
 					if (FromDate.HasValue)
 					{
-						apiResponse = Utility.Get_DanhSachPhieuGiaoHang<v_ct_PhieuGiaoHang>("", FromDate, ToDate, SearchString);
+						string ID_USER = string.Empty;
+						if (!Utility.KiemTraAdmin() && Utility.KiemTraQuyen("Delivery", "UserData"))
+									ID_USER = base.Session["idUser"].ToString();
+
+                        apiResponse = Utility.Get_DanhSachPhieuGiaoHang<v_ct_PhieuGiaoHang>("", FromDate, ToDate, SearchString, ID_USER);
 					}
 					if (!apiResponse.Success)
 					{
