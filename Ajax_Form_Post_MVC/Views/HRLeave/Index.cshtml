@@ -132,7 +132,7 @@
                                         {
                                             string THOIGIANVAO = item.THOIGIANVAO != null ? item.THOIGIANVAO.ToString("dd/MM/yyyy") : "";
                                             string THOIGIANRA = item.THOIGIANRA != null ? item.THOIGIANRA.ToString("dd/MM/yyyy") : "";
-                                            string SOLUONG = item.SOLUONG.ToString("N0");
+                                            string SOLUONG = item.SOLUONG.ToString("N0").Replace(".", ",");
                                             <tr id="@item.ID">
                                                 <td style="white-space: nowrap; " id="NAMPHEP"> @Html.DisplayFor(modelItem => item.NAMPHEP)</td>
                                                 <td style="white-space: nowrap; " id="MA"> @Html.DisplayFor(modelItem => item.MA_NHANVIEN)</td>

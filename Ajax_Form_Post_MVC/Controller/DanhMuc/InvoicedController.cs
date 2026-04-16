@@ -63,7 +63,7 @@ namespace MVC_QuanLyTHP.Controllers
 					if (apiResponse.Data != null)
 					{
 						iPagedList = (apiResponse.Data as List<v_ct_HoaDon>).OrderByDescending((v_ct_HoaDon s) => s.NGAYLAP).ToList().ToPagedList(Page, Utility.GetPageSize());
-						text = (apiResponse.Data as List<v_ct_HoaDon>).Sum((v_ct_HoaDon s) => s.TONGTIEN).ToString("N0");
+						text = (apiResponse.Data as List<v_ct_HoaDon>).Sum((v_ct_HoaDon s) => s.TONGTIEN).ToString("N0").Replace(".", ",");
 						num = (apiResponse.Data as List<v_ct_HoaDon>).Where((v_ct_HoaDon s) => s.ISXUATHOADON && !string.IsNullOrEmpty(s.MACQT)).Count();
 						num2 = (apiResponse.Data as List<v_ct_HoaDon>).Where((v_ct_HoaDon s) => s.ISXUATHOADON && string.IsNullOrEmpty(s.MACQT)).Count();
 						num3 = (apiResponse.Data as List<v_ct_HoaDon>).Where((v_ct_HoaDon s) => !s.ISXUATHOADON).Count();

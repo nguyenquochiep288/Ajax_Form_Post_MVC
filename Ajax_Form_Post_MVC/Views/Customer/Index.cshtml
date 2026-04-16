@@ -193,8 +193,8 @@
                                 @foreach (var item in Model.IPagedList)
                                 {
                                     string NGAYSINH = item.NGAYSINH != null ? item.NGAYSINH.Value.ToString("dd/MM/yyyy") : "";
-                                    string MAX_CONGNO = item.MAX_CONGNO.ToString("N0");
-                                    string CONGNODAUKY = item.CONGNODAUKY.ToString("N0");
+                                    string MAX_CONGNO = item.MAX_CONGNO.ToString("N0").Replace(".", ",");
+                                    string CONGNODAUKY = item.CONGNODAUKY.ToString("N0").Replace(".", ",");
                                     <tr id="@item.ID">
                                         <td style="white-space: nowrap; " id="MA"> @Html.DisplayFor(modelItem => item.MA)</td>
                                         <td style="white-space: nowrap; " id="NAME"> @Html.DisplayFor(modelItem => item.NAME)</td>

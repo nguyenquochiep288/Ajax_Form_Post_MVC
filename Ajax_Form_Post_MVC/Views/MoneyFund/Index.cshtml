@@ -96,10 +96,10 @@
                                             TT_TONGTIENPHIEUCHI += item.TONGTIENPHIEUCHI;
                                             TT_TONGTIENCONGNOCUOIKY += item.TONGTIENCONGNOCUOIKY;
 
-                                            string TONGTIENCONGNODAUKY = item.TONGTIENCONGNODAUKY.ToString("N0");
-                                            string TONGTIENPHIEUTHU = item.TONGTIENPHIEUTHU.ToString("N0");
-                                            string TONGTIENPHIEUCHI = item.TONGTIENPHIEUCHI.ToString("N0");
-                                            string TONGTIENCONGNOCUOIKY = item.TONGTIENCONGNOCUOIKY.ToString("N0");
+                                            string TONGTIENCONGNODAUKY = item.TONGTIENCONGNODAUKY.ToString("N0").Replace(".", ",");
+                                            string TONGTIENPHIEUTHU = item.TONGTIENPHIEUTHU.ToString("N0").Replace(".", ",");
+                                            string TONGTIENPHIEUCHI = item.TONGTIENPHIEUCHI.ToString("N0").Replace(".", ",");
+                                            string TONGTIENCONGNOCUOIKY = item.TONGTIENCONGNOCUOIKY.ToString("N0").Replace(".", ",");
                                             item.ID_TAIKHOANNGANHANG = item.ID;
                                             item.ISTHEOTHOIGIAN = Model.ISTHEOTHOIGIAN;
                                             item.TUNGAY = Model.TUNGAY;

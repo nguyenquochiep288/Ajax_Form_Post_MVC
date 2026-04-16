@@ -142,10 +142,10 @@
                             {
                                 string NGAYHOADON = item.NGAYHOADON.ToString("dd/MM/yyyy");
                                 string NGAYLAP = item.NGAYLAP.ToString("dd/MM/yyyy");
-                                string TONGTHANHTIEN = item.TONGTHANHTIEN.ToString("N0");
-                                string TONGTIENGIAMGIA = item.TONGTIENGIAMGIA.ToString("N0");
-                                string TONGTIENVAT = item.TONGTIENVAT.ToString("N0");
-                                string TONGTIEN = item.TONGTIEN.ToString("N0");
+                                string TONGTHANHTIEN = item.TONGTHANHTIEN.ToString("N0").Replace(".", ",");
+                                string TONGTIENGIAMGIA = item.TONGTIENGIAMGIA.ToString("N0").Replace(".", ",");
+                                string TONGTIENVAT = item.TONGTIENVAT.ToString("N0").Replace(".", ",");
+                                string TONGTIEN = item.TONGTIEN.ToString("N0").Replace(".", ",");
                                 <tr id="@item.ID">
                                     @if (!item.ISXUATHOADON)
                                     {

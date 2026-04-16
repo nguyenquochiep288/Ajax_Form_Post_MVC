@@ -94,11 +94,11 @@
 
                                         @foreach (var item in Model.IPagedList)
                                         {
-                                            string TONGTIENNHAP = item.TONGTIENNHAP.ToString("N0");
-                                            string TONGTIENXUAT = item.TONGTIENXUAT.ToString("N0");
-                                            string TONGTIENTHU = item.TONGTIENTHU.ToString("N0");
-                                            string TONGTIENCHI = item.TONGTIENCHI.ToString("N0");
-                                            string CONLAI = item.CONLAI.ToString("N0");
+                                            string TONGTIENNHAP = item.TONGTIENNHAP.ToString("N0").Replace(".", ",");
+                                            string TONGTIENXUAT = item.TONGTIENXUAT.ToString("N0").Replace(".", ",");
+                                            string TONGTIENTHU = item.TONGTIENTHU.ToString("N0").Replace(".", ",");
+                                            string TONGTIENCHI = item.TONGTIENCHI.ToString("N0").Replace(".", ",");
+                                            string CONLAI = item.CONLAI.ToString("N0").Replace(".", ",");
                                             item.ID_NHANVIEN = item.ID_NGUOITAO;
                                             item.ISTHEOTHOIGIAN = Model.ISTHEOTHOIGIAN;
                                             item.TUNGAY = Model.TUNGAY;

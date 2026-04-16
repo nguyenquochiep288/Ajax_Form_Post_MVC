@@ -98,12 +98,12 @@
                         <tbody id="tbodytmpitem">
                             @foreach (var item in Model.IPagedList)
                             {
-                                string TIENLUONG = item.TIENLUONG.ToString("N0");
-                                string TIENLUONGKHAC = item.TIENLUONGKHAC.ToString("N0");
-                                string MUCLUONG = item.MUCLUONG.ToString("N0");
-                                string TIENGIAM = item.TIENGIAM.ToString("N0");
-                                string TIENTHUCNHAN = item.TIENTHUCNHAN.ToString("N0");
-                                string TIENDAUKY = item.TIENDAUKY.ToString("N0");
+                                string TIENLUONG = item.TIENLUONG.ToString("N0").Replace(".", ",");
+                                string TIENLUONGKHAC = item.TIENLUONGKHAC.ToString("N0").Replace(".", ",");
+                                string MUCLUONG = item.MUCLUONG.ToString("N0").Replace(".", ",");
+                                string TIENGIAM = item.TIENGIAM.ToString("N0").Replace(".", ",");
+                                string TIENTHUCNHAN = item.TIENTHUCNHAN.ToString("N0").Replace(".", ",");
+                                string TIENDAUKY = item.TIENDAUKY.ToString("N0").Replace(".", ",");
                                 string NGAYLAP = item.NGAYLAP.ToString("dd/MM/yyyy");
                                 <tr id="@item.ID">
                                     <td style="white-space: nowrap; " id="NGAYLAP"> @NGAYLAP</td>

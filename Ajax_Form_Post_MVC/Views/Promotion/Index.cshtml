@@ -133,9 +133,9 @@
                             {
                                 string TUNGAY = item.TUNGAY.ToString("dd/MM/yyyy");
                                 string DENNGAY = item.DENNGAY.ToString("dd/MM/yyyy");
-                                string TIENGIAM = item.TIENGIAM.ToString("N0");
-                                string TONGTIEN_DATKM = item.TONGTIEN_DATKM.ToString("N0");
-                                string SOLUONG_DATKM = item.SOLUONG_DATKM.ToString("N0");
+                                string TIENGIAM = item.TIENGIAM.ToString("N0").Replace(".", ",");
+                                string TONGTIEN_DATKM = item.TONGTIEN_DATKM.ToString("N0").Replace(".", ",");
+                                string SOLUONG_DATKM = item.SOLUONG_DATKM.ToString("N0").Replace(".", ",");
                                 <tr id="@item.ID">
                                     <td style="white-space: nowrap; " id="MA"> @Html.DisplayFor(modelItem => item.MA)</td>
                                     <td style="white-space: nowrap; " id="NAME"> @Html.DisplayFor(modelItem => item.NAME)</td>

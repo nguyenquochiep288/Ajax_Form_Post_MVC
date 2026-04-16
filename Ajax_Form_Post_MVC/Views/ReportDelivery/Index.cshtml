@@ -122,26 +122,26 @@
                                             TT_NHAPXUAT += item.NHAPXUAT;
                                             TT_THUCHI += item.THUCHI;
 
-                                            string SOLUONG_DONHANG = item.SOLUONG_DONHANG.ToString("N0");
-                                            string SOTIENGIAOHANG = item.SOTIENGIAOHANG.ToString("N0");
+                                            string SOLUONG_DONHANG = item.SOLUONG_DONHANG.ToString("N0").Replace(".", ",");
+                                            string SOTIENGIAOHANG = item.SOTIENGIAOHANG.ToString("N0").Replace(".", ",");
                                             string NGAYLAP = item.NGAYLAP.ToString("dd/MM/yyyy");
 
-                                            string TONGTIENPHIEUXUAT = item.TONGTIENPHIEUXUAT.ToString("N0");
-                                            string TONGTIENPHIEUNHAP = item.TONGTIENPHIEUNHAP.ToString("N0");
-                                            string TONGTIENPHIEUTHU = item.TONGTIENPHIEUTHU.ToString("N0");
-                                            string TONGTIENPHIEUCHI = item.TONGTIENPHIEUCHI.ToString("N0");
-                                            string TONGTIENPHIEUTHUNGANHANG = item.TONGTIENPHIEUTHUNGANHANG.ToString("N0");
-                                            string TONGTIENPHIEUTHUGANNO = item.TONGTIENPHIEUTHUGANNO.ToString("N0");
+                                            string TONGTIENPHIEUXUAT = item.TONGTIENPHIEUXUAT.ToString("N0").Replace(".", ",");
+                                            string TONGTIENPHIEUNHAP = item.TONGTIENPHIEUNHAP.ToString("N0").Replace(".", ",");
+                                            string TONGTIENPHIEUTHU = item.TONGTIENPHIEUTHU.ToString("N0").Replace(".", ",");
+                                            string TONGTIENPHIEUCHI = item.TONGTIENPHIEUCHI.ToString("N0").Replace(".", ",");
+                                            string TONGTIENPHIEUTHUNGANHANG = item.TONGTIENPHIEUTHUNGANHANG.ToString("N0").Replace(".", ",");
+                                            string TONGTIENPHIEUTHUGANNO = item.TONGTIENPHIEUTHUGANNO.ToString("N0").Replace(".", ",");
 
-                                            string TONGTIENTHU = (item.TONGTIENPHIEUTHU + item.TONGTIENPHIEUTHUGANNO + item.TONGTIENPHIEUTHUNGANHANG).ToString("N0");
+                                            string TONGTIENTHU = (item.TONGTIENPHIEUTHU + item.TONGTIENPHIEUTHUGANNO + item.TONGTIENPHIEUTHUNGANHANG).ToString("N0").Replace(".", ",");
 
-                                            string TONGTIENPHIEUXUATKHAC = item.TONGTIENPHIEUXUATKHAC.ToString("N0");
-                                            string TONGTIENPHIEUNHAPKHAC = item.TONGTIENPHIEUNHAPKHAC.ToString("N0");
-                                            string TONGTIENPHIEUTHUKHAC = item.TONGTIENPHIEUTHUKHAC.ToString("N0");
-                                            string TONGTIENPHIEUCHIKHAC = item.TONGTIENPHIEUCHIKHAC.ToString("N0");
+                                            string TONGTIENPHIEUXUATKHAC = item.TONGTIENPHIEUXUATKHAC.ToString("N0").Replace(".", ",");
+                                            string TONGTIENPHIEUNHAPKHAC = item.TONGTIENPHIEUNHAPKHAC.ToString("N0").Replace(".", ",");
+                                            string TONGTIENPHIEUTHUKHAC = item.TONGTIENPHIEUTHUKHAC.ToString("N0").Replace(".", ",");
+                                            string TONGTIENPHIEUCHIKHAC = item.TONGTIENPHIEUCHIKHAC.ToString("N0").Replace(".", ",");
 
-                                            string THUCHI = item.THUCHI.ToString("N0");
-                                            string NHAPXUAT = item.NHAPXUAT.ToString("N0");
+                                            string THUCHI = item.THUCHI.ToString("N0").Replace(".", ",");
+                                            string NHAPXUAT = item.NHAPXUAT.ToString("N0").Replace(".", ",");
                                             item.TUNGAY = Model.TUNGAY;
                                             item.DENNGAY = Model.DENNGAY;
                                             item.ID_XE = Model.ID_XE;

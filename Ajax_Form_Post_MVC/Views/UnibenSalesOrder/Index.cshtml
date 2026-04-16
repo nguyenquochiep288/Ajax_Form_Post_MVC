@@ -102,7 +102,7 @@
                                         {                                        
                                             foreach (var item in Model.IPagedList)
                                             {
-                                                string totalAmount = item.totalAmount.ToString("N0");
+                                                string totalAmount = item.totalAmount.ToString("N0").Replace(".", ",");
                             <tr id="@item.orderId">
                                 <td style="white-space: nowrap;" id="CHON">
                                     @if (!item.DATONTAI)

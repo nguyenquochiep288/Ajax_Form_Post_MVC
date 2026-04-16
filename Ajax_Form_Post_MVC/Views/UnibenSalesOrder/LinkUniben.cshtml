@@ -108,7 +108,7 @@
                                                             <span class="input-group-btn">
                                                                 <button type="button" class="btn btn-default" onclick="myFunOpenSearch('accordion', '@{@API.dm_KhachHang;}', '@API.Chon1', 'lstdm_KhachHang|' + @item.ID_UNIBEN, '')"><span class="glyphicon glyphicon-search"></span></button>
                                                             </span>
-                                                            @Html.DropDownList("lstdm_KhachHang|" + item.ID_UNIBEN, new SelectList(Model.lstdm_KhachHang.Where(s => s.ID == item.ID_KHACHHANG), "ID", "NAME", item.ID_KHACHHANG), Utility.GetTitleChon(API.dm_KhachHang), htmlAttributes: new { @class = "form-control chosen-select", id = "lstdm_KhachHang|" + item.ID_UNIBEN })
+                                                            @Html.DropDownList("lstdm_KhachHang|" + item.ID_UNIBEN, new SelectList(Model.lstdm_KhachHang, "ID", "NAME", item.ID_KHACHHANG), Utility.GetTitleChon(API.dm_KhachHang), htmlAttributes: new { @class = "form-control chosen-select", id = "lstdm_KhachHang|" + item.ID_UNIBEN })
                                                         </div>
                                                     </td>
                                                     <td style="white-space: nowrap; " class="fix">
@@ -201,7 +201,7 @@
                                                         <span class="input-group-btn">
                                                             <button type="button" class="btn btn-default" onclick="myFunOpenSearch('accordion1', '@{@API.dm_HangHoa;}', '@API.Chon1', 'lstdm_HangHoa|' + @item.ID_UNIBEN+ '|' + @(item.ISKHUYENMAI ? "1" : "0"), '')"><span class="glyphicon glyphicon-search"></span></button>
                                                         </span>
-                                                        @Html.DropDownList("lstdm_HangHoa|" + item.ID_UNIBEN + "|" + item.ISKHUYENMAI, new SelectList(Model.lstdm_HangHoa.Where(s => s.ID == item.ID_HANGHOA), "ID", "NAME", item.ID_HANGHOA), Utility.GetTitleChon(API.dm_HangHoa), htmlAttributes: new { @class = "form-control chosen-select", id = "lstdm_HangHoa|" + item.ID_UNIBEN + "|" + (item.ISKHUYENMAI ? "1" : "0") })
+                                                        @Html.DropDownList("lstdm_HangHoa|" + item.ID_UNIBEN + "|" + item.ISKHUYENMAI, new SelectList(Model.lstdm_HangHoa, "ID", "NAME", item.ID_HANGHOA), Utility.GetTitleChon(API.dm_HangHoa), htmlAttributes: new { @class = "form-control chosen-select", id = "lstdm_HangHoa|" + item.ID_UNIBEN + "|" + (item.ISKHUYENMAI ? "1" : "0") })
                                                     </div>
                                                 </td>
                                                 <td style="white-space: nowrap; " class="fix">
@@ -291,7 +291,7 @@
                                                 <td style="width: 200px; @Color" id="TENNHANVIEN"> @Html.DisplayFor(modelItem => item.TENNHANVIEN)</td>
                                                 <td style="white-space: nowrap;" id="ID_NHANVIEN">
                                                     <div class="col-sm-5">
-                                                        @Html.DropDownList("lstAspNetUsers|" + item.ID_UNIBEN, new SelectList(Model.lstAspNetUsers.Where(s => s.ID == item.ID_NHANVIEN), "ID", "NAME", item.ID_NHANVIEN), Utility.GetTitleChon(API.AspNetUser), htmlAttributes: new { @class = "form-control chosen-select", id = "lstAspNetUsers|" + item.ID_UNIBEN })
+                                                        @Html.DropDownList("lstAspNetUsers|" + item.ID_UNIBEN, new SelectList(Model.lstAspNetUsers, "ID", "NAME", item.ID_NHANVIEN), Utility.GetTitleChon(API.AspNetUser), htmlAttributes: new { @class = "form-control chosen-select", id = "lstAspNetUsers|" + item.ID_UNIBEN })
                                                     </div>
                                                 </td>
                                                 <td style="white-space: nowrap; " class="fix">

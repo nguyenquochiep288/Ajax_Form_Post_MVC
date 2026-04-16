@@ -202,10 +202,10 @@
                                         //bolHoanTat = false;
                                     }
 
-                                    string SOTIENGIAOHANG = item.SOTIENGIAOHANG.ToString("N0");
-                                    string SOTIENDATHU = item.SOTIENDATHU.ToString("N0");
-                                    string TONGTIENTRAHANG = item.TONGTIENTRAHANG.ToString("N0");
-                                    string CONLAI = (item.SOTIENGIAOHANG - item.SOTIENDATHU - item.TONGTIENTRAHANG).ToString("N0");
+                                    string SOTIENGIAOHANG = item.SOTIENGIAOHANG.ToString("N0").Replace(".", ",");
+                                    string SOTIENDATHU = item.SOTIENDATHU.ToString("N0").Replace(".", ",");
+                                    string TONGTIENTRAHANG = item.TONGTIENTRAHANG.ToString("N0").Replace(".", ",");
+                                    string CONLAI = (item.SOTIENGIAOHANG - item.SOTIENDATHU - item.TONGTIENTRAHANG).ToString("N0").Replace(".", ",");
                                     TongTien += item.SOTIENGIAOHANG;
                                     TongTienDaThu += item.SOTIENDATHU;
                                     TongTienTraHang += item.TONGTIENTRAHANG;

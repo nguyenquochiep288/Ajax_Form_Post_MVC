@@ -58,7 +58,7 @@ namespace MVC_QuanLyTHP.Controllers
 						if (Utility.KiemTraQuyen("Output", "AllData"))
 						{
 							iPagedList = ((string.IsNullOrEmpty(SearchString) || (!(SearchString.ToUpper() == "ĐÃ XUẤT") && !(SearchString.ToUpper() == "CHƯA XUẤT"))) ? (apiResponse.Data as List<v_ct_PhieuXuat>).OrderByDescending((v_ct_PhieuXuat s) => s.NGAYLAP).ToList().ToPagedList(Page, Utility.GetPageSize()) : (apiResponse.Data as List<v_ct_PhieuXuat>).ToList().ToPagedList(Page, Utility.GetPageSize()));
-							text = (apiResponse.Data as List<v_ct_PhieuXuat>).Sum((v_ct_PhieuXuat s) => s.TONGTIEN).ToString("N0");
+							text = (apiResponse.Data as List<v_ct_PhieuXuat>).Sum((v_ct_PhieuXuat s) => s.TONGTIEN).ToString("N0").Replace(".", ",");
 						}
 						else if (Utility.KiemTraQuyen("Output", "UserData"))
 						{
@@ -66,7 +66,7 @@ namespace MVC_QuanLyTHP.Controllers
 										  where s.ID_NHANVIEN == Login_Model.iduser
 										  orderby s.NGAYLAP descending
 										  select s).ToList().ToPagedList(Page, Utility.GetPageSize());
-							text = (apiResponse.Data as List<v_ct_PhieuXuat>).Sum((v_ct_PhieuXuat s) => s.TONGTIEN).ToString("N0");
+							text = (apiResponse.Data as List<v_ct_PhieuXuat>).Sum((v_ct_PhieuXuat s) => s.TONGTIEN).ToString("N0").Replace(".", ",");
 						}
 					}
 				}
@@ -1083,8 +1083,8 @@ namespace MVC_QuanLyTHP.Controllers
 						double num = v_v_ct_PhieuXuat2.lstct_PhieuXuat_ChiTiet.Sum((v_ct_PhieuXuat_ChiTiet e) => e.TONGCONG);
 						if (v_ThongKeCongNoKhachHang2 != null && v_ThongKeCongNoKhachHang2.TONGTIENCONGNOCUOIKY - num > 0.0)
 						{
-							v_ct_PhieuXuat2.TONGTIENNO = "Nợ cũ: " + (v_ThongKeCongNoKhachHang2.TONGTIENCONGNOCUOIKY - num).ToString("N0");
-							v_ct_PhieuXuat2.GHICHU = "Tổng tiền: " + v_ThongKeCongNoKhachHang2.TONGTIENCONGNOCUOIKY.ToString("N0");
+							v_ct_PhieuXuat2.TONGTIENNO = "Nợ cũ: " + (v_ThongKeCongNoKhachHang2.TONGTIENCONGNOCUOIKY - num).ToString("N0").Replace(".", ",");
+							v_ct_PhieuXuat2.GHICHU = "Tổng tiền: " + v_ThongKeCongNoKhachHang2.TONGTIENCONGNOCUOIKY.ToString("N0").Replace(".", ",");
 						}
 					}
 				}

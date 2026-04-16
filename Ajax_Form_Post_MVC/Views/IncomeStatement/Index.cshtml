@@ -85,9 +85,9 @@
                                             TT_CHI += item.SOTIENCHI;
                                             TT_CONLAI += item.SOTIENTHU - item.SOTIENCHI;
                                             string NGAYLAP = item.HIENTHI;
-                                            string THU = item.SOTIENTHU.ToString("N0");
-                                            string CHI = item.SOTIENCHI.ToString("N0");
-                                            string CONLAI = (item.SOTIENTHU - item.SOTIENCHI).ToString("N0");
+                                            string THU = item.SOTIENTHU.ToString("N0").Replace(".", ",");
+                                            string CHI = item.SOTIENCHI.ToString("N0").Replace(".", ",");
+                                            string CONLAI = (item.SOTIENTHU - item.SOTIENCHI).ToString("N0").Replace(".", ",");
                                             if (Model.HINHTHUC_THUCHI == "1")
                                             {
                                                 item.TUNGAY = item.NGAYLAP;

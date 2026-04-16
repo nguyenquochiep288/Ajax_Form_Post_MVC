@@ -65,7 +65,7 @@ namespace MVC_QuanLyTHP.Controllers
 						base.TempData["TitleError"] = apiResponse.Message;
 						return RedirectToAction("Index", "Notfound");
 					}
-					text = (apiResponse.Data as List<v_ct_PhieuThu>).Sum((v_ct_PhieuThu s) => s.SOTIEN).ToString("N0");
+					text = (apiResponse.Data as List<v_ct_PhieuThu>).Sum((v_ct_PhieuThu s) => s.SOTIEN).ToString("N0").Replace(".", ",");
 					iPagedList = (apiResponse.Data as List<v_ct_PhieuThu>).ToPagedList(Page, Utility.GetPageSize());
 				}
 				v_v_ct_PhieuThu v_v_ct_PhieuThu2 = new v_v_ct_PhieuThu();

@@ -41,9 +41,9 @@ namespace MVC_QuanLyTHP.Controllers.NghiepVu.Uniben
 					}
 					pagedList = (apiResponse.Data as List<DatabaseTHP.Class.Uniben.Uniben.UnibenOrderData>).ToPagedList(Page, Utility.GetPageSize());
 					v_v_UnibenOrderData2.IPagedList = pagedList;
-					text = (apiResponse.Data as List<DatabaseTHP.Class.Uniben.Uniben.UnibenOrderData>).Sum((DatabaseTHP.Class.Uniben.Uniben.UnibenOrderData s) => s.totalAmount).ToString("N0");
-					text2 = (apiResponse.Data as List<DatabaseTHP.Class.Uniben.Uniben.UnibenOrderData>).Where((DatabaseTHP.Class.Uniben.Uniben.UnibenOrderData s) => string.IsNullOrEmpty(s.MAPHIEUDATHANG)).Count().ToString("N0");
-					text3 = (apiResponse.Data as List<DatabaseTHP.Class.Uniben.Uniben.UnibenOrderData>).Where((DatabaseTHP.Class.Uniben.Uniben.UnibenOrderData s) => !string.IsNullOrEmpty(s.MAPHIEUDATHANG)).Count().ToString("N0");
+					text = (apiResponse.Data as List<DatabaseTHP.Class.Uniben.Uniben.UnibenOrderData>).Sum((DatabaseTHP.Class.Uniben.Uniben.UnibenOrderData s) => s.totalAmount).ToString("N0").Replace(".", ",");
+					text2 = (apiResponse.Data as List<DatabaseTHP.Class.Uniben.Uniben.UnibenOrderData>).Where((DatabaseTHP.Class.Uniben.Uniben.UnibenOrderData s) => string.IsNullOrEmpty(s.MAPHIEUDATHANG)).Count().ToString("N0").Replace(".", ",");
+					text3 = (apiResponse.Data as List<DatabaseTHP.Class.Uniben.Uniben.UnibenOrderData>).Where((DatabaseTHP.Class.Uniben.Uniben.UnibenOrderData s) => !string.IsNullOrEmpty(s.MAPHIEUDATHANG)).Count().ToString("N0").Replace(".", ",");
 				}
 				string text4 = "";
 				if (!string.IsNullOrEmpty(text3) || !string.IsNullOrEmpty(text2))

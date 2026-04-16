@@ -73,7 +73,7 @@ namespace MVC_QuanLyTHP.Controllers
 						base.TempData["TitleError"] = apiResponse.Message;
 						return RedirectToAction("Index", "Notfound");
 					}
-					text = (apiResponse.Data as List<v_ct_PhieuGiaoHang>).Sum((v_ct_PhieuGiaoHang s) => s.SOTIENGIAOHANG).ToString("N0");
+					text = (apiResponse.Data as List<v_ct_PhieuGiaoHang>).Sum((v_ct_PhieuGiaoHang s) => s.SOTIENGIAOHANG).ToString("N0").Replace(".", ",");
 					iPagedList = (apiResponse.Data as List<v_ct_PhieuGiaoHang>).ToPagedList(Page, Utility.GetPageSize());
 				}
 				v_v_ct_PhieuGiaoHang v_v_ct_PhieuGiaoHang2 = new v_v_ct_PhieuGiaoHang();
@@ -1847,8 +1847,8 @@ namespace MVC_QuanLyTHP.Controllers
 						}
 						foreach (v_PhieuGioaHang_InTheoGroup item2 in list.Where((v_PhieuGioaHang_InTheoGroup e) => e.ID_KHACHHANG == sp_Parameter.ID_KHACHHANG))
 						{
-							item2.NAME_DVT_QD = "Nợ cũ: " + (v_ThongKeCongNoKhachHang2.TONGTIENCONGNOCUOIKY - num2).ToString("N0");
-							item2.MA_HANGHOA = "Tổng tiền: " + v_ThongKeCongNoKhachHang2.TONGTIENCONGNOCUOIKY.ToString("N0");
+							item2.NAME_DVT_QD = "Nợ cũ: " + (v_ThongKeCongNoKhachHang2.TONGTIENCONGNOCUOIKY - num2).ToString("N0").Replace(".", ",");
+							item2.MA_HANGHOA = "Tổng tiền: " + v_ThongKeCongNoKhachHang2.TONGTIENCONGNOCUOIKY.ToString("N0").Replace(".", ",");
 						}
 					}
 				}

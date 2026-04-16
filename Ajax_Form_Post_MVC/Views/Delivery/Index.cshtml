@@ -120,8 +120,8 @@
                             {
                                 foreach (var item in Model.IPagedList)
                                 {
-                                    string SOLUONG_DONHANG = item.SOLUONG_DONHANG.ToString("N0");
-                                    string SOTIENGIAOHANG = item.SOTIENGIAOHANG.ToString("N0");
+                                    string SOLUONG_DONHANG = item.SOLUONG_DONHANG.ToString("N0").Replace(".", ",");
+                                    string SOTIENGIAOHANG = item.SOTIENGIAOHANG.ToString("N0").Replace(".", ",");
                                     <tr id="@item.ID">
                                         <td style="white-space: nowrap;" id="MAPHIEU"> @Html.DisplayFor(modelItem => item.MAPHIEU)</td>
                                         <td style="white-space: nowrap;" id="NGAYLAP"> @item.NGAYLAP.ToString("dd/MM/yy HH:mm")</td>

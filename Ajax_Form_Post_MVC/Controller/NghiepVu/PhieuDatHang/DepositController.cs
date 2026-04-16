@@ -1209,7 +1209,7 @@ namespace MVC_QuanLyTHP.Controllers
 				{
 					if (v_dm_KhachHang2.MAX_CONGNO > 0.0 && v_dm_KhachHang2.MAX_CONGNO < v_ThongKeCongNoKhachHang2.TONGTIENCONGNOCUOIKY + TienHoaDon)
 					{
-						return (v_ThongKeCongNoKhachHang2.TONGTIENCONGNOCUOIKY + TienHoaDon).ToString("N0") + " > " + v_dm_KhachHang2.MAX_CONGNO.ToString("N0");
+						return (v_ThongKeCongNoKhachHang2.TONGTIENCONGNOCUOIKY + TienHoaDon).ToString("N0") + " > " + v_dm_KhachHang2.MAX_CONGNO.ToString("N0").Replace(".", ",");
 					}
 					return "";
 				}

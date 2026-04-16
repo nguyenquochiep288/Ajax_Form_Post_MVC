@@ -136,7 +136,7 @@
                             @foreach (var item in Model.IPagedList)
                             {
                                 string NGAYLAP = item.NGAYLAP.ToString("dd/MM/yyyy");
-                                string SOTIEN = item.SOTIEN.ToString("N0");
+                                string SOTIEN = item.SOTIEN.ToString("N0").Replace(".", ",");
                                 <tr id="@item.ID">
                                     <td style="white-space: nowrap; " id="NAME_LOAIPhieuChi"> @Html.DisplayFor(modelItem => item.NAME_LOAIPHIEUCHI)</td>
                                     <td style="white-space: nowrap; " id="MAPHIEU"> @Html.DisplayFor(modelItem => item.MAPHIEU)</td>

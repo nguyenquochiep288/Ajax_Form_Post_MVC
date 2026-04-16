@@ -150,10 +150,10 @@
                             @foreach (var item in Model.IPagedList)
                             {
                                 string NGAYLAP = item.NGAYLAP.ToString("dd/MM/yyyy");
-                                string TONGTHANHTIEN = item.TONGTHANHTIEN.ToString("N0");
-                                string TONGTIENGIAMGIA = item.TONGTIENGIAMGIA.ToString("N0");
-                                string TONGTIENVAT = item.TONGTIENVAT.ToString("N0");
-                                string TONGTIEN = item.TONGTIEN.ToString("N0");
+                                string TONGTHANHTIEN = item.TONGTHANHTIEN.ToString("N0").Replace(".", ",");
+                                string TONGTIENGIAMGIA = item.TONGTIENGIAMGIA.ToString("N0").Replace(".", ",");
+                                string TONGTIENVAT = item.TONGTIENVAT.ToString("N0").Replace(".", ",");
+                                string TONGTIEN = item.TONGTIEN.ToString("N0").Replace(".", ",");
                                 <tr id="@item.ID">
                                    
                                     <td style="white-space: nowrap; " id="NAME_LOAIPHIEUNHAP"> @Html.DisplayFor(modelItem => item.NAME_LOAIPHIEUNHAP)</td>
