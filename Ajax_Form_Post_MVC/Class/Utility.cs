@@ -3631,7 +3631,8 @@ namespace MVC_QuanLyTHP.Class
 							foreach (Product_Detail item2 in enumerable)
 							{
 								item2.DONGIA = ((itm.DONGIAMOI != 0.0) ? itm.DONGIAMOI : item2.DONGIA);
-							}
+								TinhTong(item2);
+                            }
 						}
 					}
 				}
