@@ -134,7 +134,7 @@
                                     {
                                         if (item.lstTinh_KPI_KinhDoanh_ChiTiet.Count > 1 && string.IsNullOrEmpty(ID_KPI_KINHDOANH) || ID_KPI_KINHDOANH != itemKPI.ID_KPI_KINHDOANH)
                                         {
-                                            <tr data-id="@itemKPI.ID_KPI_KINHDOANH" data-parent="@item.ID_NHANVIEN" data-level="2" id="@itemKPI.ID_KPI_KINHDOANH" style="color: #428bca">
+                                            <tr data-id="@item.ID_NHANVIEN@itemKPI.ID_KPI_KINHDOANH" data-parent="@item.ID_NHANVIEN" data-level="2" id="@item.ID_NHANVIEN@itemKPI.ID_KPI_KINHDOANH" style="color: #428bca">
                                                 <td data-column="name">@itemKPI.NAME_KPI_KINHDOANH</td>
                                                 <td></td>
                                                 <td></td>
@@ -163,7 +163,7 @@
                                         string TONGTIEN = itemKPI.TONGTIEN > 0 ? itemKPI.TONGTIEN.ToString("N0") + "đ" : "";
                                         string TONGTIEN_TRAHANG = itemKPI.TONGTIEN_TRAHANG > 0 ? itemKPI.TONGTIEN_TRAHANG.ToString("N0") + "đ" : "";
                                         string TT_TRAHANG1 = TT_TRAHANG > 0 ? TT_TRAHANG.ToString("N0") + "đ" : "";
-                                        <tr data-id="@itemKPI.ID_HANGHOA" data-parent="@itemKPI.ID_KPI_KINHDOANH" data-level="3" id="@itemKPI.ID_HANGHOA">
+                                        <tr data-id="@item.ID_NHANVIEN@itemKPI.ID_KPI_KINHDOANH@itemKPI.ID_HANGHOA" data-parent="@item.ID_NHANVIEN@itemKPI.ID_KPI_KINHDOANH" data-level="3" id="@item.ID_NHANVIEN@itemKPI.ID_KPI_KINHDOANH@itemKPI.ID_HANGHOA">
                                             <td data-column="name">@itemKPI.NAME_HANGHOA</td>
                                             <td>@TONGSOLUONG_TRING</td>
                                             <td>@TONGTIEN</td>

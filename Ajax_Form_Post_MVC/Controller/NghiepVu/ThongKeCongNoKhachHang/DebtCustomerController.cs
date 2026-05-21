@@ -41,7 +41,9 @@ namespace MVC_QuanLyTHP.Controllers
 				v_v_ThongKeCongNoKhachHang2.ISPHATSINHCONGNO = true;
 				v_v_ThongKeCongNoKhachHang2.ISPHATSINHCONGNOTRONGKY = false;
 				v_v_ThongKeCongNoKhachHang2.ISCONCONGNO = false;
-				v_v_ThongKeCongNoKhachHang2.TUNGAY = DateTime.Now;
+                v_v_ThongKeCongNoKhachHang2.ISNGAYQUAHAN = false;
+                v_v_ThongKeCongNoKhachHang2.SONGAYQUAHAN = 7;
+                v_v_ThongKeCongNoKhachHang2.TUNGAY = DateTime.Now;
 				v_v_ThongKeCongNoKhachHang2.DENNGAY = DateTime.Now;
 				return View(v_v_ThongKeCongNoKhachHang2);
 			}
@@ -85,8 +87,14 @@ namespace MVC_QuanLyTHP.Controllers
 					}
 					if (apiResponse.Data != null)
 					{
-						iPagedList = (apiResponse.Data as List<v_ThongKeCongNoKhachHang>).OrderByDescending((v_ThongKeCongNoKhachHang s) => s.NAME).ToList();
-					}
+						var lst = (apiResponse.Data as List<v_ThongKeCongNoKhachHang>).OrderByDescending((v_ThongKeCongNoKhachHang s) => s.NAME).ToList();
+						if(sp_Parameter.ISNGAYQUAHAN == true)
+						{
+                            lst = lst.Where(s =>s.NGAY_PHIEUXUAT_CUOI.HasValue &&
+								(DateTime.Now.Date - s.NGAY_PHIEUXUAT_CUOI.Value.Date).Days > sp_Parameter.SONGAYQUAHAN).OrderByDescending(s =>(DateTime.Now.Date - s.NGAY_PHIEUXUAT_CUOI.Value.Date).Days).ToList();
+                        }
+                        iPagedList = lst;
+                    }
 				}
 				v_v_ThongKeCongNoKhachHang v_v_ThongKeCongNoKhachHang2 = new v_v_ThongKeCongNoKhachHang();
 				v_v_ThongKeCongNoKhachHang2.IPagedList = iPagedList;
@@ -103,6 +111,8 @@ namespace MVC_QuanLyTHP.Controllers
 				v_v_ThongKeCongNoKhachHang2.ISPHATSINHCONGNO = sp_Parameter.ISPHATSINHCONGNO == true;
 				v_v_ThongKeCongNoKhachHang2.ISPHATSINHCONGNOTRONGKY = sp_Parameter.ISPHATSINHCONGNOTRONGKY == true;
 				v_v_ThongKeCongNoKhachHang2.ISCONCONGNO = sp_Parameter.ISCONCONGNO == true;
+				v_v_ThongKeCongNoKhachHang2.ISNGAYQUAHAN = sp_Parameter.ISNGAYQUAHAN == true;
+				v_v_ThongKeCongNoKhachHang2.SONGAYQUAHAN = sp_Parameter.SONGAYQUAHAN;
 				v_v_ThongKeCongNoKhachHang2.TUNGAY = sp_Parameter.TUNGAY ?? DateTime.Now;
 				v_v_ThongKeCongNoKhachHang2.DENNGAY = sp_Parameter.DENNGAY ?? DateTime.Now;
 				return View(v_v_ThongKeCongNoKhachHang2);

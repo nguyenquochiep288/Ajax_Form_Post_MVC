@@ -9,6 +9,39 @@
     Layout = "~/Views/Shared/Admin.cshtml";
 }
 @Html.Partial("LoadCssDanhMuc")
+<script>
+
+    function onFileSelected(event, name) {
+        var selectedFile = event.target.files[0];
+        var reader = new FileReader();
+
+        var imgtag = document.getElementById(name);
+        imgtag.title = selectedFile.name;
+
+        reader.onload = function (event) {
+            imgtag.src = event.target.result;
+        };
+
+        reader.readAsDataURL(selectedFile);
+    }
+
+    function RemoveFile(nameID, name) {
+        var input = document.querySelector('#' + nameID);
+        input.outerHTML = input.outerHTML;
+        var imgtag = document.getElementsByName(name);
+        if (imgtag != null && imgtag.length > 0) {
+            for (var i = 0; i < imgtag.length; i++) {
+                if (imgtag[i].localName == "img") {
+                    imgtag[i].title = "";
+                    imgtag[i].src = "";
+                }
+                else {
+                    imgtag[i].value = "";
+                }
+            }
+        }
+    }
+</script>
 <hr />
 <div class="panel-group" id="accordion">
     <div class="panel panel-default">
@@ -170,37 +203,5 @@
         </div>
     }
 }
-<script>
 
-    function onFileSelected(event, name) {
-        var selectedFile = event.target.files[0];
-        var reader = new FileReader();
-
-        var imgtag = document.getElementById(name);
-        imgtag.title = selectedFile.name;
-
-        reader.onload = function (event) {
-            imgtag.src = event.target.result;
-        };
-
-        reader.readAsDataURL(selectedFile);
-    }
-   
-    function RemoveFile(nameID, name) {
-        var input = document.querySelector('#' + nameID);
-        input.outerHTML = input.outerHTML;
-        var imgtag = document.getElementsByName(name);
-        if (imgtag != null && imgtag.length > 0) {
-            for (var i = 0; i < imgtag.length; i++) {
-                if (imgtag[i].localName == "img") {
-                    imgtag[i].title = "";
-                    imgtag[i].src = "";
-                }
-                else {
-                    imgtag[i].value = "";
-                }
-            }
-        }
-    }
-</script>
 

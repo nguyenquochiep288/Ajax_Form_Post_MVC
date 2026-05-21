@@ -24,10 +24,10 @@
         @Html.HiddenFor(model => model.URL_IMAGE)
         <div class="panel-body panel-body-nopadding">
             <div class="form-horizontal form-bordered">
-                <div class="form-group">
+                @*<div class="form-group">
                     @Html.Label(@Utility.GetColumnName(@API.dm_HangHoa, "PICTURE"), htmlAttributes: new { @class = "col-sm-2 control-label" })
                     <div class="col-sm-5">
-                        <img alt="" src="@Model.URL_IMAGE" style="width: 150px" id="URL_IMAGEAdd" name="URL_IMAGE" /> <br />
+                        <img alt="" src="~/Images_Upload/@Model.URL_IMAGE" style="width: 150px" id="URL_IMAGEAdd" name="URL_IMAGE" /> <br />
                         <div class="fileupload fileupload-exists" data-provides="fileupload">
                             <input type="hidden" value="" name="">
                             <div class="input-append">
@@ -43,7 +43,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div>*@
                 <div class="form-group">
                     @Html.Label(@Utility.GetColumnName(@API.AspNetUser, "UserName"), htmlAttributes: new { @class = "col-sm-2 control-label" })
                     <div class="col-sm-5">
@@ -101,7 +101,7 @@
                             <span class="input-group-btn">
                                 <button type="button" class="btn btn-default" onclick="myFunOpenSearch('myModalAdd', '@{@API.web_NhomQuyen;}', '@API.Chon1', 'lstweb_NhomQuyen', '')"><span class="glyphicon glyphicon-search"></span></button>
                             </span>
-                            @Html.DropDownListFor(model => model.ID_NHOMQUYEN, new SelectList(Model.lstweb_NhomQuyen, "ID", "NAME"), Utility.GetTitleChon(API.web_NhomQuyen), htmlAttributes: new { @class = "form-control chosen-select", id = "lstweb_NhomQuyen" })
+                            @Html.DropDownListFor(model => model.ID_NHOMQUYEN, new SelectList(Model.lstweb_NhomQuyen, "ID", "NAME"), Utility.GetTitleChon(API.web_NhomQuyen), htmlAttributes: new { @class = "form-control chosen-select", id = "lstweb_NhomQuyen" })                          
                         </div>
 
                         @Html.ValidationMessageFor(model => model.ID_NHOMQUYEN, "", new { @class = "text-danger" })
@@ -109,6 +109,7 @@
                 </div>
             </div>
         </div>
+
         <div class="panel-footer">
             <div class="row">
                 <div class="col-sm-5 col-sm-offset-3">
