@@ -157,8 +157,8 @@
 
                                         @foreach (var item in Model.IPagedList)
                                         {
-                                            var soNgay = item.NGAY_PHIEUXUAT_CUOI.HasValue
-                                            ? (DateTime.Now.Date - item.NGAY_PHIEUXUAT_CUOI.Value.Date).Days : 0;
+                                            var soNgay = item.TONGTIENCONGNOCUOIKY != 0 ? (item.NGAY_PHIEUXUAT_CUOI.HasValue
+                                            ? (DateTime.Now.Date - item.NGAY_PHIEUXUAT_CUOI.Value.Date).Days : 0) : 0;
 
                                             TT_TONGTIENCONGNODAUKY += item.TONGTIENCONGNODAUKY;
                                             TT_TONGTIENPHIEUXUAT += item.TONGTIENPHIEUXUAT;

@@ -90,7 +90,7 @@ namespace MVC_QuanLyTHP.Controllers
 						var lst = (apiResponse.Data as List<v_ThongKeCongNoKhachHang>).OrderByDescending((v_ThongKeCongNoKhachHang s) => s.NAME).ToList();
 						if(sp_Parameter.ISNGAYQUAHAN == true)
 						{
-                            lst = lst.Where(s =>s.NGAY_PHIEUXUAT_CUOI.HasValue &&
+                            lst = lst.Where(s => Math.Round(Convert.ToDecimal(s.TONGTIENCONGNOCUOIKY), 0) != 0 && s.NGAY_PHIEUXUAT_CUOI.HasValue &&
 								(DateTime.Now.Date - s.NGAY_PHIEUXUAT_CUOI.Value.Date).Days > sp_Parameter.SONGAYQUAHAN).OrderByDescending(s =>(DateTime.Now.Date - s.NGAY_PHIEUXUAT_CUOI.Value.Date).Days).ToList();
                         }
                         iPagedList = lst;
