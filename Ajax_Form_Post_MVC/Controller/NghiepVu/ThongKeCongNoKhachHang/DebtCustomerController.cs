@@ -159,7 +159,6 @@ namespace MVC_QuanLyTHP.Controllers
 				{
 					Data = apiResponse,
 					JsonRequestBehavior = JsonRequestBehavior.AllowGet,
-					MaxJsonLength = int.MaxValue
 				};
 			}
 			catch (Exception ex)

@@ -7,6 +7,7 @@ using PagedList;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Web.Mvc;
 
@@ -350,7 +351,7 @@ namespace MVC_QuanLyTHP.Controllers
                         string fileName = base.Request.Files["MaHinh"].FileName;
                         if (fileName != "")
                         {
-                            string text = Guid.NewGuid().ToString() + "." + fileName.Split('.')[1];
+                            string text = Guid.NewGuid().ToString() + "." + fileName.Split('.').Last();
                             string text2 = Path.Combine(base.Server.MapPath("~/Images_Upload/Customer/"), text);
                             if (!Directory.Exists(base.Server.MapPath("~/Images_Upload/Customer/")))
                             {
@@ -531,7 +532,7 @@ namespace MVC_QuanLyTHP.Controllers
                         string fileName = base.Request.Files["MaHinh"].FileName;
                         if (fileName != "")
                         {
-                            string text = dm_KhachHang.ID.Trim() + "." + fileName.Split('.')[1];
+                            string text = dm_KhachHang.ID.Trim() + "." + fileName.Split('.').Last();
                             string text2 = Path.Combine(base.Server.MapPath("~/Images_Upload/Customer/"), text);
                             if (!Directory.Exists(base.Server.MapPath("~/Images_Upload/Customer/")))
                             {

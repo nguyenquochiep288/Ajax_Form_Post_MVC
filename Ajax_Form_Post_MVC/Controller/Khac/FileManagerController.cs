@@ -1,11 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Reflection;
-using System.Web.Mvc;
 using DatabaseTHP;
 using DatabaseTHP.Class;
 using MVC_QuanLyTHP.Class;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Web.Mvc;
 
 namespace MVC_QuanLyTHP.Controllers
 {
@@ -38,7 +39,7 @@ namespace MVC_QuanLyTHP.Controllers
 						string fileName = base.Request.Files["MaHinh"].FileName;
 						if (fileName != "")
 						{
-							string text = dm_HangHoa.ID.ToString() + "." + fileName.Split('.')[1];
+							string text = dm_HangHoa.ID.ToString() + "." + fileName.Split('.').Last();
 							string text2 = "/Images_Upload/Delivery/" + dm_HangHoa.ID_NGUOITAO + "/" + dm_HangHoa.ID_PHIEUXUAT + "/";
 							string text3 = Path.Combine(base.Server.MapPath("~" + text2), text);
 							if (!Directory.Exists(base.Server.MapPath("~" + text2)))

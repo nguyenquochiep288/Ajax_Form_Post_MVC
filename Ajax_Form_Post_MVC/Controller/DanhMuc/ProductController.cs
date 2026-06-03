@@ -132,7 +132,7 @@ namespace MVC_QuanLyTHP.Controllers
 						string fileName = base.Request.Files["MaHinh"].FileName;
 						if (fileName != "")
 						{
-							string text = Guid.NewGuid().ToString() + fileName.Split('.')[1];
+							string text = Guid.NewGuid().ToString() + fileName.Split('.').Last();
 							string text2 = Path.Combine(base.Server.MapPath("~/Images_Upload/Product/"), text);
 							base.Request.Files["MaHinh"].SaveAs(text2);
 							dm_HangHoa.PICTURE = text;
@@ -432,7 +432,7 @@ namespace MVC_QuanLyTHP.Controllers
 						string fileName = base.Request.Files["MaHinh"].FileName;
 						if (fileName != "")
 						{
-							string text = Guid.NewGuid().ToString() + "." + fileName.Split('.')[1];
+							string text = Guid.NewGuid().ToString() + "." + fileName.Split('.').Last();
 							string text2 = Path.Combine(base.Server.MapPath("~/Images_Upload/Product/"), text);
 							if (!Directory.Exists(base.Server.MapPath("~/Images_Upload/Product/")))
 							{
@@ -672,7 +672,7 @@ namespace MVC_QuanLyTHP.Controllers
 						string fileName = base.Request.Files["MaHinh"].FileName;
 						if (fileName != "")
 						{
-							string text = dm_HangHoa.ID.Trim() + "." + fileName.Split('.')[1];
+							string text = dm_HangHoa.ID.Trim() + "." + fileName.Split('.').Last();
 							string text2 = Path.Combine(base.Server.MapPath("~/Images_Upload/Product/"), text);
 							if (!Directory.Exists(base.Server.MapPath("~/Images_Upload/Product/")))
 							{

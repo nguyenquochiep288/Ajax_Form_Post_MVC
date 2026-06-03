@@ -1,14 +1,15 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Reflection;
-using System.Web.Mvc;
 using DatabaseTHP;
 using DatabaseTHP.Class;
 using MVC_QuanLyTHP.Class;
 using MVC_QuanLyTHP.Models;
 using Newtonsoft.Json;
 using PagedList;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Web.Mvc;
 
 namespace MVC_QuanLyTHP.Controllers
 {
@@ -342,7 +343,7 @@ namespace MVC_QuanLyTHP.Controllers
 							string fileName = base.Request.Files["MaHinh"].FileName;
 							if (fileName != "")
 							{
-								string text = AspNetUser.ID.ToString() + "." + fileName.Split('.')[1];
+								string text = AspNetUser.ID.ToString() + "." + fileName.Split('.').Last();
 								string text2 = "/Images_Upload/User/";
 								string text3 = Path.Combine(base.Server.MapPath("~" + text2), text);
 								if (!Directory.Exists(base.Server.MapPath("~" + text2)))
@@ -535,7 +536,7 @@ namespace MVC_QuanLyTHP.Controllers
 						string fileName = base.Request.Files["MaHinh"].FileName;
 						if (fileName != "")
 						{
-							string text = AspNetUser.ID.Trim() + "." + fileName.Split('.')[1];
+							string text = AspNetUser.ID.Trim() + "." + fileName.Split('.').Last();
 							string text2 = Path.Combine(base.Server.MapPath("~/Images_Upload/User/"), text);
 							if (!Directory.Exists(base.Server.MapPath("~/Images_Upload/User/")))
 							{
