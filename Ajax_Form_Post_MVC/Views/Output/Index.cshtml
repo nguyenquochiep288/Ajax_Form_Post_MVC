@@ -25,11 +25,12 @@
 
         <div id="collapseOne" class="panel-collapse collapse in">
             <div class="form-group">
-                @if (ViewBag.PermissionCreate)
-                {
-                    int TYPE = 0;
-                    <div class="col-sm-3" style="padding-bottom: 5px;">
-                        <button id="download-excel" style="background-color: #217346; margin-bottom: 10px;" class="btn btn-success" onclick="ExportExcel('example-table')" style="margin-bottom:10px"><i class="fa fa-file-text-o" style="margin-right:10px"></i>@Utility.XuatExcel</button>
+               
+                <div class="col-sm-3" style="padding-bottom: 5px;">
+                    <button id="download-excel" style="background-color: #217346; margin-bottom: 10px;" class="btn btn-success" onclick="ExportExcel('example-table')" style="margin-bottom:10px"><i class="fa fa-file-text-o" style="margin-right:10px"></i>@Utility.XuatExcel</button>
+                    @if (ViewBag.PermissionCreate)
+                    {
+                        int TYPE = 0;
                         <div class="btn-group mr5">
                             <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown">
                                 <i class="fa fa-pencil-square-o" style="margin-right:5px"></i>  @Utility.Them <span class="caret"></span>
@@ -46,8 +47,9 @@
                                 }
                             </ul>
                         </div><!-- btn-group -->
+                        }
                     </div>
-                }
+                
 
                 <div class="col-sm-2" style="padding-bottom: 5px;">
                     <select class="form-control chosen-select" onchange="show('@API.ct_PhieuXuat')" id="Show" name="Show">

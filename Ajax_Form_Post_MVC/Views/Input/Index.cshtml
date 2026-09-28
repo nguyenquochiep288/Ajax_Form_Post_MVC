@@ -54,11 +54,12 @@
 
         <div id="collapseOne" class="panel-collapse collapse in">
             <div class="form-group">
-                @if (ViewBag.PermissionCreate)
-                {
-                    int TYPE = 0;
-                    <div class="col-sm-3" style="padding-bottom: 5px;">
-                        <button id="download-excel" style="background-color: #217346; margin-bottom: 10px;" class="btn btn-success" onclick="ExportExcel('example-table')" style="margin-bottom: 10px "><i class="fa fa-file-text-o" style="margin-right:10px"></i>@Utility.XuatExcel</button>
+
+                <div class="col-sm-3" style="padding-bottom: 5px;">
+                    <button id="download-excel" style="background-color: #217346; margin-bottom: 10px;" class="btn btn-success" onclick="ExportExcel('example-table')" style="margin-bottom: 10px "><i class="fa fa-file-text-o" style="margin-right:10px"></i>@Utility.XuatExcel</button>
+                    @if (ViewBag.PermissionCreate)
+                    {
+                        int TYPE = 0;
                         <div class="btn-group mr5">
                             <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown">
                                 <i class="fa fa-pencil-square-o" style="margin-right: 5px;"></i>  @Utility.Them <span class="caret"></span>
@@ -75,8 +76,9 @@
                                 }
                             </ul>
                         </div><!-- btn-group -->
-                    </div>
-                }
+                    }
+                </div>
+
                 <div class="col-sm-2" style="padding-bottom: 5px;">
                     <select class="form-control chosen-select" onchange="show('@{@API.ct_PhieuNhap;}')" id="Show" name="Show">
                         @for (int show = 0; show < Utility.arrShow.Length; show++)
@@ -109,7 +111,7 @@
                 </div>
             </div>
             <div class="form-group">
-                
+
                 <div class="col-sm-2" style="padding-bottom: 5px;">
                     <input type="date" class="form-control" name="fromdate" id="fromdate" value="@ViewBag.fromdate" />
                 </div>
@@ -126,7 +128,7 @@
                     <table class="table table-bordered mb30" id="example-table">
                         <thead>
                             <tr>
-                               
+
                                 <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuNhap, "ID_LOAIPHIEUNHAP")</th>
                                 <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuNhap, "ID_KHO")</th>
                                 <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.ct_PhieuNhap, "MAPHIEU")</th>
@@ -155,7 +157,7 @@
                                 string TONGTIENVAT = item.TONGTIENVAT.ToString("N0").Replace(".", ",");
                                 string TONGTIEN = item.TONGTIEN.ToString("N0").Replace(".", ",");
                                 <tr id="@item.ID">
-                                   
+
                                     <td style="white-space: nowrap; " id="NAME_LOAIPHIEUNHAP"> @Html.DisplayFor(modelItem => item.NAME_LOAIPHIEUNHAP)</td>
                                     <td style="white-space: nowrap; " id="NAME_KHO"> @Html.DisplayFor(modelItem => item.NAME_KHO)</td>
                                     <td style="white-space: nowrap; " id="MAPHIEU"> @Html.DisplayFor(modelItem => item.MAPHIEU)</td>
@@ -206,10 +208,10 @@
         <div class="panel-footer">
             @ViewBag.TotalSum
             @Html.PagedListPager((PagedList.IPagedList<v_ct_PhieuNhap>)Model.IPagedList, page => Url.Action("Index", new { Page = page, ShowSearchValue = ViewBag.showsearchValue, SearchString = ViewBag.searchValue, FromDate = ViewBag.fromdate, ToDate = ViewBag.todate, ID_DEPOT = ViewBag.ID_KHO_DF }))
-        </div>    
+        </div>
     </div>
 
-    
+
 </div>
 
 @if (Utility.IntWidth == 1)

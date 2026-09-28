@@ -84,6 +84,8 @@
                                 <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_HangHoa_KhungGia, "STT")</th>
                                 <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_HangHoa_KhungGia, "MA")</th>
                                 <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_HangHoa_KhungGia, "NAME")</th>
+                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KPI_KinhDoanh, "TUNGAY")</th>
+                                <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_KPI_KinhDoanh, "DENNGAY")</th>
                                 <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_HangHoa_KhungGia, "ISACTIVE")</th>
                                 <th>
 
@@ -95,12 +97,15 @@
                             @foreach (var item in Model.IPagedList)
                             {
                                 STT += 1;
-                               
+                                string TUNGAY = item.TUNGAY.ToString("dd/MM/yyyy");
+                                string DENNGAY = item.DENNGAY.ToString("dd/MM/yyyy");
                                 <tr id="@item.ID">
 
                                     <td style="white-space: nowrap; " id="STT"> @STT</td>
                                     <td style="white-space: nowrap; " id="MA"> @Html.DisplayFor(modelItem => item.MA)</td>
                                     <td style="white-space: nowrap; " id="NAME"> @Html.DisplayFor(modelItem => item.NAME)</td>
+                                    <td style="white-space: nowrap; " id="TUNGAY"> @TUNGAY</td>
+                                    <td style="white-space: nowrap; " id="DENNGAY"> @DENNGAY</td>
                                     <td style="white-space: nowrap; " id="ISACTIVE"> @Html.DisplayFor(modelItem => item.ISACTIVE)</td>
                                     <td style="white-space: nowrap; " class="fix">
                                         @if (ViewBag.PermissionEdit)

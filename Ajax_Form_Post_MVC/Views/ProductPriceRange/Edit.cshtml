@@ -38,6 +38,18 @@
                     </div>
                 </div>
                 <div class="form-group">
+                    @Html.Label(@Utility.GetColumnName(@API.dm_KPI_KinhDoanh, "TUNGAY"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                    <div class="col-sm-2">
+                        @Html.TextBoxFor(model => model.TUNGAY, (Model.TUNGAY).ToString("yyyy-MM-dd"), new { @class = "form-control hasDatepicker", @placeholder = "dd/MM/yyyy", @type = "date" })
+                        @Html.ValidationMessageFor(model => model.TUNGAY, "", new { @class = "text-danger" })
+                    </div>
+                    @Html.Label(@Utility.GetColumnName(@API.dm_KPI_KinhDoanh, "DENNGAY"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                    <div class="col-sm-2">
+                        @Html.TextBoxFor(model => model.DENNGAY, (Model.DENNGAY).ToString("yyyy-MM-dd"), new { @class = "form-control hasDatepicker", @placeholder = "dd/MM/yyyy", @type = "date" })
+                        @Html.ValidationMessageFor(model => model.DENNGAY, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
                     @Html.Label(@Utility.GetColumnName(@API.dm_HangHoa_KhungGia, "ID_HANGHOA"), htmlAttributes: new { @class = "col-sm-2 control-label" })
                     <div class="col-sm-5">
 
