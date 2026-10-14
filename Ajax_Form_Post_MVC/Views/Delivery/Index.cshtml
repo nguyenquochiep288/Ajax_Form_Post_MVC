@@ -23,6 +23,59 @@
         left: -17px;
         cursor: pointer;
     }
+
+    #accordion .fix .btn-group {
+        position: relative;
+        vertical-align: middle;
+    }
+
+    #accordion .fix .delivery-row-actions {
+        display: flex;
+        width: max-content;
+        flex-wrap: nowrap;
+        align-items: center;
+        gap: 3px;
+    }
+
+    #accordion .fix .btn,
+    #accordion .fix .label {
+        display: inline-flex;
+        box-sizing: border-box;
+        min-height: 30px;
+        height: 30px;
+        align-items: center;
+        justify-content: center;
+        vertical-align: middle;
+        line-height: 1.25;
+        padding: 4px 6px;
+        gap: 4px;
+        font-size: 12px;
+    }
+
+    #accordion .fix .label {
+        margin: 0 2px;
+        white-space: nowrap;
+    }
+
+    #accordion .fix .btn-group.open {
+        z-index: 1100;
+    }
+
+    #accordion .fix .dropdown-menu {
+        position: absolute !important;
+        top: 100%;
+        left: 0;
+        z-index: 1101;
+    }
+
+    .delivery-dropdown-portal {
+        position: fixed !important;
+        z-index: 20000 !important;
+        min-width: 190px;
+        max-width: min(320px, calc(100vw - 16px));
+        margin: 0;
+        box-shadow: 0 8px 24px rgba(15, 23, 42, .22);
+    }
 </style>
 @Html.Partial("LoadCssDanhMuc")
 <script src="@Url.Content("~/Scripts/InputOutput.js?"+Utility.VersionJs)"></script>
@@ -130,15 +183,15 @@
                                         <td style="white-space: nowrap;" id="SOTIENGIAOHANG"> @SOTIENGIAOHANG</td>
                                         <td style="white-space: nowrap;" id="ISHOANTAT"> @Html.DisplayFor(modelItem => item.ISHOANTAT)</td>
                                         <td style="white-space: nowrap;" id="GHICHU"> @Html.DisplayFor(modelItem => item.GHICHU)</td>
-                                        <td style="white-space: nowrap; " class="fix">
-                                            <div class="btn-group">
-                                                <button type="button" class="btn btn-xs btn-primary" style="padding: 0px 2px; "><i class="fa fa-print" style="margin-right:5px"></i>In</button>
-                                                <button type="button" class="btn btn-xs btn-primary dropdown-toggle" data-toggle="dropdown" style="padding: 0px 2px; margin-right: 10px;">
+                                        <td class="fix">
+                                            <div class="delivery-row-actions">
+                                                <div class="btn-group">
+                                                <button type="button" class="btn btn-xs btn-primary"><i class="fa fa-print" style="margin-right:5px"></i>In</button>
+                                                <button type="button" class="btn btn-xs btn-primary dropdown-toggle" data-toggle="dropdown">
                                                     <span class="caret"></span>
                                                     <span class="sr-only">Toggle Dropdown</span>
                                                 </button>
-                                                <ul class="dropdown-menu" role="menu" style="position: relative;">
-                                                    @*style="position: relative;"*@
+                                                <ul class="dropdown-menu" role="menu">
                                                     <li><a onclick="myFunctionViewReport('@{@API.ct_PhieuGiaoHang;}','@item.ID')" href="#">Ds phiếu xuất</a></li>
                                                     <li class="divider">Phiếu soạn hàng:</li>
                                                     <li><a onclick="myFunctionViewReportType('@{@API.ct_PhieuGiaoHang;}','@item.ID','4','-1')" href="#">Theo khu vực</a></li>
@@ -147,6 +200,7 @@
                                                     <li class="divider"></li>
                                                     <li><a onclick="myFunctionViewReportType('@{@API.ct_PhieuGiaoHang;}','@item.ID','3','-1')" href="#">Phiếu giao hàng</a></li>
                                                 </ul>
+                                                </div><!-- btn-group -->
 
 
                                                 @if (!item.ISHOANTAT)
@@ -198,7 +252,7 @@
                                                         <a class="label label-warning" onclick="myFunctionCompletedDelivery('@{@API.ct_PhieuGiaoHang;}','@item.ID', '1')" href="#"><i class="fa fa-unlock" style="margin-right:5px"></i></a>
                                                     }
                                                 }
-                                            </div><!-- btn-group -->
+                                            </div>
 
                                         </td>
                                     </tr>
@@ -324,3 +378,129 @@
         </div>
     </div>
 </div>
+<script>
+    (function () {
+        function initializeDeliveryDropdownPortal() {
+            if (!window.jQuery) return;
+
+            var $ = window.jQuery;
+            var selector = '#accordion .fix .btn-group';
+
+            function restoreMenu(group) {
+                var menu = group.__deliveryPortalMenu;
+                var parent = group.__deliveryPortalParent;
+                if (!menu || !parent) return;
+
+                menu.classList.remove('delivery-dropdown-portal');
+                menu.style.removeProperty('display');
+                menu.style.removeProperty('position');
+                menu.style.removeProperty('visibility');
+                menu.style.removeProperty('z-index');
+                menu.style.removeProperty('left');
+                menu.style.removeProperty('top');
+                menu.style.removeProperty('max-height');
+                menu.style.removeProperty('overflow-y');
+
+                if (group.__deliveryPortalNext && group.__deliveryPortalNext.parentNode === parent) {
+                    parent.insertBefore(menu, group.__deliveryPortalNext);
+                } else {
+                    parent.appendChild(menu);
+                }
+
+                delete group.__deliveryPortalMenu;
+                delete group.__deliveryPortalParent;
+                delete group.__deliveryPortalNext;
+                delete menu.__deliveryPortalOwner;
+            }
+
+            function positionMenu(group) {
+                var menu = group.__deliveryPortalMenu;
+                if (!menu) return;
+
+                var toggle = group.querySelector('.dropdown-toggle');
+                if (!toggle) return;
+
+                var anchor = group.getBoundingClientRect();
+                var viewportWidth = document.documentElement.clientWidth;
+                var viewportHeight = window.innerHeight;
+                var maxHeight = Math.max(120, viewportHeight - 16);
+
+                menu.style.maxHeight = maxHeight + 'px';
+                menu.style.overflowY = 'auto';
+                menu.style.left = '0px';
+                menu.style.top = '0px';
+
+                var menuBounds = menu.getBoundingClientRect();
+                var left = Math.max(8, Math.min(anchor.left, viewportWidth - menuBounds.width - 8));
+                var top = anchor.bottom;
+                if (top + menuBounds.height > viewportHeight - 8 && anchor.top - menuBounds.height >= 8) {
+                    top = anchor.top - menuBounds.height;
+                }
+
+                menu.style.left = left + 'px';
+                menu.style.top = Math.max(8, top) + 'px';
+                menu.style.visibility = 'visible';
+            }
+
+            $(document).on('shown.bs.dropdown', selector, function () {
+                var group = this;
+                var menu = $(group).children('.dropdown-menu').first()[0];
+                if (!menu || group.__deliveryPortalMenu) return;
+
+                group.__deliveryPortalMenu = menu;
+                group.__deliveryPortalParent = menu.parentNode;
+                group.__deliveryPortalNext = menu.nextSibling;
+                menu.__deliveryPortalOwner = group;
+                menu.classList.add('delivery-dropdown-portal');
+                menu.style.setProperty('display', 'block', 'important');
+                menu.style.setProperty('position', 'fixed', 'important');
+                menu.style.setProperty('z-index', '20000', 'important');
+                menu.style.visibility = 'hidden';
+                document.body.appendChild(menu);
+                positionMenu(group);
+            });
+
+            $(document).on('hidden.bs.dropdown', selector, function () {
+                restoreMenu(this);
+            });
+
+            $(document).on('click', '.delivery-dropdown-portal a', function () {
+                var menu = this.closest('.delivery-dropdown-portal');
+                var group = menu && menu.__deliveryPortalOwner;
+                if (!group) {
+                    group = document.querySelector(selector + '.open');
+                }
+                if (!group) return;
+
+                window.setTimeout(function () {
+                    if (group.classList.contains('open')) {
+                        group.classList.remove('open');
+                        $(group).trigger($.Event('hidden.bs.dropdown', {
+                            relatedTarget: group.querySelector('.dropdown-toggle')
+                        }));
+                    }
+                }, 0);
+            });
+
+            var repositionPending = false;
+            function repositionOpenMenu() {
+                if (repositionPending) return;
+                repositionPending = true;
+                window.requestAnimationFrame(function () {
+                    repositionPending = false;
+                    var group = document.querySelector(selector + '.open');
+                    if (group) positionMenu(group);
+                });
+            }
+
+            document.addEventListener('scroll', repositionOpenMenu, true);
+            window.addEventListener('resize', repositionOpenMenu);
+        }
+
+        if (document.readyState === 'complete') {
+            initializeDeliveryDropdownPortal();
+        } else {
+            window.addEventListener('load', initializeDeliveryDropdownPortal);
+        }
+    })();
+</script>

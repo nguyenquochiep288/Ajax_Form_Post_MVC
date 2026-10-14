@@ -57,6 +57,69 @@ namespace MVC_QuanLyTHP.Controllers
 			}
 		}
 
+		public ActionResult ActiveSessions()
+		{
+			try
+			{
+				if (Utility.KiemTra())
+				{
+					return RedirectToAction("Index", "Admin");
+				}
+				if (!Utility.KiemTraQuyen("User", "View"))
+				{
+					base.TempData["TitleError"] = "Bạn không có quyền truy cập chức năng!";
+					return RedirectToAction("Index", "Notfound");
+				}
+
+				base.ViewBag.CanDisconnect = Utility.KiemTraQuyen("User", "Edit");
+				return View(MVC_QuanLyTHP.MvcApplication.GetActiveAccessSessions());
+			}
+			catch (Exception ex)
+			{
+				Utility.WriteLog(this, MethodBase.GetCurrentMethod().Name, ex);
+				base.TempData["TitleError"] = "Đã có lỗi phát sinh trong phiên làm việc!";
+				base.TempData["DetailError"] = ex.Message;
+				return RedirectToAction("Index", "Notfound");
+			}
+		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public ActionResult DisconnectSession(string sessionId)
+		{
+			try
+			{
+				if (Utility.KiemTra())
+				{
+					return RedirectToAction("Index", "Admin");
+				}
+				if (!Utility.KiemTraQuyen("User", "Edit"))
+				{
+					base.TempData["TitleError"] = "Bạn không có quyền ngắt kết nối phiên!";
+					return RedirectToAction("Index", "Notfound");
+				}
+
+				MVC_QuanLyTHP.ActiveAccessSession disconnected;
+				if (!MVC_QuanLyTHP.MvcApplication.TryDisconnectActiveSession(sessionId, out disconnected))
+				{
+					base.TempData["DisconnectWarning"] = "Phiên này không còn hoạt động hoặc đã được ngắt trước đó.";
+					return RedirectToAction("ActiveSessions");
+				}
+
+				bool refreshTokenRevoked = Utility.TryRevokeRefreshToken(disconnected.RefreshToken);
+				base.TempData[refreshTokenRevoked ? "DisconnectSuccess" : "DisconnectWarning"] = refreshTokenRevoked
+					? "Đã thu hồi refresh token và chặn phiên. Máy đó sẽ được chuyển về đăng nhập ở request kế tiếp."
+					: "Đã chặn phiên trong phần mềm, nhưng API chưa xác nhận thu hồi refresh token. Kiểm tra kết nối API hoặc refresh token.";
+				return RedirectToAction("ActiveSessions");
+			}
+			catch (Exception ex)
+			{
+				Utility.WriteLog(this, MethodBase.GetCurrentMethod().Name, ex);
+				base.TempData["DisconnectWarning"] = "Không thể hoàn tất thao tác ngắt kết nối.";
+				return RedirectToAction("ActiveSessions");
+			}
+		}
+
 		public ActionResult Create(int type = 2)
 		{
 			try

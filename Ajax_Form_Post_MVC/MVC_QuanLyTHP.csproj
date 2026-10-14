@@ -1622,6 +1622,7 @@
     <Content Include="Views\GroupCustomer\Edit.cshtml" />
     <Content Include="Views\GroupCustomer\Index.cshtml" />
     <Content Include="Views\User\Index.cshtml" />
+    <Content Include="Views\User\ActiveSessions.cshtml" />
     <Content Include="Views\User\Create.cshtml" />
     <Content Include="Views\User\Edit.cshtml" />
     <Content Include="Views\Quyen\Index.cshtml" />
@@ -1681,6 +1682,7 @@
     <Content Include="Views\Input\Index.cshtml" />
     <Content Include="Views\Input\Edit.cshtml" />
     <Content Include="Views\Promotion\Index.cshtml" />
+    <Content Include="Views\Promotion\ForCustomers.cshtml" />
     <Content Include="Views\Promotion\Create.cshtml" />
     <Content Include="Views\Promotion\Edit.cshtml" />
     <Content Include="Views\ViewReport\Index.cshtml" />

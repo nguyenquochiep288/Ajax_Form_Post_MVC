@@ -10,5 +10,7 @@ namespace MVC_QuanLyTHP.Class
 
 		[Required]
 		public string Password { get; set; }
+
+		public string DeviceId { get; set; }
 	}
 }

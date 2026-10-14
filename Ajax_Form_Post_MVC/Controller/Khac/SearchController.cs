@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Web;
 using System.Web.Mvc;
 using DatabaseTHP;
 using DatabaseTHP.Class;
@@ -13,6 +14,26 @@ namespace MVC_QuanLyTHP.Controllers
 
 	public class SearchController : Controller
 	{
+		private List<T> GetCachedSearchList<T>(string apiName)
+		{
+			string cacheKey = "SearchController:" + Session.SessionID + ":" + Utility.LOC_ID + ":" + apiName;
+			List<T> cached = HttpRuntime.Cache[cacheKey] as List<T>;
+			if (cached != null)
+			{
+				return cached;
+			}
+
+			ApiResponse response = Utility.GetListData<T>(apiName, "", "", Utility.LOC_ID);
+			List<T> values = response?.Success == true ? response.Data as List<T> : null;
+			if (values == null)
+			{
+				return new List<T>();
+			}
+
+			HttpRuntime.Cache.Insert(cacheKey, values, null, DateTime.UtcNow.AddMinutes(3), System.Web.Caching.Cache.NoSlidingExpiration);
+			return values;
+		}
+
 		[ChildActionOnly]
 		public ActionResult Index()
 		{
@@ -24,12 +45,9 @@ namespace MVC_QuanLyTHP.Controllers
 			}
 			base.ViewBag.urlAddProductPromotion_YC = text;
 			v_v_Search v_v_Search2 = new v_v_Search();
-			v_v_Search2.lstdm_ThueSuat = new List<v_dm_ThueSuat>();
-			v_v_Search2.lstdm_ThueSuat = Utility.GetListData<v_dm_ThueSuat>("Tax", "", "", Utility.LOC_ID).Data as List<v_dm_ThueSuat>;
-			v_v_Search2.lstdm_DonViTinh = new List<v_dm_DonViTinh>();
-			v_v_Search2.lstdm_DonViTinh = Utility.GetListData<v_dm_DonViTinh>("Unit", "", "", Utility.LOC_ID).Data as List<v_dm_DonViTinh>;
-			v_v_Search2.lstKhuVuc = new List<v_dm_KhuVuc>();
-			v_v_Search2.lstKhuVuc = Utility.GetListData<v_dm_KhuVuc>("Area", "", "", Utility.LOC_ID).Data as List<v_dm_KhuVuc>;
+			v_v_Search2.lstdm_ThueSuat = GetCachedSearchList<v_dm_ThueSuat>("Tax");
+			v_v_Search2.lstdm_DonViTinh = GetCachedSearchList<v_dm_DonViTinh>("Unit");
+			v_v_Search2.lstKhuVuc = GetCachedSearchList<v_dm_KhuVuc>("Area");
 			if (v_v_Search2.lstdm_ThueSuat != null)
 			{
 				v_v_Search2.lstdm_ThueSuat = v_v_Search2.lstdm_ThueSuat.Where((v_dm_ThueSuat s) => s.ISACTIVE).ToList();

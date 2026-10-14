@@ -1,0 +1,116 @@
+﻿@model System.Collections.Generic.IReadOnlyCollection<MVC_QuanLyTHP.ActiveAccessSession>
+@using DatabaseTHP;
+@using MVC_QuanLyTHP.Class;
+@{
+    ViewBag.Title = "Máy đang truy cập";
+    Layout = "~/Views/Shared/Admin.cshtml";
+}
+@Html.Partial("LoadCssDanhMuc")
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h1 class="panel-title">Máy đang truy cập</h1>
+    </div>
+    <div class="panel-body">
+        @if (TempData["DisconnectSuccess"] != null)
+        {
+            <div class="alert alert-success">@TempData["DisconnectSuccess"]</div>
+        }
+        @if (TempData["DisconnectWarning"] != null)
+        {
+            <div class="alert alert-warning">@TempData["DisconnectWarning"]</div>
+        }
+        <div class="row" style="margin-bottom: 15px;">
+            <div class="col-sm-6">
+                <strong>Đang hoạt động: @Model.Count</strong>
+                <span class="text-muted">(cập nhật khi tải lại trang; phiên không hoạt động 35 phút sẽ tự ẩn)</span>
+            </div>
+            <div class="col-sm-6 text-right">
+                <a class="btn btn-success" href="@Url.Action("ActiveSessions", "User")" title="Tải lại danh sách">
+                    <i class="fa fa-refresh"></i> Làm mới
+                </a>
+                <a class="btn btn-default" href="@Url.Action("Index", "User")">Quản lý tài khoản</a>
+            </div>
+        </div>
+        <div class="row" style="margin-bottom: 15px;">
+            <div class="col-sm-5">
+                <input id="sessionSearch" class="form-control" type="search" placeholder="Tìm tài khoản, tên máy hoặc IP..." />
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped" id="activeSessionsTable">
+                <thead>
+                    <tr>
+                        <th>Tài khoản</th>
+                        <th>Họ và tên</th>
+                        <th>Tên máy (tra cứu DNS)</th>
+                        <th>IP đang truy cập</th>
+                        <th>Access token hiện tại</th>
+                        <th>Refresh token hiện tại</th>
+                        <th>Access hết hạn</th>
+                        <th>Hoạt động gần nhất</th>
+                        @if (ViewBag.CanDisconnect == true)
+                        {
+                            <th>Thao tác</th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var session in Model)
+                    {
+                        <tr>
+                            <td>@session.UserName</td>
+                            <td>@session.FullName</td>
+                            <td>@session.ComputerName</td>
+                            <td>@session.IpAddress</td>
+                            <td>@session.AccessTokenId</td>
+                            <td>@session.RefreshTokenId</td>
+                            <td>@(session.AccessTokenExpires.HasValue ? session.AccessTokenExpires.Value.ToString("dd/MM/yyyy HH:mm:ss") : "Không rõ")</td>
+                            <td data-sort="@session.LastSeen.ToString("yyyyMMddHHmmss")">@session.LastSeen.ToString("dd/MM/yyyy HH:mm:ss")</td>
+                            @if (ViewBag.CanDisconnect == true)
+                            {
+                                <td>
+                                    @using (Html.BeginForm("DisconnectSession", "User", FormMethod.Post, new { @class = "disconnect-session-form" }))
+                                    {
+                                        @Html.AntiForgeryToken()
+                                        @Html.Hidden("sessionId", session.SessionId)
+                                        <button type="submit" class="btn btn-danger btn-sm" title="Thu hồi refresh token và ngắt phiên">
+                                            <i class="fa fa-power-off"></i> Ngắt kết nối
+                                        </button>
+                                    }
+                                </td>
+                            }
+                        </tr>
+                    }
+                    @if (Model.Count == 0)
+                    {
+                        <tr><td colspan="@(ViewBag.CanDisconnect == true ? 9 : 8)" class="text-center">Chưa có máy nào được ghi nhận đang truy cập.</td></tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <p class="text-muted">Token chỉ hiển thị bằng mã nhận diện rút gọn. Ngắt kết nối sẽ thu hồi refresh token và chặn phiên MVC; JWT access đã phát hành riêng vẫn hợp lệ đến hạn hết hạn. Tên máy chỉ hiển thị nếu DNS nội bộ phân giải được IP.</p>
+    </div>
+</div>
+
+<script>
+    (function () {
+        var input = document.getElementById('sessionSearch');
+        var rows = document.querySelectorAll('#activeSessionsTable tbody tr');
+        input.addEventListener('input', function () {
+            var query = input.value.toLocaleLowerCase();
+            Array.prototype.forEach.call(rows, function (row) {
+                row.style.display = row.textContent.toLocaleLowerCase().indexOf(query) >= 0 ? '' : 'none';
+            });
+        });
+
+        var forms = document.querySelectorAll('.disconnect-session-form');
+        Array.prototype.forEach.call(forms, function (form) {
+            form.addEventListener('submit', function (event) {
+                if (!window.confirm('Ngắt phiên đăng nhập này và thu hồi refresh token?')) {
+                    event.preventDefault();
+                }
+            });
+        });
+    })();
+</script>

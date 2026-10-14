@@ -35,38 +35,32 @@ namespace MVC_QuanLyTHP.Controllers
 					return RedirectToAction("Index", "Notfound");
 				}
 				string text = "";
-				ApiResponse apiResponse = new ApiResponse();
-				IPagedList<v_ct_PhieuThu> iPagedList = new List<v_ct_PhieuThu>().ToList().ToPagedList(Page, Utility.GetPageSize());
+				Utility.PagedApiResponse<v_ct_PhieuThu> pagedResponse = new Utility.PagedApiResponse<v_ct_PhieuThu>();
+				int pageNumber = Math.Max(1, Page);
+				int pageSize = Math.Min(Math.Max(1, Utility.GetPageSize()), 1000);
+				IPagedList<v_ct_PhieuThu> iPagedList = new StaticPagedList<v_ct_PhieuThu>(new List<v_ct_PhieuThu>(), pageNumber, pageSize, 0);
 				if (FromDate.HasValue || !string.IsNullOrEmpty(IDCODE) || !string.IsNullOrEmpty(MAPHIEU))
 				{
 					if (!string.IsNullOrEmpty(IDCODE) || !string.IsNullOrEmpty(MAPHIEU))
 					{
-						apiResponse = Utility.Get_DanhSachPhieuThu<v_ct_PhieuThu>("", null, null, MAPHIEU, IDCODE);
+						pagedResponse = Utility.Get_DanhSachPhieuThuPaged<v_ct_PhieuThu>("", null, null, MAPHIEU, IDCODE, pageNumber, pageSize);
 					}
 					if (FromDate.HasValue)
 					{
-						apiResponse = Utility.Get_DanhSachPhieuThu<v_ct_PhieuThu>("", FromDate, ToDate, SearchString);
+						pagedResponse = Utility.Get_DanhSachPhieuThuPaged<v_ct_PhieuThu>("", FromDate, ToDate, SearchString, "", pageNumber, pageSize);
 					}
-					if (!apiResponse.Success)
+					if (!pagedResponse.Success)
 					{
-						apiResponse.Data = new List<v_dm_HangHoa>();
-						base.TempData["TitleError"] = apiResponse.Message;
-						apiResponse.Success = false;
-						apiResponse.URL = base.Url.Action("Index", "Notfound");
+						base.TempData["TitleError"] = pagedResponse.Message;
 						return new JsonResult
 						{
-							Data = apiResponse,
+							Data = new ApiResponse { Success = false, Message = pagedResponse.Message, Data = new List<v_ct_PhieuThu>(), URL = base.Url.Action("Index", "Notfound") },
 							JsonRequestBehavior = JsonRequestBehavior.AllowGet,
 							MaxJsonLength = int.MaxValue
 						};
 					}
-					if (!apiResponse.Success)
-					{
-						base.TempData["TitleError"] = apiResponse.Message;
-						return RedirectToAction("Index", "Notfound");
-					}
-					text = (apiResponse.Data as List<v_ct_PhieuThu>).Sum((v_ct_PhieuThu s) => s.SOTIEN).ToString("N0").Replace(".", ",");
-					iPagedList = (apiResponse.Data as List<v_ct_PhieuThu>).ToPagedList(Page, Utility.GetPageSize());
+					text = pagedResponse.TotalSum.ToString("N0").Replace(".", ",");
+					iPagedList = new StaticPagedList<v_ct_PhieuThu>(pagedResponse.Data, pageNumber, pageSize, pagedResponse.TotalCount);
 				}
 				v_v_ct_PhieuThu v_v_ct_PhieuThu2 = new v_v_ct_PhieuThu();
 				v_v_ct_PhieuThu2.IPagedList = iPagedList;

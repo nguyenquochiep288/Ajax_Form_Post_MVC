@@ -33,39 +33,33 @@ namespace MVC_QuanLyTHP.Controllers
 					base.TempData["TitleError"] = "Bạn không có quyền truy cập chức năng!";
 					return RedirectToAction("Index", "Notfound");
 				}
-				ApiResponse apiResponse = new ApiResponse();
+				Utility.PagedApiResponse<v_ct_PhieuChi> pagedResponse = new Utility.PagedApiResponse<v_ct_PhieuChi>();
 				string text = "";
-				IPagedList<v_ct_PhieuChi> iPagedList = new List<v_ct_PhieuChi>().ToList().ToPagedList(Page, Utility.GetPageSize());
-				if ((FromDate.HasValue || !string.IsNullOrEmpty(IDCODE) || !string.IsNullOrEmpty(MAPHIEU)) && (FromDate.HasValue || !string.IsNullOrEmpty(IDCODE) || !string.IsNullOrEmpty(MAPHIEU)))
+				int pageNumber = Math.Max(1, Page);
+				int pageSize = Math.Min(Math.Max(1, Utility.GetPageSize()), 1000);
+				IPagedList<v_ct_PhieuChi> iPagedList = new StaticPagedList<v_ct_PhieuChi>(new List<v_ct_PhieuChi>(), pageNumber, pageSize, 0);
+				if (FromDate.HasValue || !string.IsNullOrEmpty(IDCODE) || !string.IsNullOrEmpty(MAPHIEU))
 				{
 					if (!string.IsNullOrEmpty(IDCODE) || !string.IsNullOrEmpty(MAPHIEU))
 					{
-						apiResponse = Utility.Get_DanhSachPhieuChi<v_ct_PhieuChi>("", null, null, MAPHIEU, IDCODE);
+						pagedResponse = Utility.Get_DanhSachPhieuChiPaged<v_ct_PhieuChi>("", null, null, MAPHIEU, IDCODE, pageNumber, pageSize);
 					}
 					if (FromDate.HasValue)
 					{
-						apiResponse = Utility.Get_DanhSachPhieuChi<v_ct_PhieuChi>("", FromDate, ToDate, SearchString);
+						pagedResponse = Utility.Get_DanhSachPhieuChiPaged<v_ct_PhieuChi>("", FromDate, ToDate, SearchString, "", pageNumber, pageSize);
 					}
-					if (!apiResponse.Success)
+					if (!pagedResponse.Success)
 					{
-						apiResponse.Data = new List<v_dm_HangHoa>();
-						base.TempData["TitleError"] = apiResponse.Message;
-						apiResponse.Success = false;
-						apiResponse.URL = base.Url.Action("Index", "Notfound");
+						base.TempData["TitleError"] = pagedResponse.Message;
 						return new JsonResult
 						{
-							Data = apiResponse,
+							Data = new ApiResponse { Success = false, Message = pagedResponse.Message, Data = new List<v_ct_PhieuChi>(), URL = base.Url.Action("Index", "Notfound") },
 							JsonRequestBehavior = JsonRequestBehavior.AllowGet,
 							MaxJsonLength = int.MaxValue
 						};
 					}
-					if (!apiResponse.Success)
-					{
-						base.TempData["TitleError"] = apiResponse.Message;
-						return RedirectToAction("Index", "Notfound");
-					}
-					text = (apiResponse.Data as List<v_ct_PhieuChi>).Sum((v_ct_PhieuChi s) => s.SOTIEN).ToString("N0").Replace(".", ",");
-					iPagedList = (apiResponse.Data as List<v_ct_PhieuChi>).ToPagedList(Page, Utility.GetPageSize());
+					text = pagedResponse.TotalSum.ToString("N0").Replace(".", ",");
+					iPagedList = new StaticPagedList<v_ct_PhieuChi>(pagedResponse.Data, pageNumber, pageSize, pagedResponse.TotalCount);
 				}
 				v_v_ct_PhieuChi v_v_ct_PhieuChi2 = new v_v_ct_PhieuChi();
 				v_v_ct_PhieuChi2.IPagedList = iPagedList;
@@ -947,6 +941,7 @@ namespace MVC_QuanLyTHP.Controllers
 				}
 				v_ct_PhieuChi v_ct_PhieuChi2 = new v_ct_PhieuChi();
 				SP_Parameter sP_Parameter = new SP_Parameter();
+				sP_Parameter.LOC_ID = Utility.LOC_ID;
 				sP_Parameter.ID_PHIEUCHI = ID;
 				apiResponse = Utility.ExecuteStoredProc<v_ct_PhieuChi>(sP_Parameter, "Sp_Get_DanhSachPhieuChi");
 				if (!apiResponse.Success)
@@ -964,12 +959,23 @@ namespace MVC_QuanLyTHP.Controllers
 				{
 					v_ct_PhieuChi2 = (apiResponse.Data as List<v_ct_PhieuChi>).FirstOrDefault();
 				}
+				if (v_ct_PhieuChi2 == null)
+				{
+					apiResponse = new ApiResponse { Success = false, Message = "Không tìm thấy phiếu chi trong chi nhánh hiện tại." };
+					return new JsonResult
+					{
+						Data = apiResponse,
+						JsonRequestBehavior = JsonRequestBehavior.AllowGet,
+						MaxJsonLength = int.MaxValue
+					};
+				}
 				ReportClass reportClass = new ReportClass();
 				reportClass.FileName = base.Server.MapPath("~/Report/rptPhieuChi.rpt");
 				SP_Parameter_Report sP_Parameter_Report = new SP_Parameter_Report();
+				sP_Parameter_Report.NAME_SP = "Sp_Get_DanhSachPhieuChi";
 				sP_Parameter_Report.LOC_ID = Utility.LOC_ID;
 				sP_Parameter_Report.ID_PHIEUCHI = ID;
-				apiResponse = Utility.ExecuteStoredProc<DataTable>(sP_Parameter_Report, "Sp_Get_DanhSachPhieuChi");
+				apiResponse = Utility.ExecuteStoredProc<DataTable>(sP_Parameter_Report, "SP_GetReport");
 				if (!apiResponse.Success)
 				{
 					apiResponse.Success = false;
@@ -982,9 +988,15 @@ namespace MVC_QuanLyTHP.Controllers
 					};
 				}
 				DataTable dataTable = apiResponse.Data as DataTable;
-				if (apiResponse.CheckValue)
+				if (apiResponse.CheckValue || dataTable == null || dataTable.Rows.Count == 0)
 				{
-					dataTable.Rows.Clear();
+					apiResponse = new ApiResponse { Success = false, Message = "Không có dữ liệu chi tiết để in phiếu chi." };
+					return new JsonResult
+					{
+						Data = apiResponse,
+						JsonRequestBehavior = JsonRequestBehavior.AllowGet,
+						MaxJsonLength = int.MaxValue
+					};
 				}
 				reportClass = Utility.GetFormulaFields(reportClass, v_ct_PhieuChi2);
 				reportClass.SetDataSource(dataTable);
@@ -1008,8 +1020,13 @@ namespace MVC_QuanLyTHP.Controllers
 				Utility.WriteLog(this, MethodBase.GetCurrentMethod().Name, ex);
 				base.TempData["TitleError"] = "Đã có lỗi phát sinh trong phiên làm việc!";
 				base.TempData["DetailError"] = ex.Message;
-				apiResponse.Success = false;
-				apiResponse.URL = base.Url.Action("Index", "Notfound");
+				apiResponse = new ApiResponse
+				{
+					Success = false,
+					Message = base.HttpContext.IsDebuggingEnabled
+						? ex.Message
+						: "Không thể tạo báo cáo phiếu chi. Vui lòng kiểm tra log lỗi."
+				};
 				return new JsonResult
 				{
 					Data = apiResponse,

@@ -23,6 +23,57 @@ $(document).ready(function ()
     });
 });
 
+function initializeMaskInputs() {
+    $("input.form-control.maskinput").each(function () {
+        var input = this;
+        var $input = $(input);
+        var $display = $input.data("categoryMaskDisplay");
+
+        if ($display && $display.length && $.contains(document, $display[0])) {
+            updateMaskInputDisplay(input);
+            return;
+        }
+
+        $display = $input.clone(false)
+            .removeAttr("id")
+            .removeAttr("name")
+            .removeAttr("onkeyup")
+            .removeClass("maskinput")
+            .addClass("maskinput-display")
+            .attr("type", "text")
+            .prop("readonly", true)
+            .insertAfter($input);
+
+        $input.data("categoryMaskDisplay", $display);
+        updateMaskInputDisplay(input);
+
+        $input.hide()
+            .off(".categoryMaskInput")
+            .on("input.categoryMaskInput change.categoryMaskInput keyup.categoryMaskInput", function () {
+                updateMaskInputDisplay(input);
+            })
+            .on("mouseleave.categoryMaskInput", function () {
+                updateMaskInputDisplay(input);
+                $input.hide();
+                $display.show();
+            });
+
+        $display.on("mouseenter.categoryMaskInput", function () {
+            $display.hide();
+            $input.show();
+        });
+    });
+}
+
+function updateMaskInputDisplay(input) {
+    var $input = $(input);
+    var $display = $input.data("categoryMaskDisplay");
+
+    if ($display && $display.length) {
+        $display.val(Number($input.val()).toLocaleString("vn"));
+    }
+}
+
 function OpenLoaderCategory() {
     try {
         var modal = document.getElementById("myModal1");
@@ -432,31 +483,7 @@ function OnSuccessLoadEdit(apiResponse)
             }
 
             if (bolChaymaskinput) {
-                $("input.form-control.maskinput").each((ii, ele) => {
-                    let clone = $(ele).clone(false)
-                    clone.attr("type", "text")
-                    let ele1 = $(ele)
-                    clone.val(Number(ele1.val()).toLocaleString("vn"))
-
-                    $(ele).after(clone)
-                    $(ele).hide()
-                    clone.mouseenter(() => {
-
-                        ele1.show()
-                        clone.hide()
-                    })
-                    setInterval(() => {
-                        var newv = Number(ele1.val()).toLocaleString("vn");
-                        if (clone.val() != newv) {
-                            clone.val(newv)
-                        }
-                    }, 10)
-
-                    $(ele).mouseleave(() => {
-                        $(clone).show()
-                        $(ele1).hide()
-                    })
-                })
+                initializeMaskInputs();
             }
         }
         else
@@ -910,31 +937,7 @@ function OnSuccessLoadCreate(apiResponse)
             }
 
             if (bolChaymaskinput) {
-                $("input.form-control.maskinput").each((ii, ele) => {
-                    let clone = $(ele).clone(false)
-                    clone.attr("type", "text")
-                    let ele1 = $(ele)
-                    clone.val(Number(ele1.val()).toLocaleString("vn"))
-
-                    $(ele).after(clone)
-                    $(ele).hide()
-                    clone.mouseenter(() => {
-
-                        ele1.show()
-                        clone.hide()
-                    })
-                    setInterval(() => {
-                        var newv = Number(ele1.val()).toLocaleString("vn");
-                        if (clone.val() != newv) {
-                            clone.val(newv)
-                        }
-                    }, 10)
-
-                    $(ele).mouseleave(() => {
-                        $(clone).show()
-                        $(ele1).hide()
-                    })
-                })
+                initializeMaskInputs();
             }
         }
         else
@@ -1838,35 +1841,7 @@ function OnSuccessProductInputOutput(apiResponse) {
                 LockKho("lstdm_KhoEdit", apiResponse.ProductCombo);
             } catch { }
 
-            $("input.form-control.maskinput").each((i, ele) => {
-                $(ele).removeAttr("onkeyup");
-                let clone = $(ele).clone(false)
-                clone.removeAttr("onkeyup"); // Xoá thuộc tính gây sự kiện
-                clone.attr("type", "text")
-                let ele1 = $(ele)
-                clone.val(Number(ele1.val()).toLocaleString("vn"))
-
-                $(ele).after(clone)
-                $(ele).hide()
-                clone.mouseenter(() => {
-
-                    ele1.show()
-                    clone.hide()
-                })
-                setInterval(() => {
-                    var newv = Number(ele1.val()).toLocaleString("vn");
-                    if (clone.val() != newv) {
-                        clone.val(newv)
-                    }
-                }, 10)
-
-                $(ele).mouseleave(() => {
-                    $(clone).show()
-                    $(ele1).hide()
-                })
-
-
-            })
+            initializeMaskInputs();
             myFunClosed("myModalInputOutput");
         }
         else {
@@ -1917,33 +1892,7 @@ function updateInputOutput(ID, elem) {
                         LockKho("lstdm_KhoEdit", apiResponse.ProductCombo);
                     } catch { }
 
-                    $("input.form-control.maskinput").each((i, ele) => {
-                        $(ele).removeAttr("onkeyup");
-                        let clone = $(ele).clone(false)
-                        clone.removeAttr("onkeyup"); // Xoá thuộc tính gây sự kiện
-                        clone.attr("type", "text")
-                        let ele1 = $(ele)
-                        clone.val(Number(ele1.val()).toLocaleString("vn"))
-
-                        $(ele).after(clone)
-                        $(ele).hide()
-                        clone.mouseenter(() => {
-
-                            ele1.show()
-                            clone.hide()
-                        })
-                        setInterval(() => {
-                            var newv = Number(ele1.val()).toLocaleString("vn");
-                            if (clone.val() != newv) {
-                                clone.val(newv)
-                            }
-                        }, 10)
-
-                        $(ele).mouseleave(() => {
-                            $(clone).show()
-                            $(ele1).hide()
-                        })
-                    })
+                    initializeMaskInputs();
                 }
                 else {
                     if (apiResponse.URL != null && apiResponse.URL != "")
@@ -3310,31 +3259,7 @@ function OnSuccessLoadChangeCustomer(apiResponse)
             }
 
             if (bolChaymaskinput) {
-                $("input.form-control.maskinput").each((ii, ele) => {
-                    let clone = $(ele).clone(false)
-                    clone.attr("type", "text")
-                    let ele1 = $(ele)
-                    clone.val(Number(ele1.val()).toLocaleString("vn"))
-
-                    $(ele).after(clone)
-                    $(ele).hide()
-                    clone.mouseenter(() => {
-
-                        ele1.show()
-                        clone.hide()
-                    })
-                    setInterval(() => {
-                        var newv = Number(ele1.val()).toLocaleString("vn");
-                        if (clone.val() != newv) {
-                            clone.val(newv)
-                        }
-                    }, 10)
-
-                    $(ele).mouseleave(() => {
-                        $(clone).show()
-                        $(ele1).hide()
-                    })
-                })
+                initializeMaskInputs();
             }
         }
         else {

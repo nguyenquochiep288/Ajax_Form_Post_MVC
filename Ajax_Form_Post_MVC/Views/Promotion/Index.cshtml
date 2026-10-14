@@ -150,6 +150,7 @@
                                     <td style="white-space: nowrap; " id="ISACTIVE"> @Html.DisplayFor(modelItem => item.ISACTIVE)</td>
 
                                     <td style="white-space: nowrap; " class="fix">
+                                        <a class="label label-info promotion-preview-button" href="@Url.Action("PreviewCustomer", "Promotion", new { id = item.ID })" title="Xem mô phỏng trên trang khách hàng"><i class="fa fa-eye" style="margin-right:5px"></i></a>
                                         @if (ViewBag.PermissionEdit)
                                         {
                                             if (Utility.IntWidth == 1)
@@ -209,4 +210,54 @@
         </div>
     }
 }
+
+<style>
+    .promotion-preview-modal { position: fixed; inset: 0; z-index: 2100; display: none; align-items: center; justify-content: center; padding: 24px; background: rgba(15, 25, 35, .68); }
+    .promotion-preview-modal.is-open { display: flex; }
+    .promotion-preview-dialog { position: relative; width: min(1120px, 96vw); height: min(900px, 92vh); overflow: hidden; border-radius: 12px; background: #fff; box-shadow: 0 18px 60px rgba(0,0,0,.35); }
+    .promotion-preview-frame { display: block; width: 100%; height: 100%; border: 0; background: #f3f7f8; }
+    .promotion-preview-close { position: absolute; top: 10px; right: 12px; z-index: 2; display: grid; place-items: center; width: 38px; height: 38px; border: 1px solid #d7e0e3; border-radius: 50%; color: #26343b; background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,.16); font-size: 25px; line-height: 1; cursor: pointer; }
+    @@media (max-width: 600px) { .promotion-preview-modal { padding: 8px; } .promotion-preview-dialog { width: 100%; height: 92vh; border-radius: 8px; } }
+</style>
+<div id="promotionPreviewModal" class="promotion-preview-modal" role="dialog" aria-modal="true" aria-label="Xem trước khuyến mãi" aria-hidden="true">
+    <div class="promotion-preview-dialog">
+        <button type="button" class="promotion-preview-close" aria-label="Đóng xem trước">×</button>
+        <iframe class="promotion-preview-frame" title="Mô phỏng chương trình khuyến mãi cho khách hàng" src="about:blank"></iframe>
+    </div>
+</div>
+<script>
+    (function () {
+        var modal = document.getElementById('promotionPreviewModal');
+        if (!modal) return;
+        var frame = modal.querySelector('.promotion-preview-frame');
+        var closeButton = modal.querySelector('.promotion-preview-close');
+        var previousOverflow = '';
+
+        function closePreview() {
+            modal.classList.remove('is-open');
+            modal.setAttribute('aria-hidden', 'true');
+            frame.src = 'about:blank';
+            document.body.style.overflow = previousOverflow;
+        }
+
+        document.addEventListener('click', function (event) {
+            var previewLink = event.target.closest('.promotion-preview-button');
+            if (previewLink) {
+                event.preventDefault();
+                frame.src = previewLink.href;
+                previousOverflow = document.body.style.overflow;
+                document.body.style.overflow = 'hidden';
+                modal.classList.add('is-open');
+                modal.setAttribute('aria-hidden', 'false');
+                closeButton.focus();
+                return;
+            }
+            if (event.target === modal || event.target === closeButton) closePreview();
+        });
+
+        document.addEventListener('keydown', function (event) {
+            if (event.key === 'Escape' && modal.classList.contains('is-open')) closePreview();
+        });
+    })();
+</script>
 

@@ -16,6 +16,8 @@ using System.Threading;
 using System.Web;
 using System.Web.Hosting;
 using System.Web.Mvc;
+using System.Web.SessionState;
+using System.Web.Security;
 using CrystalDecisions.CrystalReports.Engine;
 using DatabaseTHP;
 using DatabaseTHP.Class;
@@ -614,57 +616,137 @@ namespace MVC_QuanLyTHP.Class
 			return stypeWidth_Level3;
 		}
 
+		private static bool HasFreshSessionCache(string key, bool forceReload)
+		{
+			HttpSessionState session = HttpContext.Current.Session;
+			if (forceReload || session[key] == null)
+			{
+				return false;
+			}
+
+			string currentVersion = GetDatabaseCacheVersion();
+			if (string.IsNullOrEmpty(currentVersion))
+			{
+				return true;
+			}
+
+			return string.Equals(session[key + "_Version"] as string, currentVersion, StringComparison.Ordinal);
+		}
+
+		private static void StoreSessionCache(string key, object value)
+		{
+			HttpSessionState session = HttpContext.Current.Session;
+			session[key] = value;
+			string version = GetDatabaseCacheVersion();
+			if (!string.IsNullOrEmpty(version))
+			{
+				session[key + "_Version"] = version;
+			}
+		}
+
+		private static string GetDatabaseCacheVersion()
+		{
+			HttpContext context = HttpContext.Current;
+			const string requestCacheKey = "THP.DatabaseCacheVersion";
+			if (context.Items.Contains(requestCacheKey))
+			{
+				return context.Items[requestCacheKey] as string;
+			}
+
+			string version = null;
+			try
+			{
+				string groupId = Convert.ToString(context.Session["idNhomQuyen"]);
+				if (!string.IsNullOrWhiteSpace(groupId))
+				{
+					HttpClient httpClient = new HttpClient();
+					string accessToken = Token;
+					if (!string.IsNullOrWhiteSpace(accessToken))
+					{
+						httpClient.DefaultRequestHeaders.Add("Authorization", "Bearer " + accessToken);
+					}
+
+					string url = URL + "Accounts/GetCacheVersion/" + Uri.EscapeDataString(LOC_ID) + "/" + Uri.EscapeDataString(groupId);
+					HttpResponseMessage response = httpClient.GetAsync(url).Result;
+					if (response.IsSuccessStatusCode)
+					{
+						string responseText = response.Content.ReadAsStringAsync().Result;
+						ApiResponse apiResponse = JsonConvert.DeserializeObject<ApiResponse>(responseText);
+						if (apiResponse != null && apiResponse.Success && apiResponse.Data != null)
+						{
+							version = apiResponse.Data.ToString();
+						}
+					}
+				}
+			}
+			catch (Exception e)
+			{
+				WriteLog("Utility", MethodBase.GetCurrentMethod().Name, e);
+			}
+
+			context.Items[requestCacheKey] = version;
+			return version;
+		}
+
 		public static List<view_web_NoteClass> GetNoteClass(bool bolCache = false)
 		{
-			List<view_web_NoteClass> list = new List<view_web_NoteClass>();
-			list = (List<view_web_NoteClass>)((!bolCache && HttpContext.Current.Session["lstNoteClass"] != null) ? ((List<view_web_NoteClass>)HttpContext.Current.Session["lstNoteClass"]) : (HttpContext.Current.Session["lstNoteClass"] = GetNoteClasss<view_web_NoteClass>()));
-			return list ?? new List<view_web_NoteClass>();
+			HttpSessionState session = HttpContext.Current.Session;
+			if (!HasFreshSessionCache("lstNoteClass", bolCache))
+			{
+				List<view_web_NoteClass> refreshed = GetNoteClasss<view_web_NoteClass>();
+				if (refreshed != null)
+				{
+					StoreSessionCache("lstNoteClass", refreshed);
+				}
+			}
+			return session["lstNoteClass"] as List<view_web_NoteClass> ?? new List<view_web_NoteClass>();
 		}
 
 		public static List<web_ThongBao> GetThongBao(bool bolCache = false)
 		{
-			List<web_ThongBao> list = new List<web_ThongBao>();
-			list = (List<web_ThongBao>)((!bolCache && HttpContext.Current.Session["lstThongBao"] != null) ? ((List<web_ThongBao>)HttpContext.Current.Session["lstThongBao"]) : (HttpContext.Current.Session["lstThongBao"] = GetThongBao<web_ThongBao>()));
-			return list ?? new List<web_ThongBao>();
+			HttpSessionState session = HttpContext.Current.Session;
+			if (!HasFreshSessionCache("lstThongBao", bolCache))
+			{
+				List<web_ThongBao> refreshed = GetThongBao<web_ThongBao>();
+				if (refreshed != null)
+				{
+					StoreSessionCache("lstThongBao", refreshed);
+				}
+			}
+			return session["lstThongBao"] as List<web_ThongBao> ?? new List<web_ThongBao>();
 		}
 
 		public static List<v_web_Menu> GetMenu(bool bolCache = false)
 		{
-			List<v_web_Menu> list = new List<v_web_Menu>();
-			if (!bolCache && HttpContext.Current.Session["lstMenu"] != null)
-			{
-				list = (List<v_web_Menu>)HttpContext.Current.Session["lstMenu"];
-			}
-			else
+			HttpSessionState session = HttpContext.Current.Session;
+			if (!HasFreshSessionCache("lstMenu", bolCache))
 			{
 				ApiResponse listData = GetListData<v_web_Menu>("Menu");
-				if (!listData.Success)
+				if (listData.Success && listData.Data is List<v_web_Menu>)
 				{
-					return new List<v_web_Menu>();
+					StoreSessionCache("lstMenu", listData.Data);
 				}
-				list = (List<v_web_Menu>)(HttpContext.Current.Session["lstMenu"] = listData.Data as List<v_web_Menu>);
 			}
-			return list ?? new List<v_web_Menu>();
+			return session["lstMenu"] as List<v_web_Menu> ?? new List<v_web_Menu>();
 		}
 
 		public static List<view_web_PhanQuyen> GetPhanQuyen(bool bolCache = false)
 		{
-			List<view_web_PhanQuyen> list = new List<view_web_PhanQuyen>();
-			if (!bolCache && HttpContext.Current.Session["lstPhanQuyen"] != null)
+			HttpSessionState session = HttpContext.Current.Session;
+			if (!HasFreshSessionCache("lstPhanQuyen", bolCache))
 			{
-				list = (List<view_web_PhanQuyen>)HttpContext.Current.Session["lstPhanQuyen"];
+				List<view_web_PhanQuyen> refreshed = GetPhanQuyen<view_web_PhanQuyen>();
+				if (refreshed != null)
+				{
+					StoreSessionCache("lstPhanQuyen", refreshed);
+				}
 			}
-			else
-			{
-				List<view_web_PhanQuyen> phanQuyen = GetPhanQuyen<view_web_PhanQuyen>();
-				list = (List<view_web_PhanQuyen>)(HttpContext.Current.Session["lstPhanQuyen"] = phanQuyen);
-			}
-			return list ?? new List<view_web_PhanQuyen>();
+			return session["lstPhanQuyen"] as List<view_web_PhanQuyen> ?? new List<view_web_PhanQuyen>();
 		}
 
 		public static List<T> GetPhanQuyen<T>()
 		{
-			List<T> result = new List<T>();
+			List<T> result = null;
 			HttpResponseMessage httpResponseMessage = null;
 			try
 			{
@@ -674,13 +756,16 @@ namespace MVC_QuanLyTHP.Class
 				{
 					string result2 = httpResponseMessage.Content.ReadAsStringAsync().Result;
 					ApiResponse apiResponse = JsonConvert.DeserializeObject<ApiResponse>(result2);
-					result = JsonConvert.DeserializeObject<List<T>>(apiResponse.Data.ToString());
+					if (apiResponse.Success && apiResponse.Data != null)
+					{
+						result = JsonConvert.DeserializeObject<List<T>>(apiResponse.Data.ToString());
+					}
 				}
 			}
 			catch (Exception e)
 			{
 				WriteLog((httpResponseMessage != null) ? httpResponseMessage.RequestMessage.RequestUri.ToString() : "GetPhanQuyen", MethodBase.GetCurrentMethod().Name, e);
-				result = new List<T>();
+				result = null;
 			}
 			return result;
 		}
@@ -717,7 +802,7 @@ namespace MVC_QuanLyTHP.Class
 
 		public static List<T> GetNoteClasss<T>()
 		{
-			List<T> result = new List<T>();
+			List<T> result = null;
 			try
 			{
 				HttpClient httpClient = new HttpClient();
@@ -726,20 +811,23 @@ namespace MVC_QuanLyTHP.Class
 				{
 					string result3 = result2.Content.ReadAsStringAsync().Result;
 					ApiResponse apiResponse = JsonConvert.DeserializeObject<ApiResponse>(result3);
-					result = JsonConvert.DeserializeObject<List<T>>(apiResponse.Data.ToString());
+					if (apiResponse.Success && apiResponse.Data != null)
+					{
+						result = JsonConvert.DeserializeObject<List<T>>(apiResponse.Data.ToString());
+					}
 				}
 			}
 			catch (Exception e)
 			{
 				WriteLog("Utility", MethodBase.GetCurrentMethod().Name, e);
-				result = new List<T>();
+				result = null;
 			}
 			return result;
 		}
 
 		public static List<T> GetThongBao<T>()
 		{
-			List<T> result = new List<T>();
+			List<T> result = null;
 			try
 			{
 				HttpClient httpClient = new HttpClient();
@@ -748,13 +836,16 @@ namespace MVC_QuanLyTHP.Class
 				{
 					string result3 = result2.Content.ReadAsStringAsync().Result;
 					ApiResponse apiResponse = JsonConvert.DeserializeObject<ApiResponse>(result3);
-					result = JsonConvert.DeserializeObject<List<T>>(apiResponse.Data.ToString());
+					if (apiResponse.Success && apiResponse.Data != null)
+					{
+						result = JsonConvert.DeserializeObject<List<T>>(apiResponse.Data.ToString());
+					}
 				}
 			}
 			catch (Exception e)
 			{
 				WriteLog("Utility", MethodBase.GetCurrentMethod().Name, e);
-				result = new List<T>();
+				result = null;
 			}
 			return result;
 		}
@@ -785,6 +876,10 @@ namespace MVC_QuanLyTHP.Class
 				if (HttpContext.Current.Session["Expires"] != null && !string.IsNullOrEmpty(HttpContext.Current.Session["Expires"].ToString()))
 				{
 					result = Convert.ToDateTime(HttpContext.Current.Session["Expires"]);
+					if (result.Kind == DateTimeKind.Utc)
+					{
+						result = result.ToLocalTime();
+					}
 					return result;
 				}
 			}
@@ -800,13 +895,29 @@ namespace MVC_QuanLyTHP.Class
 			string result = string.Empty;
 			try
 			{
-				if ((GetExpires() < CurrentTime || bolCache) && HttpContext.Current.Session["Login_Model"] != null)
+				if (GetExpires() < CurrentTime || bolCache)
 				{
-					Login_Model login_Model = (Login_Model)HttpContext.Current.Session["Login_Model"];
-					ApiResponse apiResponse = Login(login_Model.user, login_Model.pass);
-					if (apiResponse.Success)
+					string refreshToken = HttpContext.Current.Session["RefreshToken"] as string;
+					Login_Model login_Model = HttpContext.Current.Session["Login_Model"] as Login_Model;
+					ApiResponse apiResponse = null;
+					if (!string.IsNullOrWhiteSpace(refreshToken))
+					{
+						apiResponse = Refresh(refreshToken);
+					}
+					else if (login_Model != null)
+					{
+						apiResponse = Login(login_Model.user, login_Model.pass);
+					}
+					if (apiResponse != null && apiResponse.Success)
 					{
 						SetSession(apiResponse, login_Model, null);
+					}
+					else if ((apiResponse != null && apiResponse.CheckValue) || (GetExpires() < CurrentTime && string.IsNullOrWhiteSpace(refreshToken)))
+					{
+						HttpContext.Current.Session.Remove("Token");
+						HttpContext.Current.Session.Remove("User");
+						HttpContext.Current.Session.Remove("RefreshToken");
+						ExpirePersistedTokenCookie();
 					}
 				}
 				if (HttpContext.Current.Session["Token"] != null && !string.IsNullOrEmpty(HttpContext.Current.Session["Token"].ToString()))
@@ -821,6 +932,258 @@ namespace MVC_QuanLyTHP.Class
 			return result;
 		}
 
+		private sealed class PersistedToken
+		{
+			public string Token { get; set; }
+			public DateTime Expires { get; set; }
+			public string RefreshToken { get; set; }
+			public DateTime RefreshTokenExpires { get; set; }
+			public string User { get; set; }
+			public string UserId { get; set; }
+			public string GroupId { get; set; }
+			public string FullName { get; set; }
+		}
+
+		private const string PersistedTokenCookieName = "THP_AUTH";
+
+		private const string DeviceCookieName = "THP_DEVICE";
+
+		private static string GetOrCreateDeviceId()
+		{
+			HttpContext context = HttpContext.Current;
+			HttpCookie existingCookie = context.Request.Cookies[DeviceCookieName];
+			if (Guid.TryParse(existingCookie?.Value, out Guid existingDeviceId))
+			{
+				return existingDeviceId.ToString("N");
+			}
+
+			string deviceId = Guid.NewGuid().ToString("N");
+			context.Response.Cookies.Add(new HttpCookie(DeviceCookieName, deviceId)
+			{
+				HttpOnly = true,
+				Secure = context.Request.IsSecureConnection,
+				Path = string.IsNullOrEmpty(context.Request.ApplicationPath) ? "/" : context.Request.ApplicationPath,
+				Expires = DateTime.Now.AddYears(5)
+			});
+			return deviceId;
+		}
+
+		private static void PersistToken(ApiResponse apiResponse, ApiResponseUser user, bool rememberMe)
+		{
+			if (!rememberMe)
+			{
+				ExpirePersistedTokenCookie();
+				return;
+			}
+			if (apiResponse == null || user == null || apiResponse.Data == null || string.IsNullOrWhiteSpace(apiResponse.Data.ToString()))
+			{
+				ExpirePersistedTokenCookie();
+				return;
+			}
+
+			DateTime expires = Convert.ToDateTime(apiResponse.Expires, CultureInfo.InvariantCulture);
+			if (expires.Kind == DateTimeKind.Utc)
+			{
+				expires = expires.ToLocalTime();
+			}
+			DateTime refreshExpires = apiResponse.RefreshTokenExpires.HasValue ? apiResponse.RefreshTokenExpires.Value : DateTime.MinValue;
+			if (refreshExpires.Kind == DateTimeKind.Utc)
+			{
+				refreshExpires = refreshExpires.ToLocalTime();
+			}
+			if (string.IsNullOrWhiteSpace(apiResponse.RefreshToken) || refreshExpires <= CurrentTime)
+			{
+				ExpirePersistedTokenCookie();
+				return;
+			}
+
+			PersistedToken persistedToken = new PersistedToken
+			{
+				Token = apiResponse.Data.ToString(),
+				Expires = expires,
+				RefreshToken = apiResponse.RefreshToken,
+				RefreshTokenExpires = refreshExpires,
+				User = user.UserName,
+				UserId = user.idUser,
+				GroupId = user.idNhomQuyen,
+				FullName = user.FullName
+			};
+			byte[] protectedData = MachineKey.Protect(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(persistedToken)), "MVC_QuanLyTHP", "THP_AUTH");
+			if (protectedData == null)
+			{
+				return;
+			}
+
+			HttpContext context = HttpContext.Current;
+			HttpCookie cookie = new HttpCookie(PersistedTokenCookieName, Convert.ToBase64String(protectedData))
+			{
+				HttpOnly = true,
+				Secure = context.Request.IsSecureConnection,
+				Path = string.IsNullOrEmpty(context.Request.ApplicationPath) ? "/" : context.Request.ApplicationPath,
+				Expires = persistedToken.RefreshTokenExpires
+			};
+			context.Response.Cookies.Add(cookie);
+		}
+
+		private static bool RestorePersistedToken()
+		{
+			try
+			{
+				HttpContext context = HttpContext.Current;
+				HttpCookie cookie = context.Request.Cookies[PersistedTokenCookieName];
+				if (cookie == null || string.IsNullOrWhiteSpace(cookie.Value))
+				{
+					return false;
+				}
+
+				byte[] protectedData = Convert.FromBase64String(cookie.Value);
+				byte[] data = MachineKey.Unprotect(protectedData, "MVC_QuanLyTHP", "THP_AUTH");
+				if (data == null)
+				{
+					ExpirePersistedTokenCookie();
+					return false;
+				}
+
+				PersistedToken persistedToken = JsonConvert.DeserializeObject<PersistedToken>(Encoding.UTF8.GetString(data));
+				if (persistedToken == null || string.IsNullOrWhiteSpace(persistedToken.Token) || string.IsNullOrWhiteSpace(persistedToken.RefreshToken) || persistedToken.RefreshTokenExpires <= CurrentTime || string.IsNullOrWhiteSpace(persistedToken.User))
+				{
+					ExpirePersistedTokenCookie();
+					return false;
+				}
+
+				context.Session["Token"] = persistedToken.Token;
+				context.Session["Expires"] = persistedToken.Expires;
+				context.Session["RefreshToken"] = persistedToken.RefreshToken;
+				context.Session["User"] = persistedToken.User;
+				context.Session["idUser"] = persistedToken.UserId;
+				context.Session["idNhomQuyen"] = persistedToken.GroupId;
+				context.Session["RememberMe"] = true;
+				context.Session["Login_Model"] = new Login_Model
+				{
+					user = persistedToken.User,
+					fullname = string.IsNullOrWhiteSpace(persistedToken.FullName) ? persistedToken.User : persistedToken.FullName,
+					iduser = persistedToken.UserId,
+					check = true
+				};
+				return true;
+			}
+			catch (Exception exception)
+			{
+				WriteLog("Utility", MethodBase.GetCurrentMethod().Name, exception);
+				ExpirePersistedTokenCookie();
+				return false;
+			}
+		}
+
+		public static void ExpirePersistedTokenCookie()
+		{
+			HttpContext context = HttpContext.Current;
+			if (context == null)
+			{
+				return;
+			}
+
+			context.Response.Cookies.Add(new HttpCookie(PersistedTokenCookieName, string.Empty)
+			{
+				HttpOnly = true,
+				Secure = context.Request.IsSecureConnection,
+				Path = string.IsNullOrEmpty(context.Request.ApplicationPath) ? "/" : context.Request.ApplicationPath,
+				Expires = CurrentTime.AddDays(-1)
+			});
+		}
+
+		public static ApiResponse Refresh(string refreshToken)
+		{
+			try
+			{
+				return PostAuthenticationRequest("Accounts/Refresh", new { RefreshToken = refreshToken, DeviceId = GetOrCreateDeviceId() });
+			}
+			catch (Exception exception)
+			{
+				WriteLog("Utility", MethodBase.GetCurrentMethod().Name, exception);
+				return new ApiResponse { Success = false, Message = "Không thể làm mới phiên đăng nhập." };
+			}
+		}
+
+		public static void RevokeRefreshToken(string refreshToken)
+		{
+			if (string.IsNullOrWhiteSpace(refreshToken))
+			{
+				refreshToken = ReadPersistedRefreshToken();
+			}
+			if (string.IsNullOrWhiteSpace(refreshToken))
+			{
+				return;
+			}
+
+			try
+			{
+				PostAuthenticationRequest("Accounts/Revoke", new { RefreshToken = refreshToken });
+			}
+			catch (Exception exception)
+			{
+				WriteLog("Utility", MethodBase.GetCurrentMethod().Name, exception);
+			}
+		}
+
+		public static bool TryRevokeRefreshToken(string refreshToken)
+		{
+			if (string.IsNullOrWhiteSpace(refreshToken))
+			{
+				return false;
+			}
+
+			try
+			{
+				ApiResponse response = PostAuthenticationRequest("Accounts/Revoke", new { RefreshToken = refreshToken });
+				return response != null && response.Success;
+			}
+			catch (Exception exception)
+			{
+				WriteLog("Utility", MethodBase.GetCurrentMethod().Name, exception);
+				return false;
+			}
+		}
+
+		private static string ReadPersistedRefreshToken()
+		{
+			try
+			{
+				HttpCookie cookie = HttpContext.Current.Request.Cookies[PersistedTokenCookieName];
+				if (cookie == null || string.IsNullOrWhiteSpace(cookie.Value))
+				{
+					return string.Empty;
+				}
+
+				byte[] protectedData = Convert.FromBase64String(cookie.Value);
+				byte[] data = MachineKey.Unprotect(protectedData, "MVC_QuanLyTHP", "THP_AUTH");
+				PersistedToken persistedToken = data == null ? null : JsonConvert.DeserializeObject<PersistedToken>(Encoding.UTF8.GetString(data));
+				return persistedToken?.RefreshToken ?? string.Empty;
+			}
+			catch (Exception exception)
+			{
+				WriteLog("Utility", MethodBase.GetCurrentMethod().Name, exception);
+				return string.Empty;
+			}
+		}
+
+		private static ApiResponse PostAuthenticationRequest(string endpoint, object request)
+		{
+			using (HttpClient client = new HttpClient())
+			using (StringContent content = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json"))
+			{
+				HttpResponseMessage response = client.PostAsync(URL + endpoint, content).Result;
+				string body = response.Content.ReadAsStringAsync().Result;
+				ApiResponse result = JsonConvert.DeserializeObject<ApiResponse>(body);
+				if (!response.IsSuccessStatusCode && result != null)
+				{
+					result.Success = false;
+					result.CheckValue = response.StatusCode == HttpStatusCode.Unauthorized;
+				}
+				return result ?? new ApiResponse { Success = false, Message = "Phản hồi xác thực API không hợp lệ." };
+			}
+		}
+
 		public static ApiResponse Login(string username, string password)
 		{
 			ApiResponse apiResponse = new ApiResponse();
@@ -830,6 +1193,7 @@ namespace MVC_QuanLyTHP.Class
 				SignInModel signInModel = new SignInModel();
 				signInModel.UserName = username;
 				signInModel.Password = clsMaHoa.Encrypt(password, "tmt6364");
+				signInModel.DeviceId = GetOrCreateDeviceId();
 				string content = JsonConvert.SerializeObject(signInModel);
 				StringContent content2 = new StringContent(content, Encoding.UTF8, "application/json");
 				HttpClient httpClient = new HttpClient();
@@ -1510,6 +1874,47 @@ namespace MVC_QuanLyTHP.Class
 			return apiResponse;
 		}
 
+		public class PagedApiResponse<T>
+		{
+			public bool Success { get; set; }
+			public string Message { get; set; }
+			public List<T> Data { get; set; }
+			public int TotalCount { get; set; }
+			public decimal TotalSum { get; set; }
+		}
+
+		public static PagedApiResponse<T> ExecuteStoredProcPaged<T>(SP_Parameter model, string name, int page, int pageSize)
+		{
+			HttpResponseMessage httpResponseMessage = null;
+			string requestBody = JsonConvert.SerializeObject(model);
+			try
+			{
+				using (HttpClient httpClient = new HttpClient())
+				using (StringContent content = new StringContent(requestBody, Encoding.UTF8, "application/json"))
+				{
+					httpClient.DefaultRequestHeaders.Add("Authorization", "Bearer " + Token);
+					httpResponseMessage = httpClient.PostAsync(URL + name + "?page=" + Math.Max(1, page) + "&pageSize=" + Math.Min(Math.Max(1, pageSize), 1000), content).Result;
+					if (!httpResponseMessage.IsSuccessStatusCode)
+					{
+						return new PagedApiResponse<T> { Success = false, Message = GetErrorServer(httpResponseMessage), Data = new List<T>() };
+					}
+
+					string responseBody = httpResponseMessage.Content.ReadAsStringAsync().Result;
+					PagedApiResponse<T> response = JsonConvert.DeserializeObject<PagedApiResponse<T>>(responseBody);
+					if (response != null && response.Data == null)
+					{
+						response.Data = new List<T>();
+					}
+					return response ?? new PagedApiResponse<T> { Success = false, Message = "Phản hồi API không hợp lệ", Data = new List<T>() };
+				}
+			}
+			catch (Exception exception)
+			{
+				WriteLog((httpResponseMessage != null) ? httpResponseMessage.RequestMessage.RequestUri.ToString() : name, MethodBase.GetCurrentMethod().Name, exception, requestBody);
+				return new PagedApiResponse<T> { Success = false, Message = exception.Message, Data = new List<T>() };
+			}
+		}
+
 		public static ApiResponse ExecuteStoredProc<T>(SP_Parameter model, string name = "Books")
 		{
 			ApiResponse apiResponse = new ApiResponse();
@@ -1675,46 +2080,39 @@ namespace MVC_QuanLyTHP.Class
 		public static bool KiemTra(bool bolCach = false)
 		{
 			Thread.CurrentThread.CurrentCulture = CultureInfo.CreateSpecificCulture("vi-VN");
-			if (string.IsNullOrEmpty((HttpContext.Current.Session["User"] == null) ? "" : HttpContext.Current.Session["User"].ToString()) || bolCach)
+			ExpireLegacyRememberMeCookie();
+			if (string.IsNullOrEmpty((HttpContext.Current.Session["User"] == null) ? "" : HttpContext.Current.Session["User"].ToString()))
 			{
-				string user = string.Empty;
-				string text = string.Empty;
-				bool check = false;
-				HttpCookie httpCookie = HttpContext.Current.Request.Cookies["THP"];
-				if (httpCookie != null && httpCookie.Value != "")
+				if (RestorePersistedToken())
 				{
-					string text2 = clsMaHoa.Decrypt(httpCookie.Values["Us"].ToString(), "tmt6364");
-					string[] array = text2.Split(new string[1] { Environment.NewLine }, StringSplitOptions.None);
-					if (array != null && array.Count() == 2)
-					{
-						user = array[0];
-						text = array[1];
-						check = true;
-					}
+					return false;
 				}
-				if (!string.IsNullOrEmpty(text))
-				{
-					Login_Model login_Model = new Login_Model
-					{
-						user = user,
-						pass = text,
-						check = check
-					};
-					ApiResponse apiResponse = Login(login_Model.user, login_Model.pass);
-					if (!apiResponse.Success)
-					{
-						HttpContext.Current.Session.Clear();
-						return true;
-					}
-					SetSession(apiResponse, login_Model, httpCookie);
-				}
-				if (string.IsNullOrEmpty((HttpContext.Current.Session["User"] == null) ? "" : HttpContext.Current.Session["User"].ToString()))
-				{
-					return true;
-				}
-				return false;
+				return true;
+			}
+			if (bolCach)
+			{
+				GetToken(bolCache: true);
+				return string.IsNullOrEmpty((HttpContext.Current.Session["User"] == null) ? "" : HttpContext.Current.Session["User"].ToString());
 			}
 			return false;
+		}
+
+		private static void ExpireLegacyRememberMeCookie()
+		{
+			HttpContext context = HttpContext.Current;
+			if (context?.Request.Cookies["THP"] == null)
+			{
+				return;
+			}
+
+			string appPath = string.IsNullOrEmpty(context.Request.ApplicationPath) ? string.Empty : context.Request.ApplicationPath.TrimEnd('/');
+			context.Response.Cookies.Add(new HttpCookie("THP", string.Empty)
+			{
+				HttpOnly = true,
+				Secure = context.Request.IsSecureConnection,
+				Path = appPath + "/Admin",
+				Expires = CurrentTime.AddDays(-1)
+			});
 		}
 
 		public static bool KiemTraQuyenMoKhoa()
@@ -1922,23 +2320,27 @@ namespace MVC_QuanLyTHP.Class
 
 		public static void SetSession(ApiResponse apiResponse, Login_Model model, HttpCookie cookie)
 		{
-			if (model.check && cookie != null)
+			ExpireLegacyRememberMeCookie();
+			ApiResponseUser apiResponseUser = JsonConvert.DeserializeObject<ApiResponseUser>((apiResponse.Detail != null) ? apiResponse.Detail.ToString() : "{}");
+			bool rememberMe = model != null ? model.check : (HttpContext.Current.Session["RememberMe"] != null && Convert.ToBoolean(HttpContext.Current.Session["RememberMe"]));
+			if (model == null)
 			{
-				cookie = new HttpCookie("THP");
-				string value = clsMaHoa.Encrypt(model.user + Environment.NewLine + model.pass, "tmt6364");
-				cookie.Values["Us"] = value;
-				cookie.Expires = CurrentTime.AddDays(90.0);
-				HttpContext.Current.Response.Cookies.Add(cookie);
+				model = new Login_Model { user = apiResponseUser.UserName, fullname = apiResponseUser.FullName, iduser = apiResponseUser.idUser, check = rememberMe };
 			}
 			HttpContext.Current.Session["Token"] = apiResponse.Data;
 			HttpContext.Current.Session["Expires"] = apiResponse.Expires;
-			ApiResponseUser apiResponseUser = JsonConvert.DeserializeObject<ApiResponseUser>((apiResponse.Detail != null) ? apiResponse.Detail.ToString() : "{}");
+			HttpContext.Current.Session["RefreshToken"] = apiResponse.RefreshToken;
+			HttpContext.Current.Session["RememberMe"] = rememberMe;
+			PersistToken(apiResponse, apiResponseUser, rememberMe);
 			model.fullname = apiResponseUser.FullName;
 			model.iduser = apiResponseUser.idUser;
 			HttpContext.Current.Session["idUser"] = apiResponseUser.idUser;
 			HttpContext.Current.Session["idNhomQuyen"] = apiResponseUser.idNhomQuyen;
 			HttpContext.Current.Session["Login_Model"] = model;
 			HttpContext.Current.Session["User"] = apiResponseUser.UserName;
+			MVC_QuanLyTHP.MvcApplication.ActivateSession(HttpContext.Current.Session.SessionID);
+			MVC_QuanLyTHP.MvcApplication.UpdateActiveSessionTokens(HttpContext.Current.Session.SessionID,
+				Convert.ToString(apiResponse.Data), apiResponse.RefreshToken, apiResponse.Expires);
 			ResetCach();
 		}
 
@@ -3222,6 +3624,23 @@ namespace MVC_QuanLyTHP.Class
 			}
 		}
 
+		public static PagedApiResponse<T> Get_DanhSachPhieuThuPaged<T>(string ID_KHO, DateTime? TUNGAY, DateTime? DENNAY, string SearchString, string IDPHIEU, int page, int pageSize)
+		{
+			SP_Parameter parameter = new SP_Parameter
+			{
+				LOC_ID = LOC_ID,
+				ID_KHO = ID_KHO,
+				TUNGAY = TUNGAY,
+				DENNGAY = DENNAY,
+				KEY = SearchString,
+				ID_PHIEUTHU = IDPHIEU
+			};
+			string procedure = !string.IsNullOrEmpty(SearchString) && SearchString.StartsWith("PGH", StringComparison.OrdinalIgnoreCase)
+				? "Sp_Get_DanhSachPhieuThu_PhieuGiaoHang/Paged"
+				: "Sp_Get_DanhSachPhieuThu/Paged";
+			return ExecuteStoredProcPaged<T>(parameter, procedure, page, pageSize);
+		}
+
 		public static ApiResponse Get_DanhSachPhieuChi<T>(string ID_KHO, DateTime? TUNGAY, DateTime? DENNAY, string SearchString = "", string IDPHIEU = "")
 		{
 			ApiResponse apiResponse = new ApiResponse();
@@ -3247,6 +3666,23 @@ namespace MVC_QuanLyTHP.Class
 				apiResponse = obj;
 				return obj;
 			}
+		}
+
+		public static PagedApiResponse<T> Get_DanhSachPhieuChiPaged<T>(string ID_KHO, DateTime? TUNGAY, DateTime? DENNAY, string SearchString, string IDPHIEU, int page, int pageSize)
+		{
+			SP_Parameter parameter = new SP_Parameter
+			{
+				LOC_ID = LOC_ID,
+				ID_KHO = ID_KHO,
+				TUNGAY = TUNGAY,
+				DENNGAY = DENNAY,
+				KEY = SearchString,
+				ID_PHIEUCHI = IDPHIEU
+			};
+			string procedure = !string.IsNullOrEmpty(SearchString) && SearchString.StartsWith("PGH", StringComparison.OrdinalIgnoreCase)
+				? "Sp_Get_DanhSachPhieuChi_PhieuGiaoHang/Paged"
+				: "Sp_Get_DanhSachPhieuChi/Paged";
+			return ExecuteStoredProcPaged<T>(parameter, procedure, page, pageSize);
 		}
 
 		public static ApiResponse Get_DanhSachPhieuLuong<T>(DateTime? TUNGAY, DateTime? DENNAY, string SearchString = "", string IDPHIEU = "")

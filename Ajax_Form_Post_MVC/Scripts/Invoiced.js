@@ -219,33 +219,8 @@ function updateInvoiced(ID, elem, myBtn) {
                     tbodyTempItemCombo.innerHTML = apiResponse.ProductCombo;
                 } catch { }
 
-                $("input.form-control.maskinput").each((i, ele) => {
-                    $(ele).removeAttr("onkeyup"); // Xoá thuộc tính gây sự kiện
-                    let clone = $(ele).clone(false)
-                    clone.removeAttr("onkeyup"); // Xoá thuộc tính gây sự kiện
-                    clone.attr("type", "text")
-                    let ele1 = $(ele)
-                    clone.val(Number(ele1.val()).toLocaleString("vn"))
-
-                    $(ele).after(clone)
-                    $(ele).hide()
-                    clone.mouseenter(() => {
-
-                        ele1.show()
-                        clone.hide()
-                    })
-                    setInterval(() => {
-                        var newv = Number(ele1.val()).toLocaleString("vn");
-                        if (clone.val() != newv) {
-                            clone.val(newv)
-                        }
-                    }, 10)
-
-                    $(ele).mouseleave(() => {
-                        $(clone).show()
-                        $(ele1).hide()
-                    })
-                })
+                $("input.form-control.maskinput").removeAttr("onkeyup");
+                if (typeof window.initializeMaskInputs === "function") window.initializeMaskInputs();
             }
             else {
                 if (apiResponse.URL != null && apiResponse.URL != "")
@@ -281,33 +256,8 @@ function AddInvoiced(myBtn) {
                     tbodyTempItemCombo.innerHTML = apiResponse.ProductCombo;
                 } catch { }
 
-                $("input.form-control.maskinput").each((i, ele) => {
-                    $(ele).removeAttr("onkeyup"); // Xoá thuộc tính gây sự kiện
-                    let clone = $(ele).clone(false)
-                    clone.removeAttr("onkeyup"); // Xoá thuộc tính gây sự kiện
-                    clone.attr("type", "text")
-                    let ele1 = $(ele)
-                    clone.val(Number(ele1.val()).toLocaleString("vn"))
-
-                    $(ele).after(clone)
-                    $(ele).hide()
-                    clone.mouseenter(() => {
-
-                        ele1.show()
-                        clone.hide()
-                    })
-                    setInterval(() => {
-                        var newv = Number(ele1.val()).toLocaleString("vn");
-                        if (clone.val() != newv) {
-                            clone.val(newv)
-                        }
-                    }, 10)
-
-                    $(ele).mouseleave(() => {
-                        $(clone).show()
-                        $(ele1).hide()
-                    })
-                })
+                $("input.form-control.maskinput").removeAttr("onkeyup");
+                if (typeof window.initializeMaskInputs === "function") window.initializeMaskInputs();
             }
             else {
                 if (apiResponse.URL != null && apiResponse.URL != "")
@@ -344,33 +294,8 @@ function myFunctionDeleteProdcutInvoiced(Controller, id, myBtn) {
                         tbodyTempItemCombo.innerHTML = apiResponse.ProductCombo;
                     } catch { }
 
-                    $("input.form-control.maskinput").each((i, ele) => {
-                        $(ele).removeAttr("onkeyup"); // Xoá thuộc tính gây sự kiện
-                        let clone = $(ele).clone(false)
-                        clone.removeAttr("onkeyup"); // Xoá thuộc tính gây sự kiện
-                        clone.attr("type", "text")
-                        let ele1 = $(ele)
-                        clone.val(Number(ele1.val()).toLocaleString("vn"))
-
-                        $(ele).after(clone)
-                        $(ele).hide()
-                        clone.mouseenter(() => {
-
-                            ele1.show()
-                            clone.hide()
-                        })
-                        setInterval(() => {
-                            var newv = Number(ele1.val()).toLocaleString("vn");
-                            if (clone.val() != newv) {
-                                clone.val(newv)
-                            }
-                        }, 10)
-
-                        $(ele).mouseleave(() => {
-                            $(clone).show()
-                            $(ele1).hide()
-                        })
-                    })
+                    $("input.form-control.maskinput").removeAttr("onkeyup");
+                    if (typeof window.initializeMaskInputs === "function") window.initializeMaskInputs();
                 }
                 else {
                     if (apiResponse.URL != null && apiResponse.URL != "")

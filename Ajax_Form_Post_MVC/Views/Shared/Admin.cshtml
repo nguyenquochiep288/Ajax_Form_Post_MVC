@@ -15,6 +15,163 @@
     <link href="@Url.Content("~/Content/css/jquery.datatables.css")" rel="stylesheet">
     <link href="@Url.Content("~/Content/css/jquery.gritter.css")" rel="stylesheet">
     <link href="@Url.Content("~/Content/css/prettyPhoto.css")" rel="stylesheet">
+    <style>
+        body .btn {
+            display: inline-flex;
+            min-height: 40px;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            padding: 8px 14px;
+            border: 1px solid transparent;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(15, 23, 42, .10);
+            font-weight: 600;
+            line-height: 1.25;
+            text-decoration: none;
+            transition: background-color .18s ease, border-color .18s ease, box-shadow .18s ease, transform .18s ease;
+        }
+
+        body .btn:hover {
+            box-shadow: 0 4px 10px rgba(15, 23, 42, .16);
+            transform: translateY(-1px);
+        }
+
+        body .btn:focus {
+            outline: 3px solid rgba(15, 118, 110, .20);
+            outline-offset: 2px;
+        }
+
+        body .btn-success {
+            border-color: #16a996;
+            background-color: #16a996;
+            color: #fff;
+        }
+
+        body .btn-success:hover,
+        body .btn-success:focus {
+            border-color: #108f81;
+            background-color: #108f81;
+            color: #fff;
+        }
+
+        body .btn-primary {
+            border-color: #2563eb;
+            background-color: #2563eb;
+            color: #fff;
+        }
+
+        body .btn-primary:hover,
+        body .btn-primary:focus {
+            border-color: #1d4ed8;
+            background-color: #1d4ed8;
+            color: #fff;
+        }
+
+        body .btn-danger {
+            border-color: #dc3545;
+            background-color: #dc3545;
+            color: #fff;
+        }
+
+        body .btn-danger:hover,
+        body .btn-danger:focus {
+            border-color: #b02a37;
+            background-color: #b02a37;
+            color: #fff;
+        }
+
+        body .btn-default {
+            border-color: #cbd5e1;
+            background-color: #f8fafc;
+            color: #334155;
+        }
+
+        body .btn-default:hover,
+        body .btn-default:focus {
+            border-color: #94a3b8;
+            background-color: #e2e8f0;
+            color: #0f172a;
+        }
+
+        body .btn-warning {
+            border-color: #d97706;
+            background-color: #d97706;
+            color: #fff;
+        }
+
+        body .btn-info {
+            border-color: #0891b2;
+            background-color: #0891b2;
+            color: #fff;
+        }
+
+        body .btn-sm,
+        body .btn-xs {
+            min-height: 32px;
+            padding: 6px 10px;
+            border-radius: 7px;
+        }
+
+        body #download-excel {
+            border-color: #217346 !important;
+            background-color: #217346 !important;
+            color: #fff !important;
+        }
+
+        body #download-excel:hover,
+        body #download-excel:focus {
+            border-color: #185c37 !important;
+            background-color: #185c37 !important;
+            color: #fff !important;
+        }
+
+        #backToTop {
+            position: fixed;
+            right: 22px;
+            bottom: 22px;
+            z-index: 1100;
+            display: grid;
+            width: 50px;
+            height: 50px;
+            place-items: center;
+            border: 0;
+            border-radius: 50%;
+            background: #0f766e;
+            color: #fff;
+            box-shadow: 0 5px 18px rgba(15, 23, 42, .25);
+            font-size: 28px;
+            line-height: 1;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(8px);
+            transition: opacity .2s ease, transform .2s ease, background-color .2s ease, visibility .2s;
+            cursor: pointer;
+        }
+
+        #backToTop.is-visible {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        #backToTop:hover,
+        #backToTop:focus {
+            background: #115e59;
+            color: #fff;
+            outline: 3px solid rgba(15, 118, 110, .25);
+            outline-offset: 2px;
+        }
+
+        @@media (max-width: 767px) {
+            #backToTop {
+                right: 16px;
+                bottom: 16px;
+                width: 48px;
+                height: 48px;
+            }
+        }
+    </style>
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -22,7 +179,6 @@
     <script src="js/respond.min.js"></script>
     <![endif]-->
 </head>
-<script src="https://cdn.sheetjs.com/xlsx-0.19.3/package/dist/xlsx.full.min.js"></script>
 <body style="overflow:auto" class="stickyheader" onload="GetWidth();">
     @*class="stickyheader"*@
     <!-- Preloader -->
@@ -91,16 +247,11 @@
     <script src="@Url.Content("~/Content/js/retina.min.js")"></script>
     <script src="@Url.Content("~/Content/js/jquery.cookies.js")"></script>
 
-    <script src="@Url.Content("~/Content/js/flot/flot.min.js")"></script>
-    <script src="@Url.Content("~/Content/js/flot/flot.resize.min.js")"></script>
-    <script src="@Url.Content("~/Content/js/morris.min.js")"></script>
-    <script src="@Url.Content("~/Content/js/raphael-2.1.0.min.js")"></script>
     <script src="@Url.Content("~/Content/js/jquery-ui-1.10.3.min.js")"></script>
     <script src="@Url.Content("~/Content/js/jquery.datatables.min.js")"></script>
     <script src="@Url.Content("~/Content/js/chosen.jquery.min.js")"></script>
 
     <script src="@Url.Content("~/Content/js/custom.js")"></script>
-    <script src="@Url.Content("~/Content/js/dashboard.js")"></script>
     <script src="@Url.Content("~/Content/js/jquery.gritter.min.js")"></script>
     <script src="@Url.Content("~/Content/js/jquery.prettyPhoto.js")"></script>
 </body>
@@ -124,45 +275,85 @@
         jQuery('#datepicker').datepicker();
 
     };
+    function loadXlsx() {
+        if (window.XLSX) {
+            return Promise.resolve();
+        }
+        if (!window.xlsxLoadPromise) {
+            window.xlsxLoadPromise = new Promise(function (resolve, reject) {
+                var script = document.createElement('script');
+                script.src = 'https://cdn.sheetjs.com/xlsx-0.19.3/package/dist/xlsx.full.min.js';
+                script.onload = resolve;
+                script.onerror = function () {
+                    window.xlsxLoadPromise = null;
+                    reject(new Error('Không tải được thư viện Excel.'));
+                };
+                document.head.appendChild(script);
+            });
+        }
+        return window.xlsxLoadPromise;
+    }
+
     function ExportExcel(nametable) {
-        //var table=document.getElementById(nametable);
-        //var rows=table.rows;
-        //var csvContent='\uFEFF' ; // Add BOM for UTF-8 encoding
-        //for (var i=0; i < rows.length; i++) {
-        //    var cells = rows[i].cells;
-        //    var rowContent = [];
-        //    for (var j = 0; j < cells.length; j++) {
-        //        rowContent.push(cells[j].innerText.replaceAll(',',';'));
-        //    }
-        //    csvContent += rowContent.join(',') + '\n'; // Use semicolon as delimiter
-        //}
-
-        //var blob = new Blob([csvContent], {type: 'text/csv;charset=utf-8;' });
-        //var url = window.URL.createObjectURL(blob);
-        //var a = document.createElement('a');
-        //a.setAttribute('hidden', '');
-        //a.setAttribute('href', url);
-        //a.setAttribute('download', 'FileExportExcel.csv');
-        //document.body.appendChild(a);
-        //a.click();
-        //document.body.removeChild(a);
-        const table = document.getElementById(nametable);
-        const wb = XLSX.utils.table_to_book(table, { sheet: 'Sheet1' });
-
-        // Format cells as currency (VND)
-        const ws = wb.Sheets['Sheet1'];
-        for (let cell in ws) {
-            if (ws[cell].t === 'n') { // Check if the cell is a number
-                ws[cell].z = '#,##0.00'; // Apply VND currency format
-            }
+        var table = document.getElementById(nametable);
+        if (!table) {
+            return;
         }
 
-        XLSX.writeFile(wb, 'FileExportExcel.xlsx');
+        loadXlsx().then(function () {
+            const wb = XLSX.utils.table_to_book(table, { sheet: 'Sheet1' });
+            const ws = wb.Sheets['Sheet1'];
+            for (let cell in ws) {
+                if (ws[cell].t === 'n') {
+                    ws[cell].z = '#,##0.00';
+                }
+            }
+
+            XLSX.writeFile(wb, 'FileExportExcel.xlsx');
+        }).catch(function () {
+            alert('Không thể tải thư viện xuất Excel. Vui lòng thử lại.');
+        });
     }
 </script>
 
 @{Html.RenderAction("Index", "Search");}
 <script src="@Url.Content("~/Scripts/Footer.js")"></script>
+<button type="button" id="backToTop" aria-label="Về đầu trang" title="Về đầu trang" aria-hidden="true">
+    <span aria-hidden="true">↑</span>
+</button>
+<script>
+    (function () {
+        var button = document.getElementById('backToTop');
+        if (!button) return;
+
+        var scrollUpdatePending = false;
+        function updateBackToTop() {
+            var scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
+            var isVisible = scrollTop > 250;
+            button.classList.toggle('is-visible', isVisible);
+            button.setAttribute('aria-hidden', isVisible ? 'false' : 'true');
+            scrollUpdatePending = false;
+        }
+
+        window.addEventListener('scroll', function () {
+            if (!scrollUpdatePending) {
+                scrollUpdatePending = true;
+                window.requestAnimationFrame(updateBackToTop);
+            }
+        }, { passive: true });
+
+        button.addEventListener('click', function () {
+            try {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } catch (error) {
+                document.documentElement.scrollTop = 0;
+                document.body.scrollTop = 0;
+            }
+        });
+
+        updateBackToTop();
+    })();
+</script>
 @*<script>
     document.addEventListener("keydown", function (event) {
         if (event.key === "Enter") {
@@ -171,5 +362,3 @@
         }
     });
 </script>*@
-
-

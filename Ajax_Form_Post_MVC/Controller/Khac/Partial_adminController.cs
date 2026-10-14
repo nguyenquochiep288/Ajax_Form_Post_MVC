@@ -10,12 +10,27 @@ namespace MVC_QuanLyTHP.Controllers
 
 	public class Partial_adminController : Controller
 	{
+		private Login_Model GetLoginModel()
+		{
+			Login_Model loginModel = base.Session["Login_Model"] as Login_Model;
+			if (loginModel == null)
+			{
+				loginModel = new Login_Model
+				{
+					user = base.Session["User"] as string ?? string.Empty,
+					fullname = base.Session["User"] as string ?? string.Empty,
+					iduser = base.Session["idUser"] as string ?? string.Empty
+				};
+				base.Session["Login_Model"] = loginModel;
+			}
+			return loginModel;
+		}
+
 		[ChildActionOnly]
 		public ActionResult Index()
 		{
-			if (base.Session["Login_Model"] != null)
 			{
-				Login_Model login_Model = (Login_Model)base.Session["Login_Model"];
+				Login_Model login_Model = GetLoginModel();
 				v_v_AspNetUsers v_v_AspNetUsers2 = new v_v_AspNetUsers();
 				ApiResponse apiResponse = new ApiResponse();
 				if (login_Model != null && string.IsNullOrEmpty(login_Model.url_image))
@@ -36,18 +51,17 @@ namespace MVC_QuanLyTHP.Controllers
 				}
 				base.Session["Login_Model"] = login_Model;
 				string fullname = login_Model.fullname;
-				base.ViewBag.Images = login_Model.url_image;
-				base.ViewBag.Fullname = login_Model.fullname;
-				base.ViewBag.Username = login_Model.user;
+				base.ViewBag.Images = string.IsNullOrWhiteSpace(login_Model.url_image) ? "~/Images_sp/hinh.jpg" : login_Model.url_image;
+				base.ViewBag.Fullname = login_Model.fullname ?? string.Empty;
+				base.ViewBag.Username = login_Model.user ?? string.Empty;
 			}
 			return PartialView();
 		}
 
 		public ActionResult Home()
 		{
-			if (base.Session["Login_Model"] != null)
 			{
-				Login_Model login_Model = (Login_Model)base.Session["Login_Model"];
+				Login_Model login_Model = GetLoginModel();
 				v_AspNetUsers v_AspNetUsers2 = new v_AspNetUsers();
 				ApiResponse apiResponse = new ApiResponse();
 				if (login_Model != null && string.IsNullOrEmpty(login_Model.url_image))
@@ -68,9 +82,9 @@ namespace MVC_QuanLyTHP.Controllers
 				}
 				base.Session["Login_Model"] = login_Model;
 				string fullname = login_Model.fullname;
-				base.ViewBag.Images = login_Model.url_image;
-				base.ViewBag.Fullname = login_Model.fullname;
-				base.ViewBag.Username = login_Model.user;
+				base.ViewBag.Images = string.IsNullOrWhiteSpace(login_Model.url_image) ? "~/Images_sp/hinh.jpg" : login_Model.url_image;
+				base.ViewBag.Fullname = login_Model.fullname ?? string.Empty;
+				base.ViewBag.Username = login_Model.user ?? string.Empty;
 			}
 			return PartialView();
 		}

@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Net.Http;
+using System.Threading.Tasks;
 using System.Web.Mvc;
 using DatabaseTHP;
 using DatabaseTHP.Class;
@@ -15,6 +17,136 @@ namespace MVC_QuanLyTHP.Controllers
 
 	public class PromotionController : Controller
 	{
+		[AllowAnonymous]
+		public async Task<ActionResult> ForCustomers()
+		{
+			PromotionCustomerPageModel model = new PromotionCustomerPageModel();
+			DateTime today = DateTime.Today;
+			ViewBag.MonthTitle = today.ToString("'Tháng' MM 'năm' yyyy", System.Globalization.CultureInfo.GetCultureInfo("vi-VN"));
+
+			try
+			{
+				string apiBaseUrl = Utility.URL.TrimEnd('/');
+				using (HttpClient client = new HttpClient())
+				{
+					client.Timeout = TimeSpan.FromSeconds(15);
+					HttpResponseMessage response = await client.GetAsync(apiBaseUrl + "/Promotion/Public/CurrentMonth");
+					if (!response.IsSuccessStatusCode)
+					{
+						model.LoadError = "Hiện chưa thể tải chương trình khuyến mãi. Vui lòng thử lại sau.";
+					}
+					else
+					{
+						string json = await response.Content.ReadAsStringAsync();
+						PromotionCustomerApiResponse apiResponse = JsonConvert.DeserializeObject<PromotionCustomerApiResponse>(json);
+						if (apiResponse != null && apiResponse.Success && apiResponse.Data != null)
+						{
+							model.Promotions = apiResponse.Data;
+						}
+						else
+						{
+							model.LoadError = "Hiện chưa thể tải chương trình khuyến mãi. Vui lòng thử lại sau.";
+						}
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				Utility.WriteLog(this, MethodBase.GetCurrentMethod().Name, ex);
+				model.LoadError = "Hiện chưa thể tải chương trình khuyến mãi. Vui lòng thử lại sau.";
+			}
+
+			return View("ForCustomers", model);
+		}
+
+		public ActionResult PreviewCustomer(string id)
+		{
+			try
+			{
+				if (Utility.KiemTra())
+				{
+					return RedirectToAction("Index", "Admin");
+				}
+				if (!Utility.KiemTraQuyen("Promotion", "View"))
+				{
+					base.TempData["TitleError"] = "Bạn không có quyền truy cập chức năng!";
+					return RedirectToAction("Index", "Notfound");
+				}
+				if (string.IsNullOrWhiteSpace(id))
+				{
+					return RedirectToAction("Index");
+				}
+
+				ApiResponse detail = Utility.GetDetail<v_v_dm_ChuongTrinhKhuyenMai>(Utility.LOC_ID + "/" + id, "Promotion");
+				v_v_dm_ChuongTrinhKhuyenMai promotion = detail != null && detail.Success
+					? detail.Data as v_v_dm_ChuongTrinhKhuyenMai
+					: null;
+				if (promotion == null)
+				{
+					base.TempData["TitleError"] = detail == null ? "Không thể tải chương trình khuyến mãi." : detail.Message;
+					return RedirectToAction("Index", "Notfound");
+				}
+
+				List<v_dm_HangHoa> products = Utility.GetListData<v_dm_HangHoa>("Product", "", "", Utility.LOC_ID).Data as List<v_dm_HangHoa>;
+				Dictionary<string, string> pictures = products == null
+					? new Dictionary<string, string>()
+					: products.Where(p => !string.IsNullOrWhiteSpace(p.ID)).GroupBy(p => p.ID).ToDictionary(g => g.Key, g => g.First().PICTURE);
+				Func<string, string> getPicture = productId =>
+				{
+					string picture;
+					return !string.IsNullOrWhiteSpace(productId) && pictures.TryGetValue(productId, out picture) ? picture : null;
+				};
+
+				PromotionCustomerItem item = new PromotionCustomerItem
+				{
+					MA = promotion.MA,
+					NAME = promotion.NAME,
+					TUNGAY = promotion.TUNGAY,
+					DENNGAY = promotion.DENNGAY,
+					CHIETKHAU = promotion.CHIETKHAU,
+					TIENGIAM = promotion.TIENGIAM,
+					IS_YEUCAUCHITIET = promotion.IS_YEUCAUCHITIET,
+					TONGTIEN_DATKM = promotion.TONGTIEN_DATKM,
+					SOLUONG_DATKM = promotion.SOLUONG_DATKM,
+					NAME_DVT = promotion.NAME_DVT,
+					ISTONGHOADON = promotion.ISTONGHOADON,
+					ISTINHLUYTUYEN = promotion.ISTINHLUYTUYEN,
+					Requirements = (promotion.lstdm_ChuongTrinhKhuyenMai_YeuCau ?? new List<v_dm_ChuongTrinhKhuyenMai_YeuCau>()).Select(r => new PromotionCustomerRequirement
+					{
+						NAME = r.NAME,
+						SOLUONG = r.SOLUONG,
+						NAME_DVT = r.NAME_DVT,
+						SOTIEN = r.SOTIEN,
+						CHIETKHAU = r.CHIETKHAU,
+						TIENGIAM = r.TIENGIAM,
+						NAME_HINHTHUC = r.NAME_HINHTHUC,
+						PICTURE = getPicture(r.ID_HANGHOA)
+					}).ToList(),
+					Gifts = (promotion.lstdm_ChuongTrinhKhuyenMai_Tang ?? new List<v_dm_ChuongTrinhKhuyenMai_Tang>()).Select(g => new PromotionCustomerGift
+					{
+						NAME = g.NAME,
+						SOLUONG = g.SOLUONG,
+						NAME_DVT = g.NAME_DVT,
+						PICTURE = getPicture(g.ID_HANGHOA)
+					}).ToList()
+				};
+
+				PromotionCustomerPageModel model = new PromotionCustomerPageModel
+				{
+					Promotions = new List<PromotionCustomerItem> { item },
+					PreviewMode = true
+				};
+				ViewBag.MonthTitle = DateTime.Today.ToString("'Tháng' MM 'năm' yyyy", System.Globalization.CultureInfo.GetCultureInfo("vi-VN"));
+				return View("ForCustomers", model);
+			}
+			catch (Exception ex)
+			{
+				Utility.WriteLog(this, MethodBase.GetCurrentMethod().Name, ex);
+				base.TempData["TitleError"] = "Không thể tải bản xem trước chương trình khuyến mãi.";
+				return RedirectToAction("Index", "Notfound");
+			}
+		}
+
 		public ActionResult Index(int Page = 1, string SearchString = "", string ShowSearchValue = "")
 		{
 			try
@@ -1055,5 +1187,57 @@ namespace MVC_QuanLyTHP.Controllers
 				MaxJsonLength = int.MaxValue
 			};
 		}
+	}
+
+	public class PromotionCustomerPageModel
+	{
+		public List<PromotionCustomerItem> Promotions { get; set; } = new List<PromotionCustomerItem>();
+		public string LoadError { get; set; }
+		public bool PreviewMode { get; set; }
+	}
+
+	public class PromotionCustomerApiResponse
+	{
+		public bool Success { get; set; }
+		public string Message { get; set; }
+		public List<PromotionCustomerItem> Data { get; set; }
+	}
+
+	public class PromotionCustomerItem
+	{
+		public string MA { get; set; }
+		public string NAME { get; set; }
+		public DateTime TUNGAY { get; set; }
+		public DateTime DENNGAY { get; set; }
+		public double CHIETKHAU { get; set; }
+		public double TIENGIAM { get; set; }
+		public bool IS_YEUCAUCHITIET { get; set; }
+		public double TONGTIEN_DATKM { get; set; }
+		public double SOLUONG_DATKM { get; set; }
+		public string NAME_DVT { get; set; }
+		public bool ISTONGHOADON { get; set; }
+		public bool ISTINHLUYTUYEN { get; set; }
+		public List<PromotionCustomerGift> Gifts { get; set; } = new List<PromotionCustomerGift>();
+		public List<PromotionCustomerRequirement> Requirements { get; set; } = new List<PromotionCustomerRequirement>();
+	}
+
+	public class PromotionCustomerGift
+	{
+		public string NAME { get; set; }
+		public double SOLUONG { get; set; }
+		public string NAME_DVT { get; set; }
+		public string PICTURE { get; set; }
+	}
+
+	public class PromotionCustomerRequirement
+	{
+		public string NAME { get; set; }
+		public double SOLUONG { get; set; }
+		public string NAME_DVT { get; set; }
+		public double SOTIEN { get; set; }
+		public double CHIETKHAU { get; set; }
+		public double TIENGIAM { get; set; }
+		public string NAME_HINHTHUC { get; set; }
+		public string PICTURE { get; set; }
 	}
 }

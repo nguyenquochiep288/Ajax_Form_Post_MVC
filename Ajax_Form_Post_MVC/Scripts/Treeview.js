@@ -98,32 +98,51 @@ $(document).ready(function () {
 
 function funSearchTreeview() {
     OpenLoader();
-    var value = document.getElementById("SearchStringTree").value;
-    var x, j;
-    x = document.getElementsByClassName("licbx");
-    for (j = 0; j < x.length; j++) {
-        var string = x[j].innerText.toLowerCase().replace(/à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ/g, "a").replace(/è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ/g, "e").replace(/ì|í|ị|ỉ|ĩ/g, "i").replace(/ò|ó|ọ|ỏ|õ|ô|ồ|ố|ộ|ổ|ỗ|ơ|ờ|ớ|ợ|ở|ỡ/g, "o").replace(/ù|ú|ụ|ủ|ũ|ư|ừ|ứ|ự|ử|ữ/g, "u").replace(/ỳ|ý|ỵ|ỷ|ỹ/g, "y").replace(/đ/g, "d");
-        value = value.trim().toLowerCase().replace(/à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ/g, "a").replace(/è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ/g, "e").replace(/ì|í|ị|ỉ|ĩ/g, "i").replace(/ò|ó|ọ|ỏ|õ|ô|ồ|ố|ộ|ổ|ỗ|ơ|ờ|ớ|ợ|ở|ỡ/g, "o").replace(/ù|ú|ụ|ủ|ũ|ư|ừ|ứ|ự|ử|ữ/g, "u").replace(/ỳ|ý|ỵ|ỷ|ỹ/g, "y").replace(/đ/g, "d");
-        if (string.indexOf(value) > -1)
-            x[j].classList.value = "licbx active1";
+    var searchTerm = normalizeTreeSearchText(document.getElementById("SearchStringTree").value, true);
+    var items = document.getElementsByClassName("licbx");
+    for (var j = 0; j < items.length; j++) {
+        var itemText = normalizeTreeSearchText(items[j].innerText, false);
+        if (itemText.indexOf(searchTerm) > -1)
+            items[j].classList.value = "licbx active1";
         else
-            x[j].classList.value = "licbx nested1";
+            items[j].classList.value = "licbx nested1";
     }
     var toggler = document.getElementsByClassName("caret1");
 
-    for (i = 0; i < toggler.length; i++) {
+    for (var i = 0; i < toggler.length; i++) {
         if (toggler[i].classList.value.indexOf("caret1-down") < 0) {
             toggler[i].parentElement.querySelector(".nested").classList.toggle("active");
             toggler[i].classList.toggle("caret1-down");
         }
         else {
-            if (value.length == 0) {
+            if (searchTerm.length == 0) {
                 toggler[i].classList.value = "caret1";
                 toggler[i].parentElement.querySelector(".nested").classList.value = "nested";
             }
         }
     }
     CloseLoader();
+}
+
+var treeVietnameseAccentMap = {
+    "à": "a", "á": "a", "ạ": "a", "ả": "a", "ã": "a", "â": "a", "ầ": "a", "ấ": "a", "ậ": "a", "ẩ": "a", "ẫ": "a", "ă": "a", "ằ": "a", "ắ": "a", "ặ": "a", "ẳ": "a", "ẵ": "a",
+    "è": "e", "é": "e", "ẹ": "e", "ẻ": "e", "ẽ": "e", "ê": "e", "ề": "e", "ế": "e", "ệ": "e", "ể": "e", "ễ": "e",
+    "ì": "i", "í": "i", "ị": "i", "ỉ": "i", "ĩ": "i",
+    "ò": "o", "ó": "o", "ọ": "o", "ỏ": "o", "õ": "o", "ô": "o", "ồ": "o", "ố": "o", "ộ": "o", "ổ": "o", "ỗ": "o", "ơ": "o", "ờ": "o", "ớ": "o", "ợ": "o", "ở": "o", "ỡ": "o",
+    "ù": "u", "ú": "u", "ụ": "u", "ủ": "u", "ũ": "u", "ư": "u", "ừ": "u", "ứ": "u", "ự": "u", "ử": "u", "ữ": "u",
+    "ỳ": "y", "ý": "y", "ỵ": "y", "ỷ": "y", "ỹ": "y", "đ": "d"
+};
+
+function normalizeTreeSearchText(value, trimWhitespace) {
+    var text = (value || "").toLowerCase();
+
+    if (trimWhitespace) {
+        text = text.trim();
+    }
+
+    return text.replace(/[àáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ]/g, function (character) {
+        return treeVietnameseAccentMap[character] || character;
+    });
 }
 
 function OpenLoader() {

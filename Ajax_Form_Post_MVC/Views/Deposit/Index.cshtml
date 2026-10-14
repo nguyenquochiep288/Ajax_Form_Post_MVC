@@ -176,6 +176,118 @@
         .prevDeposit:hover, .nextDeposit:hover {
             background-color: rgba(0, 0, 0, 0.8);
         }
+
+    #accordion .btn {
+        display: inline-flex;
+        min-height: 44px;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 10px 16px;
+        border: 1px solid transparent;
+        border-radius: 9px;
+        box-shadow: 0 2px 5px rgba(15, 23, 42, .10);
+        font-weight: 600;
+        line-height: 1.25;
+        text-decoration: none;
+        transition: background-color .18s ease, box-shadow .18s ease, transform .18s ease;
+    }
+
+    #accordion .btn:hover {
+        box-shadow: 0 4px 10px rgba(15, 23, 42, .16);
+        transform: translateY(-1px);
+    }
+
+    #accordion .btn:focus {
+        outline: 3px solid rgba(15, 118, 110, .22);
+        outline-offset: 2px;
+    }
+
+    #accordion .btn i {
+        margin-right: 0 !important;
+    }
+
+    #accordion .btn-success {
+        border-color: #16a996;
+        background-color: #16a996 !important;
+        color: #fff;
+    }
+
+    #accordion .btn-success:hover,
+    #accordion .btn-success:focus {
+        border-color: #108f81;
+        background-color: #108f81 !important;
+        color: #fff;
+    }
+
+    #accordion #download-excel {
+        border-color: #217346 !important;
+        background-color: #217346 !important;
+        color: #fff !important;
+    }
+
+    #accordion #download-excel:hover,
+    #accordion #download-excel:focus {
+        border-color: #185c37 !important;
+        background-color: #185c37 !important;
+    }
+
+    #accordion .btn-primary {
+        border-color: #2563eb;
+        background-color: #2563eb;
+        color: #fff;
+    }
+
+    #accordion .btn-primary:hover,
+    #accordion .btn-primary:focus {
+        border-color: #1d4ed8;
+        background-color: #1d4ed8;
+        color: #fff;
+    }
+
+    #accordion .btn-default {
+        min-width: 48px;
+        border-color: #cbd5e1;
+        background: #f8fafc;
+        color: #334155;
+    }
+
+    #accordion .btn-default:hover,
+    #accordion .btn-default:focus {
+        border-color: #94a3b8;
+        background: #e2e8f0;
+        color: #0f172a;
+    }
+
+    #accordion .fix .label {
+        display: inline-flex;
+        min-height: 34px;
+        vertical-align: middle;
+        align-items: center;
+        gap: 6px;
+        margin: 3px 2px;
+        padding: 7px 10px;
+        border-radius: 7px;
+        font-size: 13px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: filter .18s ease;
+    }
+
+    #accordion .fix .label:hover {
+        filter: brightness(.92);
+    }
+
+    #accordion .fix .label i,
+    #accordion .fix .label .glyphicon {
+        margin: 0 !important;
+    }
+
+    #accordion .pagination > li > a,
+    #accordion .pagination > li > span {
+        margin: 0 2px;
+        border-radius: 7px;
+    }
 </style>
 @Html.Partial("LoadCssDanhMuc")
 <script src="@Url.Content("~/Scripts/Deposit_Temp.js"+Utility.VersionJs)"></script>
@@ -193,7 +305,7 @@
         <div id="collapseOne" class="panel-collapse collapse in">
             <div class="form-group">
                 <div class="col-sm-3" style="padding-bottom: 5px;">
-                    <button id="download-excel" style="background-color: #217346;" class="btn btn-success" onclick="ExportExcel('example-table')"><i class="fa fa-file-text-o" style="margin-right:10px"></i>@Utility.XuatExcel</button>
+                    <button id="download-excel" class="btn btn-success" onclick="ExportExcel('example-table')"><i class="fa fa-file-text-o" style="margin-right:10px"></i>@Utility.XuatExcel</button>
                     @if (ViewBag.PermissionCreate)
                     {
                         if (Utility.IntWidth == 1)

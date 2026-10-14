@@ -13,8 +13,8 @@ const stopDragging = (e) => {
 }
 
 const move = (e) => {
-    e.preventDefault();
     if (!mouseDown) { return; }
+    e.preventDefault();
     const x = e.pageX - slider.offsetLeft;
     const scroll = x - startX;
     slider.scrollLeft = scrollLeft - scroll;
