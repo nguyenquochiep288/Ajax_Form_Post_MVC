@@ -1,0 +1,271 @@
+﻿@model MVC_QuanLyTHP.Models.PriceCalculationRunModel
+<style>
+    .pr-picker{border:1px solid #ccd5df;border-radius:6px;background:#fff;padding:9px}.pr-picker summary{cursor:pointer;color:#087d72}.pr-picker-list{max-height:220px;overflow:auto;margin-top:8px}.pr-picker-list label{display:flex;align-items:center;gap:8px;padding:7px;margin:0;font-weight:400}.pr-chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}.pr-chip{border:0;border-radius:14px;background:#e6f6f3;color:#087d72;padding:4px 9px}.pr-field{min-width:0}.pr-field input[type=date]{min-width:0;width:100%;max-width:100%;box-sizing:border-box}
+    .price-run{padding:18px}.price-run h2{text-align:center;margin:0 0 18px}.pr-card{background:#fff;border:1px solid #ddd;border-radius:9px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,.05)}.pr-card-title{font-size:20px;font-weight:600;padding:14px 18px;border-bottom:1px solid #e5e5e5;color:#536b83}.pr-card-body{padding:18px}.pr-grid{display:grid;grid-template-columns:repeat(4,minmax(170px,1fr));gap:14px;align-items:end}.pr-field label{display:block;font-weight:500;margin-bottom:6px}.pr-field .form-control{height:42px}.pr-help{font-size:12px;color:#718096;margin-top:6px}.pr-formula{padding:12px 14px;border:1px solid #cce6e1;border-radius:7px;background:#f0faf8;margin-bottom:8px}.pr-formula strong{color:#087d72}.pr-expression{font-family:Consolas,monospace;overflow-wrap:anywhere;margin:7px 0}.pr-table-wrap{overflow:auto;max-height:60vh}.pr-table{min-width:1750px;margin-bottom:0}.pr-table th{white-space:nowrap;background:#f7f9fb}.pr-table td{vertical-align:middle}.pr-status{font-weight:600}.pr-status-ready{color:#087d72}.pr-status-error{color:#b42318}.pr-status-applied{color:#126b3a}.pr-toolbar{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin:12px 0}.pr-empty{text-align:center;color:#718096;padding:32px}.pr-callout{background:#f4f8fb;border-left:4px solid #11a995;padding:10px 14px;margin-bottom:14px}.pr-date{white-space:nowrap}.pr-diff-up{color:#b42318}.pr-diff-down{color:#087d72}.pr-converted{white-space:nowrap;color:#087d72;font-weight:600}
+    .pr-scope-grid{align-items:start}.pr-group-picker{padding:0;min-height:42px;box-sizing:border-box}.pr-group-picker>summary{min-height:40px;box-sizing:border-box;padding:9px 12px;line-height:22px;overflow-wrap:anywhere}.pr-group-picker>input.form-control{width:calc(100% - 18px);margin:0 9px}.pr-group-picker .pr-picker-list{padding:0 9px 9px}.pr-group-picker .pr-picker-list label{display:flex;align-items:center;margin:0;font-weight:400}.pr-chips:empty{display:none}
+    .pr-price-edit{width:125px;min-width:110px;height:34px;padding:5px 8px;text-align:right}.pr-price-edit.pr-input-error{border-color:#d92d20;background:#fff5f4}.pr-receipt-code{display:block;margin-top:3px;color:#52667a;white-space:nowrap}.price-delta{white-space:nowrap}
+    @@media(max-width:900px){.price-run{padding:10px}.pr-grid{grid-template-columns:1fr 1fr}.pr-card-body{padding:12px}}
+    @@media(max-width:600px){.pr-grid{grid-template-columns:1fr}.pr-toolbar>*{width:100%}.pr-toolbar .btn{width:auto}}
+</style>
+<div class="price-run" style="@(Model.Embedded ? "padding:0" : "")">
+    @if (!Model.Embedded) { <h2>TÍNH GIÁ THEO CÔNG THỨC</h2> }
+    <div id="priceRunMessage" class="alert" style="display:none"></div>
+    <div class="pr-card">
+        <div class="pr-card-title">@(Model.Embedded ? "5. Chọn phạm vi hoặc nạp Excel để tính giá" : "1. Chọn phạm vi tính và nạp Excel")</div>
+        <div class="pr-card-body">
+            <div class="pr-grid pr-scope-grid">
+                @if (!Model.Embedded) {
+                <div class="pr-field"><label for="priceType">Loại giá cần cập nhật</label><select id="priceType" class="form-control"><option value="GIA01">Giá bán 1</option><option value="GIA02">Giá bán 2</option><option value="GIA03">Giá bán 3</option><option value="GIAMUA">Giá mua</option></select></div>
+                <div class="pr-field"><label>Nhóm hàng hóa</label><details class="pr-picker pr-group-picker"><summary id="priceGroupSummary">Tất cả nhóm hàng hóa</summary><input type="search" id="priceGroupSearch" class="form-control" placeholder="Tìm nhóm…" aria-label="Tìm nhóm hàng hóa" /><div id="priceGroups" class="pr-picker-list">
+                    @foreach (var group in Model.Groups) { <label><input type="checkbox" value="@group.ID" data-label="@group.NAME" /> <span>@group.NAME</span></label> }
+                </div></details><div id="priceGroupChips" class="pr-chips"></div><div class="pr-help">Không chọn nhóm = tất cả nhóm.</div></div>
+                }
+                <div class="pr-field"><label for="priceDate">Ngày áp dụng</label><input id="priceDate" class="form-control" type="date" value="@DateTime.Today.ToString("yyyy-MM-dd")" /></div>
+                <div class="pr-field"><label for="priceSource">Nguồn hàng hóa</label><select id="priceSource" class="form-control"><option value="catalog">Chọn từ danh mục hàng hóa</option><option value="excel">Nạp từ file Excel</option></select></div>
+            </div>
+            <div id="catalogScope" style="margin-top:14px">
+                <label>Hàng hóa</label>
+                <details id="catalogPicker" class="pr-picker"><summary id="catalogSummary">Tất cả hàng hóa trong nhóm đã chọn</summary>
+                    <div class="pr-toolbar"><input id="catalogSearch" type="search" class="form-control" style="max-width:380px" placeholder="Tìm mã hoặc tên hàng…" aria-label="Tìm hàng hóa trong danh mục" /><button id="loadCatalog" type="button" class="btn btn-default">Nạp danh sách</button><button id="allCatalog" type="button" class="btn btn-default">Chọn tất cả kết quả</button><button id="clearAllCatalog" type="button" class="btn btn-default">Bỏ chọn tất cả kết quả</button></div>
+                    <div id="catalogOptions" class="pr-picker-list">Bấm Nạp danh sách để chọn từng hàng; để mặc định sẽ tính tất cả hàng trong nhóm.</div>
+                </details><div id="catalogChips" class="pr-chips"></div>
+                <div class="pr-help">Để tính toàn bộ hàng: chọn nhóm ở trên rồi bấm <strong>Tính xem trước</strong>. Không chọn nhóm sẽ lấy tất cả nhóm.<br />Để chọn riêng từng hàng: mở mục này, bấm <strong>Nạp danh sách</strong> rồi chọn hoặc bỏ chọn kết quả đã nạp.</div>
+            </div>
+            <div class="pr-field" style="margin-top:14px"><label for="excelFile">Hoặc chọn file Excel</label><input id="excelFile" class="form-control" type="file" accept=".xlsx,.xls,.csv" /></div>
+            <div class="pr-toolbar">
+                <button id="downloadTemplate" class="btn btn-default" type="button"><i class="fa fa-download"></i> Tải file mẫu</button>
+                <button id="previewPrices" class="btn btn-primary" type="button"><i class="fa fa-calculator"></i> Tính xem trước</button>
+                <span id="fileSummary" class="text-muted"></span>
+            </div>
+            <div class="pr-callout">File gồm <b>MAHANG</b>, <b>TEN HANG</b>, <b>GIAHIENTAI</b>. Khi nạp Excel, <b>GIAHIENTAI là giá nhập gốc theo đơn vị gốc</b> (lớn hơn 0), dùng làm <b>GIAMUA</b> trong công thức. Giá hiện tại để so sánh lấy từ danh mục. Khi chọn từ danh mục, giá nhập lấy từ đơn giá trước chiết khấu lớn hơn 0 trên phiếu nhập gần nhất.</div>
+            @if (Model.Embedded) { <p class="pr-help">Dùng loại giá, nhóm hàng, công thức và giá trị mặc định ở trên. Có thể xem trước khi chưa lưu; để cập nhật giá hàng hóa, hãy lưu công thức rồi tính xem trước lại. Ngày áp dụng là ngày đối chiếu giá nhập và hiệu lực; bấm Áp dụng sẽ cập nhật giá ngay.</p> }
+        </div>
+    </div>
+
+    <div id="formulaSection" class="pr-card">
+        <div class="pr-card-title">@(Model.Embedded ? "Công thức sẽ dùng" : "2. Công thức sẽ dùng")</div>
+        <div id="formulaList" class="pr-card-body">Chọn phạm vi hoặc nạp Excel rồi bấm Tính xem trước để xem công thức phù hợp.</div>
+    </div>
+
+    <div id="resultSection" class="pr-card">
+        <div class="pr-card-title">@(Model.Embedded ? "Kết quả xem trước" : "3. Kết quả xem trước")</div>
+        <div class="pr-card-body">
+            <div class="pr-grid" style="grid-template-columns:minmax(220px,1fr) minmax(180px,280px);margin-bottom:12px">
+                <div class="pr-field"><label for="productSearch">Lọc kết quả hàng hóa</label><input id="productSearch" class="form-control" placeholder="Tìm mã hoặc tên hàng..." /></div>
+                <div class="pr-field"><label for="productFilter">Chọn nhanh hàng hóa</label><select id="productFilter" class="form-control"><option value="">Tất cả hàng hóa</option></select></div>
+            </div>
+            <div class="pr-toolbar">
+                <button id="selectVisible" type="button" class="btn btn-default btn-sm">Chọn dòng đang hiển thị</button>
+                <button id="clearVisible" type="button" class="btn btn-default btn-sm">Bỏ chọn dòng đang hiển thị</button>
+                <span id="resultSummary" class="text-muted"></span>
+            </div>
+            <div class="pr-table-wrap"><table class="table table-bordered table-striped pr-table">
+                <thead>
+                    <tr><th rowspan="2"><input id="selectAllRows" type="checkbox" aria-label="Chọn tất cả" /></th><th rowspan="2">Mã hàng</th><th rowspan="2">Tên hàng</th><th colspan="3" class="text-center">Giá hiện tại</th><th colspan="2" class="text-center">Giá nhập dùng tính (đơn vị gốc / QĐ)</th><th rowspan="2">Nguồn giá nhập<br />(Ngày / Mã phiếu)</th><th rowspan="2">Giá mới tính<br /><small>Có thể sửa</small></th><th rowspan="2">Giá QĐ mới</th><th rowspan="2">Chênh lệch</th><th rowspan="2">Công thức áp dụng</th><th rowspan="2">Trạng thái</th></tr>
+                    <tr><th>Giá hiện tại</th><th>Tỷ lệ QĐ</th><th>Giá QĐ hiện tại</th><th>Đơn vị gốc</th><th>Đơn vị QĐ</th></tr>
+                </thead>
+                <tbody id="priceRows"><tr><td colspan="14" class="pr-empty">Chưa có kết quả xem trước.</td></tr></tbody>
+            </table></div>
+            <div class="pr-toolbar">
+                @if (Model.CanApply) { <button id="applyPrices" type="button" class="btn btn-success" disabled><i class="fa fa-check"></i> Áp dụng giá đã chọn</button> }
+                else { <span class="text-warning">Tài khoản chưa được cấp quyền cập nhật giá.</span> }
+                @if (Model.CanApply) { <button id="restoreLatestPrices" type="button" class="btn btn-warning" style="display:none" disabled><i class="fa fa-undo"></i> Khôi phục giá cũ lần gần nhất</button> }
+                <button id="exportResult" type="button" class="btn btn-default" disabled><i class="fa fa-file-excel-o"></i> Xuất kết quả</button>
+                <span id="restoreSummary" class="text-muted"></span>
+                @if (!Model.Embedded) { @Html.AntiForgeryToken() }
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+(function () {
+    var importedItems = [], previewRows = [], previewSnapshot = '', latestHistoryIds = [], busy = false, embedded = @Model.Embedded.ToString().ToLowerInvariant(), canApply = @Model.CanApply.ToString().ToLowerInvariant();
+    var messageBox = document.getElementById('priceRunMessage');
+    var catalogItems = [], catalogSelection = Object.create(null), catalogReady = false, catalogVersion = 0, loadedScope = '';
+    function isCatalog() { return document.getElementById('priceSource').value === 'catalog'; }
+    function selectedItems() { return isCatalog() ? catalogItems.filter(function (x) { return catalogSelection[x.MAHANG]; }) : importedItems; }
+    function valueOf(obj, name) { if (!obj) return undefined; var key = Object.keys(obj).filter(function (k) { return k.toUpperCase() === name.toUpperCase(); })[0]; return key ? obj[key] : undefined; }
+    function showMessage(text, kind) { messageBox.className = 'alert alert-' + (kind || 'info'); messageBox.textContent = text; messageBox.style.display = text ? 'block' : 'none'; }
+    function money(value) { if (value === null || value === undefined || value === '') return '—'; return Number(value).toLocaleString('vi-VN', { maximumFractionDigits: 2 }); }
+    function wholeMoney(value) { if (value === null || value === undefined || value === '') return ''; return Math.round(Number(value)).toLocaleString('vi-VN', { maximumFractionDigits: 0 }); }
+    function parseWholeMoney(value) { var digits = String(value || '').replace(/[^0-9]/g, ''); return digits ? Number(digits) : NaN; }
+    function dateText(value) { if (!value) return '—'; var s = String(value).substring(0, 10); var p = s.split('-'); return p.length === 3 ? p[2] + '/' + p[1] + '/' + p[0] : s; }
+    function requestData() {
+        var data = embedded ? window.priceFormulaEditor.batchScope() : { LOAIGIA: document.getElementById('priceType').value, ID_NHOMHANGHOAS: Array.prototype.map.call(document.querySelectorAll('#priceGroups input:checked'), function (x) { return x.value; }) };
+        data.NGAYTINH = document.getElementById('priceDate').value; data.USE_EXCEL_PURCHASE_PRICE = !isCatalog(); data.ITEMS = selectedItems(); return data;
+    }
+    function invalidate() { previewSnapshot = ''; previewRows = []; document.getElementById('formulaList').textContent = 'Bấm Tính xem trước để xác định công thức phù hợp với phạm vi mới.'; document.getElementById('priceRows').innerHTML = '<tr><td colspan="14" class="pr-empty">Chưa có kết quả. Hãy bấm Tính xem trước.</td></tr>'; document.getElementById('exportResult').disabled = true; updateSummary(); }
+    function resetCatalog() { catalogVersion++; catalogItems = []; catalogSelection = Object.create(null); catalogReady = false; document.getElementById('catalogOptions').textContent = 'Bấm Nạp danh sách để chọn từng hàng.'; document.getElementById('catalogChips').innerHTML = ''; document.getElementById('catalogSummary').textContent = 'Tất cả hàng hóa trong nhóm đã chọn'; invalidate(); }
+    window.addEventListener('price-formula-changed', invalidate);
+    window.addEventListener('price-formula-changed', function () { if (!loadedScope) return; var data = requestData(); if (loadedScope !== JSON.stringify([data.LOAIGIA, data.ID_NHOMHANGHOAS])) { loadedScope = ''; resetCatalog(); } });
+    document.getElementById('priceDate').addEventListener('change', invalidate);
+    if (!embedded) {
+        document.getElementById('priceType').addEventListener('change', resetCatalog);
+        var groupHost = document.getElementById('priceGroups');
+        function groupChanged() {
+            var checks = groupHost.querySelectorAll('input:checked'), chips = document.getElementById('priceGroupChips'); chips.innerHTML = '';
+            document.getElementById('priceGroupSummary').textContent = checks.length ? checks.length + ' nhóm đã chọn' : 'Tất cả nhóm hàng hóa';
+            checks.forEach(function (check) { var chip = document.createElement('button'); chip.type = 'button'; chip.className = 'pr-chip'; chip.textContent = check.dataset.label + ' ×'; chip.onclick = function () { check.checked = false; groupChanged(); }; chips.appendChild(chip); }); resetCatalog();
+        }
+        groupHost.addEventListener('change', groupChanged);
+        document.getElementById('priceGroupSearch').addEventListener('input', function () { var q = this.value.toLocaleLowerCase(); groupHost.querySelectorAll('label').forEach(function (label) { label.style.display = label.textContent.toLocaleLowerCase().indexOf(q) >= 0 ? '' : 'none'; }); });
+    }
+    function renderCatalog() {
+        var host = document.getElementById('catalogOptions'), chips = document.getElementById('catalogChips'); host.innerHTML = ''; chips.innerHTML = '';
+        var count = 0;
+        catalogItems.forEach(function (item) {
+            var label = document.createElement('label'), check = document.createElement('input'); check.type = 'checkbox'; check.checked = !!catalogSelection[item.MAHANG];
+            check.onchange = function () { catalogSelection[item.MAHANG] = check.checked; renderCatalog(); invalidate(); };
+            label.appendChild(check); label.appendChild(document.createTextNode(item.MAHANG + ' · ' + item.TEN_HANG + ' · ' + money(item.GIAHIENTAI))); host.appendChild(label);
+            if (check.checked) { count++; if (count <= 12) { var chip = document.createElement('button'); chip.type = 'button'; chip.className = 'pr-chip'; chip.textContent = item.MAHANG + ' ×'; chip.onclick = function () { catalogSelection[item.MAHANG] = false; renderCatalog(); invalidate(); }; chips.appendChild(chip); } }
+        });
+        document.getElementById('catalogSummary').textContent = count + '/' + catalogItems.length + ' hàng hóa đã chọn';
+        if (!catalogItems.length) host.textContent = 'Không tìm thấy hàng hóa phù hợp.';
+        if (count > 12) chips.appendChild(document.createTextNode('và ' + (count - 12) + ' hàng hóa khác'));
+    }
+    function loadCatalog() {
+        var version = ++catalogVersion, data = requestData(); data.ITEMS = []; data.DRAFT_FORMULA = null; data.SEARCH = document.getElementById('catalogSearch').value;
+        loadedScope = JSON.stringify([data.LOAIGIA, data.ID_NHOMHANGHOAS]);
+        document.getElementById('loadCatalog').disabled = true;
+        return postPayload('@Url.Action("CalculationProducts", "PriceFormula")', data, false).then(function (res) {
+            if (version !== catalogVersion) throw new Error('Phạm vi đã đổi. Hãy nạp danh sách lại.');
+            if (!valueOf(res, 'Success')) throw new Error(valueOf(res, 'Message') || 'Không tải được hàng hóa.');
+            catalogItems = (valueOf(res, 'Data') || []).map(function (x) { return { MAHANG: valueOf(x, 'MAHANG'), TEN_HANG: valueOf(x, 'TEN_HANG'), GIAHIENTAI: valueOf(x, 'GIAHIENTAI') }; });
+            catalogSelection = Object.create(null); catalogItems.forEach(function (x) { catalogSelection[x.MAHANG] = true; }); catalogReady = true; renderCatalog(); invalidate();
+        }).finally(function () { document.getElementById('loadCatalog').disabled = false; });
+    }
+    document.getElementById('catalogSearch').addEventListener('input', resetCatalog);
+    document.getElementById('loadCatalog').onclick = function () { loadCatalog().catch(function (e) { showMessage(e.message, 'danger'); }); };
+    function selectAllCatalog(selected) {
+        var applySelection = function () { catalogItems.forEach(function (x) { catalogSelection[x.MAHANG] = selected; }); renderCatalog(); invalidate(); };
+        if (catalogReady) { applySelection(); return; }
+        loadCatalog().then(applySelection).catch(function (e) { showMessage(e.message, 'danger'); });
+    }
+    document.getElementById('allCatalog').onclick = function () { selectAllCatalog(true); };
+    document.getElementById('clearAllCatalog').onclick = function () { selectAllCatalog(false); };
+    document.getElementById('priceSource').addEventListener('change', function () { document.getElementById('catalogScope').style.display = isCatalog() ? '' : 'none'; invalidate(); document.getElementById('previewPrices').disabled = busy || (!isCatalog() && !importedItems.length); });
+    function loadXlsx() { if (window.XLSX) return Promise.resolve(); if (window.xlsxLoadPromise) return window.xlsxLoadPromise; window.xlsxLoadPromise = new Promise(function (resolve, reject) { var script = document.createElement('script'); script.src = 'https://cdn.sheetjs.com/xlsx-0.19.3/package/dist/xlsx.full.min.js'; script.onload = resolve; script.onerror = function () { window.xlsxLoadPromise = null; reject(new Error('Không tải được thư viện đọc Excel.')); }; document.head.appendChild(script); }); return window.xlsxLoadPromise; }
+    function headerKey(value) { return String(value || '').toUpperCase().replace(/[ _-]/g, ''); }
+    function parseExcelPrice(value) { if (typeof value === 'number') return value; var text = String(value || '').trim().replace(/\s/g, ''); if (!text) return 0; if (/^-?\d{1,3}(\.\d{3})+(,\d+)?$/.test(text)) text = text.replace(/\./g, '').replace(',', '.'); else if (text.indexOf(',') >= 0 && text.indexOf('.') < 0) text = text.replace(',', '.'); else text = text.replace(/,/g, ''); var n = Number(text); return isFinite(n) ? n : NaN; }
+    document.getElementById('downloadTemplate').onclick = function () { loadXlsx().then(function () { var ws = XLSX.utils.aoa_to_sheet([['MAHANG', 'TEN HANG', 'GIAHIENTAI'], ['SP001', 'Sản phẩm mẫu', 100000]]); var wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, 'DanhSachGia'); XLSX.writeFile(wb, 'Mau_TinhGia.xlsx'); }).catch(function (e) { showMessage(e.message, 'danger'); }); };
+    document.getElementById('excelFile').addEventListener('change', function () {
+        var file = this.files && this.files[0]; importedItems = []; invalidate(); document.getElementById('priceSource').value = 'excel'; document.getElementById('catalogScope').style.display = 'none'; document.getElementById('previewPrices').disabled = true;
+        showMessage('', 'info');
+        if (!file) return;
+        loadXlsx().then(function () { return file.arrayBuffer(); }).then(function (buffer) {
+            var book = XLSX.read(buffer, { type: 'array' }); var sheet = book.Sheets[book.SheetNames[0]]; var rows = XLSX.utils.sheet_to_json(sheet, { defval: '', raw: true });
+            if (!rows.length) throw new Error('File Excel chưa có dòng dữ liệu.');
+            var keys = Object.keys(rows[0]), map = {}; keys.forEach(function (key) { map[headerKey(key)] = key; });
+            if (!map.MAHANG || !map.TENHANG || !map.GIAHIENTAI) throw new Error('Thiếu cột bắt buộc: MAHANG, TEN HANG, GIAHIENTAI.');
+            importedItems = rows.filter(function (r) { return String(r[map.MAHANG] || '').trim(); }).map(function (r) { var price = parseExcelPrice(r[map.GIAHIENTAI]); if (!isFinite(price) || price <= 0) throw new Error('Giá nhập gốc (GIAHIENTAI) phải lớn hơn 0 ở mã hàng ' + r[map.MAHANG] + '.'); return { MAHANG: String(r[map.MAHANG]).trim(), TEN_HANG: String(r[map.TENHANG] || '').trim(), GIAHIENTAI: price }; });
+            if (!importedItems.length) throw new Error('Không tìm thấy mã hàng trong file.');
+            if (importedItems.length > 1000) throw new Error('Tối đa 1.000 hàng hóa mỗi lần.');
+            var seen = {}; importedItems.forEach(function (x) { var key = x.MAHANG.toUpperCase(); if (seen[key]) throw new Error('File bị trùng mã hàng: ' + x.MAHANG); seen[key] = true; });
+            document.getElementById('fileSummary').textContent = 'Đã đọc ' + importedItems.length + ' hàng hóa từ ' + file.name + '.';
+            document.getElementById('previewPrices').disabled = false;
+        }).catch(function (e) { importedItems = []; document.getElementById('fileSummary').textContent = ''; showMessage(e.message || 'Không đọc được file Excel.', 'danger'); });
+    });
+    function postPayload(url, data, includeToken) {
+        var fields = new URLSearchParams(); fields.append('payload', JSON.stringify(data));
+        if (includeToken) fields.append('__RequestVerificationToken', document.querySelector('input[name="__RequestVerificationToken"]').value);
+        return fetch(url, { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8', 'Accept': 'application/json' }, body: fields.toString() }).then(function (r) { return r.json(); });
+    }
+    function loadLatestRestore() {
+        var button = document.getElementById('restoreLatestPrices'), summary = document.getElementById('restoreSummary');
+        if (!button || !canApply) return Promise.resolve();
+        return fetch('@Url.Action("LatestAppliedBatch", "PriceFormula")', { credentials: 'same-origin', headers: { 'Accept': 'application/json' } }).then(function (r) { return r.json(); }).then(function (res) {
+            var data = valueOf(res, 'Data'), success = valueOf(res, 'Success'); latestHistoryIds = [];
+            if (!success || !data) { button.style.display = 'none'; summary.textContent = ''; return; }
+            latestHistoryIds = valueOf(data, 'HISTORY_IDS') || [];
+            var total = Number(valueOf(data, 'TOTAL') || 0), restorable = Number(valueOf(data, 'RESTORABLE') || latestHistoryIds.length), appliedAt = valueOf(data, 'APPLIED_AT');
+            button.style.display = total ? '' : 'none'; button.disabled = restorable === 0;
+            summary.textContent = restorable > 0 ? ('Có thể khôi phục ' + restorable + ' giá từ lần áp dụng ' + (appliedAt ? new Date(appliedAt).toLocaleString('vi-VN') : 'gần nhất') + '.') : 'Lần áp dụng gần nhất đã được khôi phục hoặc giá đã thay đổi.';
+        }).catch(function () { button.style.display = 'none'; summary.textContent = ''; });
+    }
+    function renderFormulas(rows) {
+        var seen = {}; var container = document.getElementById('formulaList'); container.innerHTML = '';
+        rows.forEach(function (r) { var id = valueOf(r, 'ID_CONGTHUCGIA'); if (!id || seen[id]) return; seen[id] = true; var card = document.createElement('div'); card.className = 'pr-formula'; var name = document.createElement('strong'); name.textContent = (valueOf(r, 'MA_CONGTHUC') || '') + ' · ' + (valueOf(r, 'TEN_CONGTHUC') || ''); var expr = document.createElement('div'); expr.className = 'pr-expression'; expr.textContent = valueOf(r, 'CONGTHUC') || ''; var period = document.createElement('small'); period.className = 'text-muted'; period.textContent = 'Hiệu lực: ' + dateText(valueOf(r, 'CONGTHUC_TUNGAY')) + ' – ' + (valueOf(r, 'CONGTHUC_DENNGAY') ? dateText(valueOf(r, 'CONGTHUC_DENNGAY')) : 'Không giới hạn'); period.textContent += id === 'draft' ? ' · Bản đang nhập' : ' · Đang hoạt động'; card.appendChild(name); card.appendChild(expr); card.appendChild(period); container.appendChild(card); });
+        if (!Object.keys(seen).length) container.textContent = 'Chưa tìm thấy công thức phù hợp. Xem trạng thái từng hàng bên dưới.';
+    }
+    function updatePriceDelta(row, deltaCell) {
+        var delta = valueOf(row, 'CHENHLECH');
+        deltaCell.textContent = delta === null || delta === undefined ? '—' : (Number(delta) > 0 ? '+' : '') + money(delta);
+        deltaCell.className = 'price-delta ' + (Number(delta) > 0 ? 'pr-diff-up' : (Number(delta) < 0 ? 'pr-diff-down' : ''));
+    }
+    function convertedPrice(basePrice, rate) { rate = Number(rate); return isFinite(rate) && rate > 1 ? Math.round(Number(basePrice) / rate) : null; }
+    function updateManualConvertedPrice(input, index) {
+        var row = previewRows[index], tr = input.closest('tr'), checkbox = tr.querySelector('.price-row-check'), deltaCell = tr.querySelector('.price-delta');
+        var text = input.value.trim(), price = parseWholeMoney(text);
+        if (!text || !isFinite(price) || price < 0) { input.classList.add('pr-input-error'); row.GIA_QD_MOI = null; checkbox.checked = false; checkbox.disabled = true; updatePriceDelta(row, deltaCell); updateSummary(); return; }
+        price = Math.round(price); input.value = wholeMoney(price); input.classList.remove('pr-input-error'); row.GIA_QD_MOI = price;
+        checkbox.disabled = !valueOf(row, 'SAN_SANG_AP_DUNG') || !canApply; updateSummary();
+    }
+    function updateManualPrice(input, index, roundValue) {
+        var row = previewRows[index], tr = input.closest('tr'), checkbox = tr.querySelector('.price-row-check'), deltaCell = tr.querySelector('.price-delta'), convertedCell = tr.querySelector('.pr-converted-new');
+        var text = input.value.trim(), price = parseWholeMoney(text);
+        if (!text || !isFinite(price) || price < 0) {
+            input.classList.add('pr-input-error'); row.GIA_MOI_TINH = null; row.CHENHLECH = null;
+            row.GIA_QD_MOI = null; convertedCell.value = ''; checkbox.checked = false; checkbox.disabled = true; updatePriceDelta(row, deltaCell); updateSummary(); return;
+        }
+        price = Math.round(price); input.value = wholeMoney(price);
+        input.classList.remove('pr-input-error'); row.GIA_MOI_TINH = price; row.GIA_QD_MOI = convertedPrice(price, valueOf(row, 'TYLE_QD')); row.CHENHLECH = price - Number(valueOf(row, 'GIAHIENTAI') || 0); convertedCell.value = wholeMoney(row.GIA_QD_MOI);
+        checkbox.disabled = !valueOf(row, 'SAN_SANG_AP_DUNG') || !canApply; updatePriceDelta(row, deltaCell); updateSummary();
+    }
+    function renderRows(rows) {
+        previewRows = (rows || []).map(function (row) { var normalized = {}; Object.keys(row).forEach(function (key) { normalized[key.toUpperCase()] = row[key]; }); return normalized; }); var tbody = document.getElementById('priceRows'); tbody.innerHTML = '';
+        if (!previewRows.length) { tbody.innerHTML = '<tr><td colspan="14" class="pr-empty">Không có hàng hóa thuộc phạm vi đã chọn.</td></tr>'; return; }
+        var filter = document.getElementById('productFilter'), old = filter.value; filter.innerHTML = '<option value="">Tất cả hàng hóa</option>';
+        previewRows.forEach(function (r) { var option = document.createElement('option'); option.value = valueOf(r, 'MAHANG') || ''; option.textContent = (valueOf(r, 'MAHANG') || '') + ' · ' + (valueOf(r, 'TEN_HANG') || ''); filter.appendChild(option); }); filter.value = old;
+        previewRows.forEach(function (r, i) {
+            var tr = document.createElement('tr'); tr.dataset.index = i;
+            var checkbox = document.createElement('input'); checkbox.type = 'checkbox'; checkbox.className = 'price-row-check'; checkbox.checked = !!valueOf(r, 'SAN_SANG_AP_DUNG'); checkbox.disabled = !checkbox.checked || !canApply;
+            var tdCheck = document.createElement('td'); tdCheck.appendChild(checkbox); tr.appendChild(tdCheck);
+            function cell(text, className) { var td = document.createElement('td'); td.textContent = text === null || text === undefined || text === '' ? '—' : text; if (className) td.className = className; tr.appendChild(td); }
+            cell(valueOf(r, 'MAHANG')); cell(valueOf(r, 'TEN_HANG')); cell(money(valueOf(r, 'GIAHIENTAI'))); cell(valueOf(r, 'TYLE_QD_TEXT') || '—'); cell(money(valueOf(r, 'GIA_QD_HIENTAI')), 'pr-converted'); cell(money(valueOf(r, 'GIA_NHAP_GANNHAT'))); cell(money(valueOf(r, 'GIA_NHAP_QD_GANNHAT')));
+            var receiptCell = document.createElement('td'); receiptCell.className = 'pr-date'; receiptCell.textContent = valueOf(r, 'NGUON_GIA_NHAP') === 'EXCEL' ? 'Excel · GIAHIENTAI' : dateText(valueOf(r, 'NGAY_NHAP_GANNHAT')); var receiptCode = valueOf(r, 'MAPHIEU_NHAP_GANNHAT'); if (receiptCode) { var code = document.createElement('small'); code.className = 'pr-receipt-code'; code.textContent = '(' + receiptCode + ')'; receiptCell.appendChild(code); } tr.appendChild(receiptCell);
+            var priceCell = document.createElement('td'), priceInput = document.createElement('input'); priceInput.type = 'text'; priceInput.inputMode = 'numeric'; priceInput.autocomplete = 'off'; priceInput.className = 'form-control pr-price-edit'; priceInput.value = wholeMoney(valueOf(r, 'GIA_MOI_TINH')); priceInput.disabled = !valueOf(r, 'SAN_SANG_AP_DUNG'); priceInput.setAttribute('aria-label', 'Giá mới của ' + (valueOf(r, 'MAHANG') || 'hàng hóa')); priceInput.oninput = function () { updateManualPrice(this, i, false); }; priceInput.onchange = function () { updateManualPrice(this, i, true); }; priceCell.appendChild(priceInput); tr.appendChild(priceCell);
+            var convertedCell = document.createElement('td'), convertedInput = document.createElement('input'); convertedInput.type = 'text'; convertedInput.inputMode = 'numeric'; convertedInput.autocomplete = 'off'; convertedInput.className = 'form-control pr-price-edit pr-converted-new'; convertedInput.value = wholeMoney(valueOf(r, 'GIA_QD_MOI')); convertedInput.disabled = !valueOf(r, 'SAN_SANG_AP_DUNG') || !valueOf(r, 'TYLE_QD'); convertedInput.setAttribute('aria-label', 'Giá quy đổi mới của ' + (valueOf(r, 'MAHANG') || 'hàng hóa')); convertedInput.oninput = function () { updateManualConvertedPrice(this, i); }; convertedInput.onchange = function () { updateManualConvertedPrice(this, i); }; convertedCell.appendChild(convertedInput); tr.appendChild(convertedCell);
+            var deltaCell = document.createElement('td'); tr.appendChild(deltaCell); updatePriceDelta(r, deltaCell);
+            cell((valueOf(r, 'MA_CONGTHUC') || '') + (valueOf(r, 'TEN_CONGTHUC') ? ' · ' + valueOf(r, 'TEN_CONGTHUC') : ''));
+            var status = valueOf(r, 'TRANGTHAI') || ''; cell(status, 'pr-status ' + (valueOf(r, 'SAN_SANG_AP_DUNG') ? 'pr-status-ready' : 'pr-status-error'));
+            tbody.appendChild(tr);
+        });
+        updateFilter(); updateSummary();
+    }
+    function updateFilter() {
+        var q = document.getElementById('productSearch').value.toLocaleLowerCase(), selected = document.getElementById('productFilter').value;
+        Array.prototype.forEach.call(document.querySelectorAll('#priceRows tr[data-index]'), function (tr) { var r = previewRows[Number(tr.dataset.index)]; var text = ((valueOf(r, 'MAHANG') || '') + ' ' + (valueOf(r, 'TEN_HANG') || '')).toLocaleLowerCase(); tr.style.display = (!q || text.indexOf(q) >= 0) && (!selected || valueOf(r, 'MAHANG') === selected) ? '' : 'none'; });
+    }
+    function updateSummary() { var ready = previewRows.filter(function (r) { return !!valueOf(r, 'SAN_SANG_AP_DUNG'); }).length; var selected = document.querySelectorAll('.price-row-check:checked').length; var applied = previewRows.filter(function (r) { return valueOf(r, 'TRANGTHAI') === 'Đã áp dụng'; }).length; document.getElementById('resultSummary').textContent = previewRows.length + ' dòng · ' + ready + ' sẵn sàng · Bỏ qua: ' + (previewRows.length - ready - applied) + ' · ' + selected + ' đang chọn' + (applied ? ' · ' + applied + ' đã áp dụng' : ''); var apply = document.getElementById('applyPrices'); if (apply) apply.disabled = busy || selected === 0 || !previewSnapshot || previewSnapshot !== JSON.stringify(requestData()) || !!requestData().DRAFT_FORMULA; }
+    document.getElementById('productSearch').addEventListener('input', updateFilter); document.getElementById('productFilter').addEventListener('change', updateFilter);
+    document.getElementById('selectVisible').onclick = function () { document.querySelectorAll('#priceRows tr[data-index]:not([style*="display: none"]) .price-row-check:not(:disabled)').forEach(function (x) { x.checked = true; }); updateSummary(); };
+    document.getElementById('clearVisible').onclick = function () { document.querySelectorAll('#priceRows tr[data-index]:not([style*="display: none"]) .price-row-check').forEach(function (x) { x.checked = false; }); updateSummary(); };
+    document.getElementById('priceRows').addEventListener('change', function (e) { if (e.target.classList.contains('price-row-check')) updateSummary(); });
+    document.getElementById('selectAllRows').addEventListener('change', function () { document.querySelectorAll('.price-row-check:not(:disabled)').forEach(function (x) { x.checked = this.checked; }, this); updateSummary(); });
+    document.getElementById('previewPrices').onclick = async function () {
+        var button = this; if (busy) return; if (isCatalog() && !catalogReady) { button.disabled = true; busy = true; try { await loadCatalog(); } catch (e) { showMessage(e.message, 'danger'); return; } finally { busy = false; button.disabled = false; } } if (!selectedItems().length) { showMessage(isCatalog() ? 'Chọn ít nhất một hàng hóa trong danh sách.' : 'Hãy chọn file Excel trước khi tính.', 'warning'); return; } var payload = requestData(); var snapshot = JSON.stringify(payload); invalidate(); if (!document.getElementById('priceDate').value) { showMessage('Hãy chọn ngày áp dụng.', 'warning'); return; }
+        busy = true; button.disabled = true; button.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Đang tính...'; showMessage('', 'info');
+        postPayload('@Url.Action("PreviewBatch", "PriceFormula")', payload, false).then(function (res) { if (snapshot !== JSON.stringify(requestData())) { showMessage('Thông tin đã thay đổi. Hãy tính xem trước lại.', 'warning'); return; } var success = valueOf(res, 'Success'), data = valueOf(res, 'Data'); if (!success) throw new Error(valueOf(res, 'Message') || 'Không tính được danh sách giá.'); previewSnapshot = snapshot; renderFormulas(data || []); renderRows(data || []); document.getElementById('resultSection').style.display = 'block'; document.getElementById('exportResult').disabled = !(data && data.length); showMessage(payload.DRAFT_FORMULA ? 'Đã tính theo công thức đang nhập. Lưu công thức và tính lại để áp dụng giá.' : (valueOf(res, 'Message') || 'Đã tính xong.'), 'success'); }).catch(function (e) { showMessage(e.message || 'Không thể kết nối API.', 'danger'); }).finally(function () { busy = false; updateSummary(); button.disabled = !isCatalog() && !importedItems.length; button.innerHTML = '<i class="fa fa-calculator"></i> Tính xem trước'; });
+    };
+    var applyButton = document.getElementById('applyPrices'); if (applyButton) applyButton.onclick = function () {
+        if (busy || !previewSnapshot || previewSnapshot !== JSON.stringify(requestData()) || requestData().DRAFT_FORMULA) { showMessage('Hãy lưu công thức và tính xem trước lại trước khi áp dụng.', 'warning'); return; } var selectedCodes = Array.prototype.map.call(document.querySelectorAll('.price-row-check:checked'), function (checkbox) { var row = previewRows[Number(checkbox.closest('tr').dataset.index)]; return valueOf(row, 'MAHANG'); });
+        if (!selectedCodes.length || !window.confirm('Cập nhật giá cho ' + selectedCodes.length + ' hàng hóa đã chọn?')) return;
+        var payload = requestData(); payload.MAHANG_APDUNG = selectedCodes; payload.GIA_MOI_APDUNG = {}; previewRows.forEach(function (row) { var code = valueOf(row, 'MAHANG'); if (selectedCodes.indexOf(code) >= 0) payload.GIA_MOI_APDUNG[code] = Math.round(Number(valueOf(row, 'GIA_MOI_TINH'))); });
+        payload.GIA_QD_MOI_APDUNG = {}; previewRows.forEach(function (row) { var code = valueOf(row, 'MAHANG'); if (selectedCodes.indexOf(code) >= 0 && valueOf(row, 'GIA_QD_MOI') !== null && valueOf(row, 'GIA_QD_MOI') !== undefined) payload.GIA_QD_MOI_APDUNG[code] = Math.round(Number(valueOf(row, 'GIA_QD_MOI'))); }); busy = true; applyButton.disabled = true; showMessage('Đang cập nhật giá...', 'info');
+        postPayload('@Url.Action("ApplyBatch", "PriceFormula")', payload, true).then(function (res) { if (!valueOf(res, 'Success')) throw new Error(valueOf(res, 'Message') || 'Không áp dụng được giá.'); var data = valueOf(res, 'Data') || {}, count = valueOf(data, 'UPDATED') || selectedCodes.length, serverRows = valueOf(data, 'ROWS') || []; serverRows.forEach(function (serverRow) { var code = valueOf(serverRow, 'MAHANG'), row = previewRows.filter(function (x) { return valueOf(x, 'MAHANG') === code; })[0]; if (!row) return; row.GIA_NHAP_GANNHAT = valueOf(serverRow, 'GIA_NHAP_GANNHAT'); row.NGAY_NHAP_GANNHAT = valueOf(serverRow, 'NGAY_NHAP_GANNHAT'); row.MAPHIEU_NHAP_GANNHAT = valueOf(serverRow, 'MAPHIEU_NHAP_GANNHAT'); row.GIA_MOI_TINH = valueOf(serverRow, 'GIA_MOI_TINH'); row.GIA_QD_MOI = valueOf(serverRow, 'GIA_QD_MOI'); if (valueOf(serverRow, 'SAN_SANG_AP_DUNG')) { row.GIAHIENTAI = row.GIA_MOI_TINH; row.GIA_QD_HIENTAI = row.GIA_QD_MOI; row.CHENHLECH = 0; row.TRANGTHAI = 'Đã áp dụng'; } else { row.TRANGTHAI = valueOf(serverRow, 'TRANGTHAI'); } row.SAN_SANG_AP_DUNG = false; }); renderRows(previewRows); document.getElementById('exportResult').disabled = false; showMessage(valueOf(res, 'Message') || 'Đã áp dụng giá cho ' + count + ' hàng hóa.', 'success'); return loadLatestRestore(); }).catch(function (e) { showMessage(e.message || 'Không thể cập nhật giá.', 'danger'); }).finally(function () { busy = false; updateSummary(); });
+    };
+    var restoreButton = document.getElementById('restoreLatestPrices'); if (restoreButton) restoreButton.onclick = function () {
+        if (busy || !latestHistoryIds.length) return;
+        if (!window.confirm('Khôi phục giá cũ cho ' + latestHistoryIds.length + ' hàng hóa của lần áp dụng gần nhất?')) return;
+        busy = true; restoreButton.disabled = true; showMessage('Đang khôi phục giá cũ...', 'info');
+        postPayload('@Url.Action("RestoreBatch", "PriceFormula")', { HISTORY_IDS: latestHistoryIds }, true).then(function (res) {
+            if (!valueOf(res, 'Success')) throw new Error(valueOf(res, 'Message') || 'Không khôi phục được giá cũ.');
+            invalidate(); if (isCatalog()) resetCatalog();
+            showMessage(valueOf(res, 'Message') || 'Đã khôi phục giá cũ.', 'success');
+            return loadLatestRestore();
+        }).catch(function (e) { showMessage(e.message || 'Không thể khôi phục giá cũ.', 'danger'); }).finally(function () { busy = false; updateSummary(); });
+    };
+    document.getElementById('exportResult').onclick = function () { loadXlsx().then(function () { var rows = previewRows.map(function (r) { return { MAHANG: valueOf(r, 'MAHANG'), 'TEN HANG': valueOf(r, 'TEN_HANG'), 'GIA HIEN TAI DANH MUC': valueOf(r, 'GIAHIENTAI'), GIAHIENTAI: valueOf(r, 'GIA_NHAP_GANNHAT'), 'NGUON GIA NHAP': valueOf(r, 'NGUON_GIA_NHAP'), 'TY LE QUY DOI': valueOf(r, 'TYLE_QD'), 'GIA QUY DOI HIEN TAI': valueOf(r, 'GIA_QD_HIENTAI'), 'GIA NHAP GOC DUNG TINH': valueOf(r, 'GIA_NHAP_GANNHAT'), 'GIA NHAP QUY DOI DUNG TINH': valueOf(r, 'GIA_NHAP_QD_GANNHAT'), 'NGAY NHAP GAN NHAT': dateText(valueOf(r, 'NGAY_NHAP_GANNHAT')), 'MA PHIEU NHAP GAN NHAT': valueOf(r, 'MAPHIEU_NHAP_GANNHAT'), 'GIA MOI TINH': valueOf(r, 'GIA_MOI_TINH'), 'GIA QUY DOI MOI': valueOf(r, 'GIA_QD_MOI'), CHENHLECH: valueOf(r, 'CHENHLECH'), 'MA CONG THUC': valueOf(r, 'MA_CONGTHUC'), 'TEN CONG THUC': valueOf(r, 'TEN_CONGTHUC'), TRANGTHAI: valueOf(r, 'TRANGTHAI') }; }); var wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(rows), 'KetQuaTinhGia'); XLSX.writeFile(wb, 'KetQua_TinhGia.xlsx'); }).catch(function (e) { showMessage(e.message, 'danger'); }); };
+    loadLatestRestore();
+})();
+</script>

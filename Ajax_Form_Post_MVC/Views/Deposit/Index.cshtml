@@ -308,6 +308,7 @@
                     <button id="download-excel" class="btn btn-success" onclick="ExportExcel('example-table')"><i class="fa fa-file-text-o" style="margin-right:10px"></i>@Utility.XuatExcel</button>
                     @if (ViewBag.PermissionCreate)
                     {
+                        <a class="btn btn-info" href="@Url.Action("OrderMenu", "Deposit")"><i class="fa fa-th"></i> Đặt hàng mới</a>
                         if (Utility.IntWidth == 1)
                         {
                             <button class="btn btn-success" onclick="myFunctionCreate('@{@API.ct_PhieuDatHang;}')"><i class="fa fa-pencil-square-o" style="margin-right:20px"></i>@Utility.Them</button>

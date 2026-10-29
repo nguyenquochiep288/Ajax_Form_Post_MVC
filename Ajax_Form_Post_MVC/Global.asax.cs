@@ -26,6 +26,7 @@ namespace MVC_QuanLyTHP
         protected void Application_Start()
         {
             AreaRegistration.RegisterAllAreas();
+            GlobalFilters.Filters.Add(new CatalogFlagPageFilter());
             RouteConfig.RegisterRoutes(RouteTable.Routes);
         }
 

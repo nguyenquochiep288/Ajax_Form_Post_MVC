@@ -6,6 +6,14 @@
     Layout = "~/Views/Shared/Admin.cshtml";
 }
 @Html.Partial("LoadCssDanhMuc")
+@if (MVC_QuanLyTHP.Class.Utility.KiemTraQuyen("Inventory", "View"))
+{
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin:16px 0">
+        <a class="btn btn-info" href="@Url.Action("Index", "InventoryInsights", new { mode = "slow" })">Hàng tồn lâu, chậm luân chuyển</a>
+        <a class="btn btn-warning" href="@Url.Action("Index", "InventoryInsights", new { mode = "reorder" })">Hàng sắp hết và đề xuất nhập</a>
+        <a class="btn btn-success" href="@Url.Action("Index", "InventoryInsights", new { mode = "sellers" })">Hàng bán chạy / ít bán</a>
+    </div>
+}
 <script src="@Url.Content("~/Scripts/Report.js?v=3.0.2")"></script>
 <script src="@Url.Content("~/Content/static/js/shieldui-all.min.js")"></script>
 <link href="@Url.Content("~/Content/static/css/all.min.css")" rel="stylesheet">

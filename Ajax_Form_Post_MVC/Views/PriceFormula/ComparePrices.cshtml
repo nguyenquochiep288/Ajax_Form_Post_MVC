@@ -1,0 +1,108 @@
+﻿@model MVC_QuanLyTHP.Models.PriceCalculationRunModel
+@{
+    ViewBag.Title = "Đối chiếu giá bán và giá nhập";
+    Layout = "~/Views/Shared/Admin.cshtml";
+}
+@Html.Partial("LoadCssDanhMuc")
+<style>
+    .compare-page{padding:18px}.compare-title{margin:0 0 18px;text-align:center;color:#536b83}.compare-card{background:#fff;border:1px solid #ddd;border-radius:9px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,.05)}.compare-card-title{font-size:19px;font-weight:600;padding:14px 18px;border-bottom:1px solid #e5e5e5;color:#536b83}.compare-body{padding:18px}.compare-grid{display:grid;grid-template-columns:1fr 1.5fr 1fr 1fr;gap:14px;align-items:end}.compare-field{min-width:0}.compare-field label{display:block;font-weight:500;margin-bottom:6px}.compare-field .form-control{height:42px}.compare-groups{position:relative;border:1px solid #ccd5df;border-radius:5px;background:#fff;min-height:42px}.compare-groups summary{cursor:pointer;padding:10px 12px;color:#087d72;list-style:none}.compare-groups summary::-webkit-details-marker{display:none}.compare-group-list{max-height:240px;overflow:auto;padding:6px 10px}.compare-group-list label{display:flex;align-items:center;gap:8px;padding:6px 2px;font-weight:400;margin:0}.compare-toolbar{display:flex;gap:9px;align-items:end;flex-wrap:wrap;margin-top:14px}.compare-summary{margin-left:auto;color:#64748b}.compare-table-wrap{overflow:auto;max-height:65vh}.compare-table{min-width:1380px;margin-bottom:0}.compare-table th{white-space:nowrap;background:#f7f9fb}.compare-table td{vertical-align:middle}.compare-table .compare-low td{background:#fee2e2!important;color:#991b1b}.compare-table .compare-low td:first-child{border-left:4px solid #dc2626}.compare-number{white-space:nowrap;text-align:right}.compare-ratio{min-width:140px}.compare-receipt{white-space:nowrap}.compare-receipt small{display:block;margin-top:3px;color:#64748b}.compare-status{font-weight:600}.compare-status-low{color:#b42318}.compare-status-ok{color:#087d72}.compare-status-none{color:#64748b}.compare-empty{text-align:center;color:#718096;padding:30px}.compare-note{margin-top:12px;padding:10px 14px;background:#f4f8fb;border-left:4px solid #11a995;color:#536b83}
+    @@media(max-width:900px){.compare-page{padding:10px}.compare-grid{grid-template-columns:1fr 1fr}.compare-body{padding:12px}}
+    @@media(max-width:600px){.compare-grid{grid-template-columns:1fr}.compare-summary{width:100%;margin-left:0}}
+</style>
+<div class="compare-page">
+    <div style="margin-bottom:16px"><a class="btn btn-default" href="@Url.Action("Index", "PriceFormula")"><i class="fa fa-arrow-left" aria-hidden="true"></i> Quay lại danh sách công thức</a></div>
+    <h2 class="compare-title">ĐỐI CHIẾU GIÁ BÁN VÀ GIÁ NHẬP</h2>
+    <div id="compareMessage" class="alert" style="display:none"></div>
+    <section class="compare-card">
+        <div class="compare-card-title">Điều kiện lọc sản phẩm</div>
+        <div class="compare-body">
+            <div class="compare-grid">
+                <div class="compare-field"><label for="comparePriceType">Loại giá bán</label><select id="comparePriceType" class="form-control"><option value="GIA01">Giá bán 1</option><option value="GIA02">Giá bán 2</option><option value="GIA03">Giá bán 3</option></select></div>
+                <div class="compare-field"><label>Nhóm sản phẩm (chọn nhiều)</label><details class="compare-groups"><summary id="compareGroupSummary">Tất cả nhóm sản phẩm</summary><div style="padding:0 10px 6px"><input id="compareGroupSearch" type="search" class="form-control" placeholder="Tìm nhóm sản phẩm..." /></div><div class="compare-group-list" id="compareGroups">
+                    @foreach (var group in Model.Groups) { <label><input type="checkbox" value="@group.ID" data-label="@group.NAME" /><span>@group.NAME</span></label> }
+                </div><div style="padding:0 10px 9px"><button id="clearGroups" type="button" class="btn btn-default btn-xs">Bỏ chọn nhóm</button></div></details></div>
+                <div class="compare-field"><label for="compareSearch">Tìm mã hoặc tên sản phẩm</label><input id="compareSearch" type="search" class="form-control" placeholder="Nhập mã hoặc tên sản phẩm..." /></div>
+                <div class="compare-field"><label for="compareDate">Tính giá nhập đến ngày</label><input id="compareDate" type="date" class="form-control" value="@DateTime.Today.ToString("yyyy-MM-dd")" /></div>
+            </div>
+            <div class="compare-toolbar"><button id="runCompare" type="button" class="btn btn-primary"><i class="fa fa-search"></i> Lọc và đối chiếu</button><label style="font-weight:400;margin:0 0 8px"><input id="onlyBelow" type="checkbox" /> Chỉ hiện sản phẩm bán thấp hơn giá nhập</label><span id="compareSummary" class="compare-summary"></span></div>
+            <div class="compare-note">Giá nhập gần nhất lấy từ phiếu nhập có đơn giá trước chiết khấu lớn hơn 0, theo đơn vị gốc hoặc đơn vị quy đổi. Dòng màu đỏ là giá bán theo đơn vị gốc thấp hơn giá nhập gần nhất.</div>
+        </div>
+    </section>
+    <section class="compare-card">
+        <div class="compare-card-title">Kết quả đối chiếu</div>
+        <div class="compare-table-wrap"><table class="table table-bordered table-striped compare-table"><thead>
+            <tr><th rowspan="2">Mã hàng</th><th rowspan="2">Tên sản phẩm</th><th rowspan="2">Nhóm</th><th colspan="3" class="text-center">Giá bán hiện tại</th><th colspan="2" class="text-center">Giá mua vào gần nhất (trước CK)</th><th rowspan="2">Ngày nhập gần nhất<br />(Mã phiếu nhập)</th><th rowspan="2">So sánh</th></tr>
+            <tr><th>Đơn vị gốc</th><th>Tỷ lệ QĐ</th><th>Đơn vị QĐ</th><th>Đơn vị gốc</th><th>Đơn vị QĐ</th></tr>
+        </thead><tbody id="compareRows"><tr><td colspan="10" class="compare-empty">Chọn điều kiện lọc rồi bấm “Lọc và đối chiếu”.</td></tr></tbody></table></div>
+        <div class="compare-body compare-toolbar" aria-label="Phân trang kết quả">
+            <button type="button" id="comparePrevious" class="btn btn-default" disabled>Trang trước</button>
+            <span id="comparePageInfo" aria-live="polite"></span>
+            <button type="button" id="compareNext" class="btn btn-default" disabled>Trang sau</button>
+        </div>
+    </section>
+</div>
+<script>
+(function(){
+    var rows=[], busy=false, page=1, pages=1, total=0, appliedFilters=null;
+    function val(o,k){if(!o)return undefined;var key=Object.keys(o).filter(function(x){return x.toUpperCase()===k.toUpperCase()})[0];return key?o[key]:undefined;}
+    function money(v){return v===null||v===undefined||v===''?'—':Number(v).toLocaleString('vi-VN',{maximumFractionDigits:2});}
+    function dateText(v){if(!v)return '—';var s=String(v).substring(0,10),p=s.split('-');return p.length===3?p[2]+'/'+p[1]+'/'+p[0]:s;}
+    function selectedGroups(){return Array.prototype.map.call(document.querySelectorAll('#compareGroups input[type=checkbox]:checked'),function(x){return x.value;});}
+    function updateGroupSummary(){var chosen=Array.prototype.map.call(document.querySelectorAll('#compareGroups input[type=checkbox]:checked'),function(x){return x.getAttribute('data-label')||x.value;});document.getElementById('compareGroupSummary').textContent=chosen.length?chosen.length+' nhóm đã chọn: '+chosen.slice(0,3).join(', ')+(chosen.length>3?'...':''):'Tất cả nhóm sản phẩm';}
+    function showMessage(msg,type){var box=document.getElementById('compareMessage');box.className='alert alert-'+(type||'info');box.textContent=msg||'';box.style.display=msg?'block':'none';}
+    function render(){var body=document.getElementById('compareRows');body.innerHTML='';var visible=rows;if(!visible.length){body.innerHTML='<tr><td colspan="10" class="compare-empty">Không tìm thấy sản phẩm phù hợp.</td></tr>';return;}
+        visible.forEach(function(r){var tr=document.createElement('tr');var below=!!val(r,'BAN_THAP_HON_GIA_NHAP');if(below)tr.className='compare-low';function td(v,cls){var el=document.createElement('td');el.textContent=v===null||v===undefined||v===''?'—':v;if(cls)el.className=cls;tr.appendChild(el);}td(val(r,'MAHANG'));td(val(r,'TEN_HANG'));td(val(r,'TEN_NHOMHANG'));td(money(val(r,'GIA_BAN_HIENTAI')),'compare-number');td(val(r,'TYLE_QD_TEXT')||'—','compare-ratio');td(money(val(r,'GIA_BAN_QD_HIENTAI')),'compare-number');td(money(val(r,'GIA_NHAP_GANNHAT')),'compare-number');td(money(val(r,'GIA_NHAP_QD_GANNHAT')),'compare-number');var receipt=document.createElement('td');receipt.className='compare-receipt';receipt.textContent=dateText(val(r,'NGAY_NHAP_GANNHAT'));var code=val(r,'MAPHIEU_NHAP_GANNHAT');if(code){var small=document.createElement('small');small.textContent='('+code+')';receipt.appendChild(small);}tr.appendChild(receipt);var status=document.createElement('td');status.textContent=val(r,'TRANGTHAI')||'';status.className='compare-status '+(below?'compare-status-low':val(r,'GIA_NHAP_GANNHAT')===null?'compare-status-none':'compare-status-ok');tr.appendChild(status);body.appendChild(tr);});}
+    function updatePager(){
+        document.getElementById('comparePageInfo').textContent=total?'Trang '+page+' / '+pages+' · '+total.toLocaleString('vi-VN')+' sản phẩm phù hợp':'';
+        document.getElementById('comparePrevious').disabled=busy||!total||page<=1;
+        document.getElementById('compareNext').disabled=busy||!total||page>=pages;
+    }
+    function load(targetPage,useAppliedFilters){
+        if(busy)return;
+        var filters=useAppliedFilters&&appliedFilters?Object.assign({},appliedFilters):{
+            LOAIGIA:document.getElementById('comparePriceType').value,
+            NGAYTINH:document.getElementById('compareDate').value,
+            ID_NHOMHANGHOAS:selectedGroups(),
+            SEARCH:document.getElementById('compareSearch').value,
+            ONLY_BELOW:document.getElementById('onlyBelow').checked
+        };
+        if(!filters.NGAYTINH){showMessage('Vui lòng chọn ngày đối chiếu.','warning');return;}
+        busy=true;
+        var btn=document.getElementById('runCompare');
+        btn.disabled=true;
+        document.getElementById('onlyBelow').disabled=true;
+        btn.innerHTML='<i class="fa fa-spinner fa-spin"></i> Đang đối chiếu...';
+        showMessage('');
+        document.getElementById('compareSummary').textContent='';
+        document.getElementById('compareRows').innerHTML='<tr><td colspan="10" class="compare-empty">Đang đối chiếu toàn bộ sản phẩm phù hợp...</td></tr>';
+        updatePager();
+        var data=Object.assign({},filters,{PAGE:targetPage||1}),payload=new URLSearchParams();
+        payload.append('payload',JSON.stringify(data));
+        fetch('@Url.Action("ComparePricesData")',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/x-www-form-urlencoded; charset=UTF-8','Accept':'application/json'},body:payload.toString()})
+        .then(function(r){if(!r.ok)throw new Error('Không tải được kết quả (HTTP '+r.status+').');return r.json();})
+        .then(function(res){
+            if(!val(res,'Success'))throw new Error(val(res,'Message')||'Không lấy được dữ liệu đối chiếu.');
+            var result=val(res,'Data');
+            if(!result||!Array.isArray(val(result,'ROWS')))throw new Error('Vui lòng cập nhật API để sử dụng đối chiếu toàn bộ sản phẩm.');
+            rows=val(result,'ROWS');page=Number(val(result,'PAGE'));pages=Number(val(result,'PAGES'));total=Number(val(result,'TOTAL'));appliedFilters=filters;
+            document.getElementById('compareSummary').textContent=Number(val(result,'TOTAL_PRODUCTS')).toLocaleString('vi-VN')+' sản phẩm · '+Number(val(result,'BELOW_COUNT')).toLocaleString('vi-VN')+' sản phẩm bán thấp hơn giá nhập';
+            render();
+            document.querySelector('.compare-table-wrap').scrollTop=0;
+            showMessage(val(res,'Message')||'Đã đối chiếu giá.','success');
+        })
+        .catch(function(e){
+            rows=[];total=0;page=1;pages=1;
+            document.getElementById('compareSummary').textContent='';
+            document.getElementById('compareRows').innerHTML='<tr><td colspan="10" class="compare-empty">Chưa tải được kết quả. Vui lòng thử lại.</td></tr>';
+            showMessage(e.message||'Không thể kết nối máy chủ.','danger');
+        })
+        .finally(function(){
+            busy=false;btn.disabled=false;document.getElementById('onlyBelow').disabled=false;
+            btn.innerHTML='<i class="fa fa-search"></i> Lọc và đối chiếu';updatePager();
+        });
+    }
+    document.getElementById('comparePrevious').addEventListener('click',function(){load(page-1,true);});
+    document.getElementById('compareNext').addEventListener('click',function(){load(page+1,true);});
+    document.getElementById('runCompare').addEventListener('click',function(){load(1);});document.getElementById('onlyBelow').addEventListener('change',function(){load(1);});document.getElementById('compareSearch').addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();load();}});document.getElementById('compareGroupSearch').addEventListener('input',function(){var q=this.value.toLocaleLowerCase();Array.prototype.forEach.call(document.querySelectorAll('#compareGroups label'),function(label){label.style.display=label.textContent.toLocaleLowerCase().indexOf(q)>=0?'':'none';});});document.getElementById('compareGroups').addEventListener('change',updateGroupSummary);document.getElementById('clearGroups').addEventListener('click',function(){Array.prototype.forEach.call(document.querySelectorAll('#compareGroups input[type=checkbox]'),function(x){x.checked=false;});updateGroupSummary();});
+})();
+</script>

@@ -464,7 +464,6 @@ function funSearchItemProduct(CLass)
 function OnSuccessDeposit_Temp(apiResponse) {
     try {
         var modal = document.getElementById("myModalDeposit_Temp");
-        modal.style.display = "block";
         if (apiResponse.Success) {
             var radiovalue = "";
             var nf = Intl.NumberFormat('vi-VN');
@@ -480,7 +479,7 @@ function OnSuccessDeposit_Temp(apiResponse) {
                 }
 
                 if (apiResponse.Detail[m].Key == "NAME") {
-                    document.getElementById("lblNameDeposit_Temp").innerHTML = apiResponse.Detail[m].Value;
+                    document.getElementById("lblNameDeposit_Temp").textContent = apiResponse.Detail[m].Value;
                     continue;
                 }
                 if (apiResponse.Detail[m].Key == "ID_HANGHOAKHO") {
@@ -574,11 +573,13 @@ function OnSuccessDeposit_Temp(apiResponse) {
                 alert(apiResponse.Message);
         }
         CloseLoader();
+        return !!apiResponse.Success;
     }
     catch (ex) {
-        alert(ex.Message);
-        alert(ex);
+        if (modal) modal.style.display = "none";
+        if (!document.getElementById('orderMenuPage')) alert(ex.message || 'Không mở được thông tin sản phẩm.');
         CloseLoader();
+        return false;
     }
 }
 

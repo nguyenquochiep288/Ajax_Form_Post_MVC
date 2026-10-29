@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
@@ -1517,7 +1517,7 @@ namespace MVC_QuanLyTHP.Controllers
 						MaxJsonLength = int.MaxValue
 					};
 				}
-				string filename = Path.Combine(base.Server.MapPath("~/Images_Upload/Logo/"), "logoTrangHiepPhat.jpg");
+				string filename = Path.Combine(base.Server.MapPath("~/Images_Upload/Logo/"), "trang-hiep-phat-20261028.jpg");
 				string plainText = Utility.UrlWebsite + "/Delivery/CheckData?ID=" + ((v_ct_PhieuGiaoHang2 != null) ? v_ct_PhieuGiaoHang2.ID : "");
 				QRCodeGenerator qRCodeGenerator = new QRCodeGenerator();
 				Bitmap icon = new Bitmap(filename);

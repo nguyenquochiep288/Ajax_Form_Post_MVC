@@ -1054,6 +1054,7 @@
     <Content Include="images\is-user.png" />
     <Content Include="images\list.png" />
     <Content Include="images\logo1.png" />
+    <Content Include="Images_Upload\Logo\trang-hiep-phat-20261028.jpg" />
     <Content Include="images\mc_pt.jpg" />
     <Content Include="images\message_cart.png" />
     <Content Include="images\payment_info.jpg" />
@@ -1087,6 +1088,16 @@
     <Content Include="Content\js\qr_packed.js" />
     <Content Include="Scripts\Report.js" />
     <Content Include="Scripts\Customer.js" />
+    <Content Include="Scripts\CustomerPortal.js" />
+    <Content Include="Scripts\CustomerPortalManage.js" />
+    <Content Include="Content\customer-portal.css" />
+    <Content Include="Views\CustomerPortal\Index.cshtml" />
+    <Content Include="Views\CustomerPortal\Manage.cshtml" />
+    <Compile Include="Controller\CustomerPortalController.cs" />
+    <Content Include="App_Data\vietqr-banks.json" />
+    <Content Include="Views\BankAccount\_BankPicker.cshtml" />
+    <Compile Include="Class\PortalStatementExcel.cs" />
+    <Reference Include="System.IO.Compression" />
     <Content Include="css\.DS_Store" />
     <Content Include="ckeditor\CHANGES.md" />
     <Content Include="ckeditor\LICENSE.md" />
@@ -1195,6 +1206,9 @@
     <Content Include="Scripts\Deposit.js" />
     <Content Include="Scripts\Treeview.js" />
     <Content Include="Scripts\Deposit_Temp.js" />
+    <Content Include="Scripts\DepositOrderMenu.js" />
+    <Content Include="Content\css\deposit-order-menu.css" />
+    <Content Include="Views\Deposit\OrderMenu.cshtml" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -1210,6 +1224,7 @@
     <Compile Include="Class\Sessions.cs" />
     <Compile Include="Class\SignInModel.cs" />
     <Compile Include="Class\Utility.cs" />
+    <Compile Include="Class\ReportLogo.cs" />
     <Compile Include="Controller\DanhMuc\AccountMisaController.cs" />
     <Compile Include="Controller\DanhMuc\AccountUnibenController.cs" />
     <Compile Include="Controller\DanhMuc\ChangePassword.cs" />
@@ -1219,6 +1234,14 @@
     <Compile Include="Controller\DanhMuc\CategoryPayrollController.cs" />
     <Compile Include="Controller\DanhMuc\OutputDetailController.cs" />
     <Compile Include="Controller\DanhMuc\ProductPriceRangeController.cs" />
+    <Compile Include="Controller\DanhMuc\PriceFormulaController.cs" />
+    <Compile Include="..\..\Shared\CatalogFlagDefinitions.cs" Link="Class\CatalogFlagDefinitions.cs" />
+    <Compile Include="Controller\DanhMuc\CatalogFlagsController.cs" />
+    <Content Include="Scripts\CatalogFlags.js" />
+    <Compile Include="Controller\DanhMuc\InventoryInsightsController.cs" />
+    <Content Include="Views\InventoryInsights\Index.cshtml" />
+    <Content Include="Scripts\InventoryInsights.js" />
+    <Content Include="Content\css\inventory-insights.css" />
     <Compile Include="Controller\DanhMuc\TypeInvoicedController.cs" />
     <Compile Include="Controller\NghiepVu\KPI_Sale\Payroll_KPI_Sale_TempController.cs" />
     <Compile Include="Controller\NghiepVu\PhepNam\AnnualLeaveController.cs" />
@@ -1304,6 +1327,7 @@
     <Compile Include="Models\DanhMucKhachHang\objTruyCap.cs" />
     <Compile Include="Models\DanhMucKhachHang\objKhachHang.cs" />
     <Compile Include="Models\Login_Model.cs" />
+    <Compile Include="Models\PriceFormulaModels.cs" />
     <Compile Include="Models\Order\OrderProduct.cs" />
     <Compile Include="Models\ShoppingCartViewModel.cs" />
     <Compile Include="Models\TimKiem\TimKiem.cs" />
@@ -1775,6 +1799,12 @@
     <Content Include="Views\ProductPriceRange\Create.cshtml" />
     <Content Include="Views\ProductPriceRange\Edit.cshtml" />
     <Content Include="Views\ProductPriceRange\Index.cshtml" />
+    <Content Include="Views\PriceFormula\Edit.cshtml" />
+    <Content Include="Views\PriceFormula\Index.cshtml" />
+    <Content Include="Views\PriceFormula\CalculatePrices.cshtml" />
+    <Content Include="Views\PriceFormula\ComparePrices.cshtml" />
+    <Content Include="Views\PriceFormula\History.cshtml" />
+    <Content Include="Views\PriceFormula\_CalculatePrices.cshtml" />
     <Content Include="Views\TypeInvoiced\Create.cshtml" />
     <Content Include="Views\TypeInvoiced\Edit.cshtml" />
     <Content Include="Views\TypeInvoiced\Index.cshtml" />

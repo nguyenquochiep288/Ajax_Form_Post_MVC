@@ -1,0 +1,37 @@
+﻿@using MVC_QuanLyTHP.Class
+@{
+    Layout = "~/Views/Shared/Admin.cshtml";
+    ViewBag.Title = "Link tra cứu khách hàng";
+}
+<link rel="stylesheet" href="@Url.Content("~/Content/customer-portal.css")" />
+<div id="portal-manage" class="portal-management" data-id="@ViewBag.CustomerId"
+     data-status-url="@Url.Action("Status")" data-issue-url="@Url.Action("Issue")" data-revoke-url="@Url.Action("Revoke")" data-history-url="@Url.Action("History")"
+     data-portal-base="@Url.Content("~/khach-hang/")">
+    <h1>Link tra cứu khách hàng</h1>
+    <p id="manage-customer">Đang tải thông tin khách hàng…</p>
+    <p id="manage-status" role="status" aria-live="polite"></p>
+    <form id="link-form">
+        @Html.AntiForgeryToken()
+        <label>Thời hạn link
+            <select id="valid-days"><option value="">Không giới hạn</option><option value="30">30 ngày</option><option value="90">90 ngày</option><option value="365">1 năm</option></select>
+        </label>
+        <button type="submit" id="issue-link" disabled>Tạo / Cấp lại link</button>
+        <button type="button" id="revoke-link" class="danger" disabled>Thu hồi link</button>
+    </form>
+    <p>Người có link được xem đơn đặt hàng, phiếu xuất, hóa đơn, phiếu thu và công nợ của khách hàng này. Cấp lại sẽ vô hiệu hóa link cũ.</p>
+    <p id="legacy-link-note" hidden>Link này được tạo trước bản cập nhật lưu link. Cần cấp lại một lần để có thể xem và sao chép lại ở những lần sau. Cấp lại sẽ vô hiệu hóa link cũ.</p>
+    <div id="issued-link" hidden>
+        <label>Link khách hàng<input id="portal-link" type="text" readonly /></label>
+        <button type="button" id="copy-link">Sao chép link</button>
+        <a id="open-link" target="_blank" rel="noreferrer noopener">Mở trang khách hàng</a>
+        <p>Bạn có thể quay lại trang này để sao chép link đang hoạt động.</p>
+    </div>
+    <section class="link-history" aria-labelledby="link-history-title">
+        <h2 id="link-history-title">Nhật ký link khách hàng</h2>
+        <p id="history-status" role="status" aria-live="polite">Đang tải nhật ký…</p>
+        <div id="history-content"></div>
+        <div class="history-pagination"><button type="button" id="history-prev" disabled>← Trước</button><span id="history-page"></span><button type="button" id="history-next" disabled>Sau →</button></div>
+    </section>
+    <a href="@Url.Action("Index", "Customer")">← Danh mục khách hàng</a>
+</div>
+<script src="@Url.Content("~/Scripts/CustomerPortalManage.js")"></script>

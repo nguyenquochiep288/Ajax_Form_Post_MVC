@@ -1,0 +1,22 @@
+﻿@model MVC_QuanLyTHP.Models.v_v_dm_TaiKhoanNganHang
+@using Newtonsoft.Json.Linq
+@using System.Linq
+@{
+    var banks = JArray.Parse(System.IO.File.ReadAllText(Server.MapPath("~/App_Data/vietqr-banks.json")));
+    var current = (Model.MANGANHANG ?? "").Trim();
+    var matched = banks.FirstOrDefault(b => String.Equals((string)b["bin"], current, StringComparison.OrdinalIgnoreCase)
+        || String.Equals((string)b["code"], current, StringComparison.OrdinalIgnoreCase)
+        || String.Equals((string)b["shortName"], current, StringComparison.OrdinalIgnoreCase));
+    var selectedBin = matched == null ? current : (string)matched["bin"];
+}
+<select name="MANGANHANG" data-bank-picker="true" class="form-control" aria-label="Ngân hàng và mã BIN VietQR" onchange="var field=this.closest('form').querySelector('[name=TENNGANHANG]');var bank=this.options[this.selectedIndex].getAttribute('data-bank-name');if(field &amp;&amp; bank){field.value=bank;field.dispatchEvent(new Event('change',{bubbles:true}));}">
+    <option value="">-- Chọn ngân hàng --</option>
+    @if (matched == null && !String.IsNullOrEmpty(current)) {
+        <option value="@current" data-legacy-bank="true" selected="selected">@current (mã cũ — chọn ngân hàng để dùng QR)</option>
+    }
+    @foreach (var bank in banks.OrderBy(b => (string)b["shortName"])) {
+        var bin = (string)bank["bin"];
+        <option value="@bin" data-bank-code="@((string)bank["code"])" data-bank-short-name="@((string)bank["shortName"])" data-bank-name="@((string)bank["name"])" selected="@(bin == selectedBin ? "selected" : null)">@((string)bank["shortName"]) — @bin</option>
+    }
+</select>
+<small class="text-muted">Chọn ngân hàng để lưu mã BIN 6 chữ số và điền tên ngân hàng.</small>

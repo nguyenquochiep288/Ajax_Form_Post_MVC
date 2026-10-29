@@ -1,4 +1,4 @@
-@model MVC_QuanLyTHP.Models.v_v_dm_TaiKhoanNganHang
+﻿@model MVC_QuanLyTHP.Models.v_v_dm_TaiKhoanNganHang
 @using MVC_QuanLyTHP.Class;
 @using DatabaseTHP.Class;
 @if (Utility.IntWidth == 1)
@@ -49,7 +49,7 @@
                 <div class="form-group">
                     @Html.Label(@Utility.GetColumnName(@API.dm_TaiKhoanNganHang, "MANGANHANG"), htmlAttributes: new { @class = "col-sm-2 control-label" })
                     <div class="col-sm-5">
-                        @Html.EditorFor(model => model.MANGANHANG, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.Partial("_BankPicker", Model)
                         @Html.ValidationMessageFor(model => model.MANGANHANG, "", new { @class = "text-danger" })
                     </div>
                 </div>
@@ -167,7 +167,7 @@ else
                             <div class="form-group">
                                 @Html.Label(@Utility.GetColumnName(@API.dm_TaiKhoanNganHang, "MANGANHANG"), htmlAttributes: new { @class = "col-sm-2 control-label" })
                                 <div class="col-sm-5">
-                                    @Html.EditorFor(model => model.MANGANHANG, new { htmlAttributes = new { @class = "form-control" } })
+                                    @Html.Partial("_BankPicker", Model)
                                     @Html.ValidationMessageFor(model => model.MANGANHANG, "", new { @class = "text-danger" })
                                 </div>
                             </div>

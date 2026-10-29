@@ -98,6 +98,58 @@ namespace MVC_QuanLyTHP.Controllers
 			}
 		}
 
+		[HttpGet]
+		public ActionResult OrderMenu()
+		{
+			if (Utility.KiemTra()) return RedirectToAction("Index", "Admin");
+			if (!Utility.KiemTraQuyen("Deposit", "Create")) return new HttpStatusCodeResult(403);
+			// Reuse order initialization, permissions and the existing session cart.
+			var initialized = Create(2);
+			var view = initialized as ViewResult;
+			if (view == null) return initialized;
+			ViewBag.OrderGroups = GetDanhSachNhomSanPham().Data as List<web_Sp_Get_DSNhomSanPham_Result>
+				?? new List<web_Sp_Get_DSNhomSanPham_Result>();
+			Response.Charset = "utf-8";
+			return View("OrderMenu", view.Model);
+		}
+
+		[HttpPost]
+		public ActionResult OrderMenuProducts(TimKiem model, string[] GroupIDs)
+		{
+			if (Utility.KiemTra()) return Json(new { Success = false, URL = Url.Action("Index", "Admin") });
+			if (!Utility.KiemTraQuyen("Deposit", "Create")) return new HttpStatusCodeResult(403);
+			if (model == null || string.IsNullOrWhiteSpace(model.ID_KHO))
+				return Json(new { Success = false, Message = "Vui lòng chọn kho để xem sản phẩm." });
+			var selectedGroups = (GroupIDs ?? new[] { model.GroupID })
+				.Where(id => !string.IsNullOrWhiteSpace(id) && id != "all" && id != "-1")
+				.Select(id => id.Trim()).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+			// The stored procedure accepts one group. For multiple groups, filter its
+			// permission-scoped result so warehouse, stock and search rules stay unchanged.
+			model.GroupID = selectedGroups.Count == 1 ? selectedGroups[0] : "-1";
+			model.keySearch = model.keySearch ?? "";
+			model.idNhomQuyen = null;
+			model.BOLTONKHO = !model.BOLTONKHO;
+			var response = GetDanhSachSanPham(model);
+			if (!response.Success) return Json(new { Success = false, Message = "Không tải được sản phẩm. Vui lòng thử lại." });
+			var products = response.Data as List<web_Sp_Get_DSSanPham_Result> ?? new List<web_Sp_Get_DSSanPham_Result>();
+			if (selectedGroups.Count > 1)
+			{
+				var selectedIds = new HashSet<string>(selectedGroups, StringComparer.OrdinalIgnoreCase);
+				products = products.Where(p => selectedIds.Contains(p.ID_NHOMHANGHOA)).ToList();
+			}
+			return new JsonResult
+			{
+				Data = new { Success = true, Products = products.Select(p => new {
+					Id = p.ID_HANGHOAKHO, Code = p.MA, Name = p.NAME,
+					Image = Url.Content("~/Images_Upload/Product/") + (string.IsNullOrEmpty(p.PICTURE) ? "NoImage.png" : p.PICTURE),
+					Price = p.GIA01, Unit = p.NAME_DVT,
+					Stock = p.ISKHONGHIENTHITONKHO ? (double?)null : p.QTY,
+					StockUnit = p.TYLE_QD > 1 ? p.NAME_DVT_QD : p.NAME_DVT
+				}) },
+				MaxJsonLength = int.MaxValue
+			};
+		}
+
 		public ActionResult Create(int type = 2)
 		{
 			base.Session["IntWidth"] = type;

@@ -1,0 +1,47 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="referrer" content="no-referrer" />
+    <title>Tra cứu khách hàng · Trang Hiệp Phát</title>
+    <link rel="stylesheet" href="@Url.Content("~/Content/customer-portal.css")" />
+    <script defer src="@Url.Content("~/Scripts/CustomerPortal.js")"></script>
+</head>
+<body>
+<div id="customer-portal" data-token="@ViewBag.PortalToken" data-read-url="@Url.Action("Read", "CustomerPortal")" data-excel-url="@Url.Action("ExportExcel", "CustomerPortal")">
+    <header class="portal-header">
+        <a class="brand" href="#overview" aria-label="Trang Hiệp Phát - Tổng quan">THP<span>TRANG HIỆP PHÁT</span></a>
+        <div class="customer-heading"><strong id="customer-name">Trang khách hàng</strong><span id="customer-code">Tra cứu giao dịch</span></div>
+    </header>
+    <main>
+        <nav class="portal-tabs" aria-label="Tra cứu khách hàng">
+            <button type="button" data-section="overview" aria-current="page">Tổng quan</button>
+            <button type="button" data-section="orders">Đơn đặt hàng</button>
+            <button type="button" data-section="outputs">Phiếu xuất</button>
+            <button type="button" data-section="invoices">Hóa đơn</button>
+            <button type="button" data-section="receipts">Phiếu thu</button>
+            <button type="button" data-section="debt">Công nợ</button>
+        </nav>
+        <div class="page-title"><div><span class="eyebrow">BÁO CÁO KHÁCH HÀNG</span><h1 id="page-title">Tổng quan giao dịch</h1></div><button type="button" id="print-report" class="secondary">In báo cáo</button></div>
+        <form id="portal-filter" class="filters">
+            <label>Từ ngày<input type="date" id="from-date" required /></label>
+            <label>Đến ngày<input type="date" id="to-date" required /></label>
+            <label id="search-field" hidden>Tìm mã chứng từ<input type="search" id="search" maxlength="100" placeholder="Nhập mã phiếu hoặc số hóa đơn" /></label>
+            <button type="submit">Xem báo cáo</button>
+        </form>
+        <p id="portal-status" role="status" aria-live="polite">Đang tải dữ liệu…</p>
+        <section id="portal-content" aria-label="Nội dung báo cáo" aria-busy="true"></section>
+        <footer>Số tiền hiển thị bằng VNĐ · Dữ liệu cập nhật khi tra cứu<span id="updated-at"></span></footer>
+    </main>
+    <dialog id="document-dialog" aria-labelledby="document-title">
+        <div class="dialog-toolbar"><h2 id="document-title">Chi tiết chứng từ</h2><button type="button" id="close-document" class="secondary">Đóng</button></div>
+        <div id="document-content"></div>
+        <div class="dialog-actions"><button type="button" id="print-document">In / Lưu PDF</button></div>
+    </dialog>
+</div>
+</body>
+</html>

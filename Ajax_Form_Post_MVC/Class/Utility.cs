@@ -4627,7 +4627,8 @@ namespace MVC_QuanLyTHP.Class
 			report.DataDefinition.FormulaFields["TENCONGTY"].Text = "'" + CovertText(v_v_dm_CongTy2.NAME) + "'";
 			report.DataDefinition.FormulaFields["DIACHI"].Text = "'" + CovertText(v_v_dm_CongTy2.ADDRESS) + "'";
 			report.DataDefinition.FormulaFields["DIENTHOAI"].Text = "'" + CovertText(v_v_dm_CongTy2.TEL) + "'";
-			report.DataDefinition.FormulaFields["ICON"].Text = "'" + CovertText(v_v_dm_CongTy2.LOGO) + "'";
+			report.DataDefinition.FormulaFields["ICON"].Text = "'" + CovertText(HostingEnvironment.MapPath("~/Images_Upload/Logo/trang-hiep-phat-20261028.jpg")) + "'";
+			ReportLogo.Apply(report);
 			report.SetDatabaseLogon("test", "test@", "test", "test");
 			return report;
 		}

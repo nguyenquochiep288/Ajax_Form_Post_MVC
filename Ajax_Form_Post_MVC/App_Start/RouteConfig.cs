@@ -9,6 +9,11 @@ namespace MVC_QuanLyTHP
         {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
             routes.MapRoute(
+                name: "CustomerPortal",
+                url: "khach-hang/{token}",
+                defaults: new { controller = "CustomerPortal", action = "Index" }
+            );
+            routes.MapRoute(
                 name: "KhuyenMai",
                 url: "KhuyenMai",
                 defaults: new { controller = "Promotion", action = "ForCustomers" }

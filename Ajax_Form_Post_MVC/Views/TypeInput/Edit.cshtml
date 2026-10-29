@@ -1,4 +1,4 @@
-@model MVC_QuanLyTHP.Models.v_v_dm_LoaiPhieuNhap
+﻿@model MVC_QuanLyTHP.Models.v_v_dm_LoaiPhieuNhap
 @using MVC_QuanLyTHP.Class;
 @using DatabaseTHP.Class;
 @if (Utility.IntWidth == 1)
@@ -25,6 +25,13 @@
 
         <div class="panel-body panel-body-nopadding">
             <div class="form-horizontal form-bordered">
+<div class="form-group">
+    @Html.LabelFor(model => model.ISNHAPTRAHANG, "Nhập hàng khách trả", new { @class = "col-sm-2 control-label" })
+    <div class="col-sm-7">
+        <input type="checkbox" id="ISNHAPTRAHANG" name="ISNHAPTRAHANG" value="true" @Html.Raw(Model.ISNHAPTRAHANG ? "checked=\"checked\"" : "") />
+        <p class="help-block">Đánh dấu loại phiếu nhận hàng khách trả về. Báo cáo dùng cờ này để trừ lượng bán và doanh thu.</p>
+    </div>
+</div>
                 <div class="form-group">
                     @Html.Label(@Utility.GetColumnName(@API.dm_LoaiPhieuNhap, "MA"), htmlAttributes: new { @class = "col-sm-2 control-label" })
                     <div class="col-sm-5">
@@ -108,6 +115,13 @@ else
 
                 <div id="collapseOne" class="panel-collapse collapse in">
                     <div class="form-horizontal form-bordered">
+<div class="form-group">
+    @Html.LabelFor(model => model.ISNHAPTRAHANG, "Nhập hàng khách trả", new { @class = "col-sm-2 control-label" })
+    <div class="col-sm-7">
+        <input type="checkbox" id="ISNHAPTRAHANG" name="ISNHAPTRAHANG" value="true" @Html.Raw(Model.ISNHAPTRAHANG ? "checked=\"checked\"" : "") />
+        <p class="help-block">Đánh dấu loại phiếu nhận hàng khách trả về. Báo cáo dùng cờ này để trừ lượng bán và doanh thu.</p>
+    </div>
+</div>
                         <div class="form-group">
                             @Html.Label(@Utility.GetColumnName(@API.dm_LoaiPhieuNhap, "MA"), htmlAttributes: new { @class = "col-sm-2 control-label" })
                             <div class="col-sm-5">
@@ -129,6 +143,13 @@ else
                                 @Html.ValidationMessageFor(model => model.GHICHU, "", new { @class = "text-danger" })
                             </div>
                         </div>
+                        <div class="form-group">
+                    @Html.Label(@Utility.GetColumnName(@API.dm_LoaiPhieuNhap, "TYPE"), htmlAttributes: new { @class = "col-sm-2 control-label" })
+                    <div class="col-sm-5">
+                        @Html.DropDownListFor(model => model.TYPE, new SelectList(Model.lstTYPEInputOutput, "ID", "NAME"), Utility.GetTitleChon(""), htmlAttributes: new { @class = "form-control", id = "lstTYPEInputOutputEdit" })
+                        @Html.ValidationMessageFor(model => model.TYPE, "", new { @class = "text-danger" })
+                    </div>
+                </div>
                         <div class="form-group">
                             @Html.Label(@Utility.GetColumnName(@API.dm_LoaiPhieuNhap, "ISACTIVE"), htmlAttributes: new { @class = "col-sm-2 control-label" })
                             <div class="col-sm-5">

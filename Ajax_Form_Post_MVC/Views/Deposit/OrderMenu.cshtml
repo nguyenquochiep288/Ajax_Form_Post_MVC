@@ -1,0 +1,90 @@
+﻿@model MVC_QuanLyTHP.Models.v_v_ct_PhieuDatHang
+@using MVC_QuanLyTHP.Class
+@using DatabaseTHP.StoredProcedure
+@{
+    ViewBag.Title = "Đặt hàng";
+    Layout = "~/Views/Shared/Admin.cshtml";
+    var groups = ViewBag.OrderGroups as List<web_Sp_Get_DSNhomSanPham_Result>;
+    Response.Charset = "utf-8";
+}
+@Html.Partial("LoadCssDanhMuc")
+<link rel="stylesheet" href="@Url.Content("~/Content/css/deposit-order-menu.css?v=20261021-3")" />
+<script src="@Url.Content("~/Scripts/Deposit_Temp.js?v=20261021-2")"></script>
+<script src="@Url.Content("~/Scripts/DepositOrderMenu.js?v=20261021-3")"></script>
+<div class="om-page" id="orderMenuPage" data-product-url="@Url.Action("LoadProduct")" data-products-url="@Url.Action("OrderMenuProducts")" data-customer-url="@Url.Action("CallChangeCustomer")">
+    <header class="om-heading">
+        <div><h1>ĐẶT HÀNG</h1><p>Chọn sản phẩm, nhập số lượng và xem lại đơn hàng trước khi lưu.</p></div>
+        <a class="btn btn-default" href="@Url.Action("Index")">Danh sách phiếu đặt hàng</a>
+    </header>
+    @using (Ajax.BeginForm("CreatePopup", "Deposit", new AjaxOptions { OnBegin = "orderMenuBegin", OnSuccess = "orderMenuSaved", OnFailure = "orderMenuFailed" }, new { id = "orderMenuForm" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(m => m.LOC_ID)
+        @Html.HiddenFor(m => m.ID)
+        @Html.HiddenFor(m => m.SOPHIEU)
+        @Html.HiddenFor(m => m.NGAYLAP)
+        <section class="om-panel" id="collapseOneDeposit">
+            <h2>1. Thông tin đơn hàng</h2>
+            @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+            <div class="om-fields">
+                <div><label for="lstdm_Kho">Kho hàng</label>@Html.DropDownListFor(m => m.ID_KHO, new SelectList(Model.lstdm_Kho, "ID", "NAME"), "Chọn kho hàng", new { @class = "form-control chosen-select", id = "lstdm_Kho", required = "required" })</div>
+                <div><label for="lstdm_KhachHang">Khách hàng</label>@Html.DropDownListFor(m => m.ID_KHACHHANG, new SelectList(Model.lstdm_KhachHang, "ID", "NAME"), "Tìm và chọn khách hàng", new { @class = "form-control chosen-select", id = "lstdm_KhachHang", required = "required" })</div>
+                <div><label for="MAPHIEU">Mã phiếu</label>@Html.TextBoxFor(m => m.MAPHIEU, new { @class = "form-control", @readonly = "readonly" })</div>
+                <div><label>Ngày đặt hàng</label><div class="form-control">@Model.NGAYLAP.ToString("dd/MM/yyyy")</div></div>
+                <div class="om-wide"><label for="ADDRESS">Địa chỉ giao hàng</label>@Html.TextBoxFor(m => m.ADDRESS, new { @class = "form-control", @readonly = "readonly" })</div>
+                <div><label for="TEL">Điện thoại</label>@Html.TextBoxFor(m => m.TEL, new { @class = "form-control", @readonly = "readonly" })</div>
+                @if (ViewBag.PermissionCreateUser == true)
+                {
+                    <div><label for="ID_NHANVIEN">Nhân viên</label>@Html.DropDownListFor(m => m.ID_NHANVIEN, new SelectList(Model.lstAspNetUsers, "ID", "NAME"), "Chọn nhân viên", new { @class = "form-control chosen-select" })</div>
+                }
+            </div>
+            <p class="text-danger" id="lblCongNo" name="lblCongNo" role="status"></p>
+        </section>
+        <section class="om-panel" aria-labelledby="om-products-title">
+            <div class="om-section-heading">
+                <h2 id="om-products-title">2. Chọn sản phẩm</h2>
+                <div class="om-switch" role="group" aria-label="Giao diện sản phẩm">
+                    <button type="button" class="btn om-mode is-active" data-mode="grid" aria-pressed="true"><i class="fa fa-th" aria-hidden="true"></i> Lưới</button>
+                    <button type="button" class="btn om-mode" data-mode="list" aria-pressed="false"><i class="fa fa-list" aria-hidden="true"></i> Danh sách</button>
+                </div>
+            </div>
+            <div class="om-filters">
+                <div><label id="om-group-label">Nhóm hàng hóa (chọn nhiều)</label>
+                    <details class="om-group-menu" id="om-group-menu">
+                        <summary aria-labelledby="om-group-label om-group-summary"><span id="om-group-summary">Tất cả nhóm hàng</span></summary>
+                        <div class="om-group-dropdown">
+                            <input id="om-group-search" type="search" class="form-control" placeholder="Tìm tên nhóm hàng…" aria-label="Tìm nhóm hàng hóa" />
+                            <div class="om-group-tools"><button type="button" class="btn btn-default" id="om-groups-all">Chọn kết quả tìm</button><button type="button" class="btn btn-default" id="om-groups-clear">Bỏ chọn tất cả</button></div>
+                            <div class="om-group-options" id="om-group-options">
+                                @foreach (var group in groups)
+                                {
+                                    <label><input type="checkbox" value="@group.ID" /><span>@group.NAME</span></label>
+                                }
+                            </div>
+                            <p id="om-group-empty" hidden>Không tìm thấy nhóm phù hợp.</p>
+                            <small>Không chọn nhóm = tất cả nhóm hàng.</small>
+                        </div>
+                    </details>
+                </div>
+                <div class="om-search"><label for="om-search">Tìm sản phẩm</label><div><input id="om-search" class="form-control" type="search" placeholder="Nhập mã hoặc tên sản phẩm…" /><button type="button" class="btn btn-primary" id="om-search-button">Tìm kiếm</button></div></div>
+                <label class="om-stock-option"><input type="checkbox" id="om-include-empty" /> Hiện cả hàng hết tồn kho</label>
+            </div>
+            <p class="om-hint">Bấm vào sản phẩm để chọn đơn vị tính và số lượng. Giá trên danh sách là giá bán 1; giá đặt hàng hiển thị khi chọn sản phẩm.</p>
+            <p id="om-selection-status" role="alert" aria-live="assertive" hidden></p>
+            <p id="om-status" role="status" aria-live="polite">Chọn kho để tải sản phẩm.</p>
+            <div id="om-products" class="om-products om-grid" aria-label="Sản phẩm"></div>
+            <div class="om-pagination"><button type="button" id="om-prev" class="btn btn-default">Trang trước</button><span id="om-page-info"></span><button type="button" id="om-next" class="btn btn-default">Trang sau</button></div>
+        </section>
+        <section class="om-panel" id="om-cart">
+            <h2>3. Đơn hàng đã chọn</h2>
+            <p id="om-cart-empty">Chưa có sản phẩm. Chọn sản phẩm ở phía trên để thêm vào đơn hàng.</p>
+            <div class="om-cart-scroll">
+                <table class="table table-bordered"><thead><tr><th>Mã hàng</th><th>Tên sản phẩm</th><th>ĐVT</th><th>Số lượng</th><th>Đơn giá</th><th>CK (%)</th><th>Tiền giảm</th><th>Thành tiền</th><th>Thuế (%)</th><th>Tiền thuế</th><th>Tổng cộng</th><th>Thao tác</th></tr></thead><tbody id="tbodyTempItemInput"></tbody></table>
+            </div>
+            <div class="om-cart-tools"><button type="button" class="btn btn-default" onclick="myDeleteAllDeposit_TempProduct()">Xóa tất cả hàng đã chọn</button><button type="submit" class="btn btn-info" name="BUTTONTYPE" value="GetPromotion" onclick="validatetext()">Lấy khuyến mãi</button></div>
+            <label for="GHICHU">Ghi chú đơn hàng</label>@Html.TextAreaFor(m => m.GHICHU, new { @class = "form-control", rows = 2, maxlength = 350 })
+            <p id="om-save-status" role="status" aria-live="polite"></p>
+            <div class="om-save-bar"><a class="btn btn-default" href="@Url.Action("Index")">Quay lại</a><a class="btn btn-default" href="#om-products-title">Chọn thêm sản phẩm</a><button class="btn btn-success" type="submit" name="BUTTONTYPE" value="Save" onclick="validatetext()"><i class="fa fa-check"></i> Lưu đơn hàng</button></div>
+        </section>
+    }
+</div>

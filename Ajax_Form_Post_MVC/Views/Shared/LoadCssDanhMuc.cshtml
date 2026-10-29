@@ -4,14 +4,28 @@
 @*<script src="@Url.Content("~/Content/js/chosen.jquery.min.js")"></script>*@
 <script src="@Url.Content("~/Scripts/jquery.unobtrusive-ajax.min.js")"></script>
 
-<script src="@Url.Content("~/Scripts/Category.js"+Utility.VersionJs)"></script>
+<script src="@Url.Content("~/Scripts/Category.js"+Utility.VersionJs+"&catalogFlags=20261026-bank-picker")"></script>
 <link href="@Url.Content("~/css/Category.css")" rel="stylesheet">
+@{
+    var flagCatalog = Convert.ToString(ViewContext.RouteData.Values["controller"]);
+}
+@if (ViewBag.CatalogFlagsEnabled == true && ViewBag.PermissionEdit == true)
+{
+    <div id="catalog-flags-config" hidden data-catalog="@flagCatalog" data-url="@Url.Action("Update", "CatalogFlags")">
+        @Html.AntiForgeryToken()
+    </div>
+    <script src="@Url.Content("~/Scripts/CatalogFlags.js?v=20261022-2")"></script>
+}
 
 
 <script>
 
 </script>
 <style>
+    .catalog-flag { width: 19px; height: 19px; cursor: pointer; vertical-align: middle; accent-color: #15a895; }
+    .catalog-flag:disabled { cursor: wait; opacity: .55; }
+    .catalog-flags-message { margin: 12px 0; padding: 8px 12px; color: #52718d; }
+    .catalog-flags-message.text-danger { color: #b42318; }
 
     /*.tablescroll td:nth-child(1), th:nth-child(1) {
         position: sticky;

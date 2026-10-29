@@ -158,7 +158,7 @@ public class ViewReportController : Controller
                 v_v_web_Report2 = apiResponse.Data as v_v_web_Report;
             }
             string text = Path.Combine(base.Server.MapPath("~/Images_Upload/Product/"), "MyBinaryQR.png");
-            string text2 = Path.Combine(base.Server.MapPath("~/Images_Upload/Logo/"), "logoTrangHiepPhat.jpg");
+            string text2 = Path.Combine(base.Server.MapPath("~/Images_Upload/Logo/"), "trang-hiep-phat-20261028.jpg");
             v_v_dm_CongTy v_v_dm_CongTy2 = new v_v_dm_CongTy();
             apiResponse = Utility.GetDetail<v_v_dm_CongTy>(Utility.LOC_ID, "Company");
             if (apiResponse.Data != null)
@@ -194,6 +194,7 @@ public class ViewReportController : Controller
             reportClass.DataDefinition.FormulaFields["DIACHI"].Text = "'" + v_v_dm_CongTy2.ADDRESS + "'";
             reportClass.DataDefinition.FormulaFields["DIENTHOAI"].Text = "'" + v_v_dm_CongTy2.TEL + "'";
             reportClass.DataDefinition.FormulaFields["ICON"].Text = "'" + text2 + "'";
+            ReportLogo.Apply(reportClass);
             switch (v_v_web_Report2.REPORT)
             {
                 case "~/Report/rptBaoCaoPhieuDatHang.rpt":

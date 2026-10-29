@@ -9,6 +9,10 @@
     Layout = "~/Views/Shared/Admin.cshtml";
 }
 @Html.Partial("LoadCssDanhMuc")
+@if (TempData["ReturnFlagMessage"] != null)
+{
+    <p class="alert @(TempData["ReturnFlagError"] as bool? == true ? "alert-danger" : "alert-success")">@TempData["ReturnFlagMessage"]</p>
+}
 <hr />
 <div class="panel-group" id="accordion">
     <div class="panel panel-default">
@@ -75,6 +79,7 @@
 
 
 
+            <p class="help-block" style="clear:both;padding:8px 15px">Tích hoặc bỏ tích ở cột trả hàng rồi xác nhận để lưu tại chỗ, không tải lại trang. Cần quyền sửa danh mục để thay đổi.</p>
             <div class="tablescroll" style="overflow-x:auto; Overflow-y:scroll; height: auto;">
                 <div class="panel-body panel-body-nopadding">
                     <div class="form-horizontal form-bordered">
@@ -86,6 +91,7 @@
                                     <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_LoaiPhieuNhap, "GHICHU")</th>
                                     <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_LoaiPhieuNhap, "ISACTIVE")</th>
                                     <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_LoaiPhieuNhap, "ISDEFAULT")</th>
+                                    <th style="font-weight:bold;text-align:center;white-space:nowrap">Nhập hàng khách trả</th>
                                     <th style="font-weight: bold; text-align:center; white-space: nowrap;"> @Utility.GetColumnName(@API.dm_LoaiPhieuNhap, "ISSYSTEM")</th>
 
                                     <th>
@@ -102,9 +108,30 @@
                                         <td style="white-space: nowrap; " id="GHICHU"> @Html.DisplayFor(modelItem => item.GHICHU)</td>
                                         <td style="white-space: nowrap; " id="ISACTIVE"> @Html.DisplayFor(modelItem => item.ISACTIVE)</td>
                                         <td style="white-space: nowrap; " id="ISDEFAULT"> @Html.DisplayFor(modelItem => item.ISDEFAULT)</td>
+                                        <td id="ISNHAPTRAHANG" style="text-align:center;vertical-align:middle">
+                                            @if (ViewBag.PermissionEdit)
+                                            {
+                                                <input type="checkbox" aria-label="Nhập hàng khách trả" title="Tích hoặc bỏ tích, xác nhận để lưu tại chỗ" style="width:18px;height:18px;cursor:pointer"
+                                                       @Html.Raw(item.ISNHAPTRAHANG ? "checked=\"checked\"" : "")
+                                                       disabled="disabled" />
+                                            }
+                                            else
+                                            {
+                                                @Html.DisplayFor(modelItem => item.ISNHAPTRAHANG)
+                                            }
+                                        </td>
                                         <td style="white-space: nowrap; " id="ISSYSTEM"> @Html.DisplayFor(modelItem => item.ISSYSTEM)</td>
 
                                         <td style="white-space: nowrap; " class="fix">
+                                            @if (ViewBag.PermissionEdit)
+                                            {
+                                                using (Html.BeginForm("SetReturnFlag", "TypeInput", FormMethod.Post, new { @class = "return-flag-form", style = "display:none" }))
+                                                {
+                                                    @Html.AntiForgeryToken()
+                                                    <input type="hidden" name="id" value="@item.ID" />
+                                                    <input type="hidden" name="enabled" value="@(item.ISNHAPTRAHANG ? "false" : "true")" />
+                                                }
+                                            }
                                             @if (!item.ISSYSTEM)
                                             {
                                                 if (ViewBag.PermissionEdit)

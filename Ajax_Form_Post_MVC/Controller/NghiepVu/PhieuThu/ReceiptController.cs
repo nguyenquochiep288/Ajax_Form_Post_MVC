@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
@@ -908,7 +908,7 @@ namespace MVC_QuanLyTHP.Controllers
 				}
 				byte[] bytes = Encoding.UTF8.GetBytes("https://ironsoftware.com/csharp/barcode/");
 				string text = Path.Combine(base.Server.MapPath("~/Images_Upload/Product/"), "MyBinaryQR.png");
-				string text2 = Path.Combine(base.Server.MapPath("~/Images_Upload/Logo/"), "logoTrangHiepPhat.jpg");
+				string text2 = Path.Combine(base.Server.MapPath("~/Images_Upload/Logo/"), "trang-hiep-phat-20261028.jpg");
 				v_ct_PhieuThu v_ct_PhieuThu2 = new v_ct_PhieuThu();
 				SP_Parameter sP_Parameter = new SP_Parameter();
 				sP_Parameter.ID_PHIEUTHU = ID;

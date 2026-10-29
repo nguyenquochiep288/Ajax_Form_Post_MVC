@@ -1,0 +1,51 @@
+﻿@model MVC_QuanLyTHP.Models.PriceFormulaPageModel
+@using MVC_QuanLyTHP.Class
+@{
+    ViewBag.Title = "Công thức giá";
+    Layout = "~/Views/Shared/Admin.cshtml";
+}
+@Html.Partial("LoadCssDanhMuc")
+<style>
+    .formula-wrap{padding:18px}.formula-heading{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}.formula-heading h2{margin:0;text-align:center;flex:1}.formula-table{overflow:auto}.formula-code{font-family:Consolas,monospace;color:#087d72;background:#eef8f6;padding:5px 8px;border-radius:5px}.formula-actions{display:flex;gap:5px;white-space:nowrap}
+    .formula-heading{flex-wrap:wrap;gap:12px}.formula-heading>div{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:5px}
+    .formula-table{position:relative}.formula-table table{border-collapse:separate;border-spacing:0}
+    .formula-table .formula-action-cell{position:sticky;right:0;z-index:2;background:#fff;box-shadow:-3px 0 6px rgba(0,0,0,.08);min-width:76px;width:76px}
+    .formula-table thead .formula-action-cell{z-index:3;background:#f7f9fb}
+    .formula-table tbody tr:nth-of-type(odd) .formula-action-cell{background:#f9f9f9}
+    .formula-actions{align-items:center;justify-content:flex-end}.formula-actions form{margin:0}
+    #example-table .formula-actions .btn{display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box;width:22px!important;height:22px!important;min-width:22px!important;min-height:0!important;padding:0!important;font-size:11px!important;line-height:1!important;border-radius:3px!important;box-shadow:none!important;margin:0!important}
+    #example-table .formula-actions .btn .fa{font-size:11px;line-height:1;margin:0}
+</style>
+<div class="formula-wrap">
+    <div class="formula-heading"><h2>CÔNG THỨC GIÁ THEO NHÓM HÀNG</h2>
+        <div>
+            <a class="btn btn-default" href="@Url.Action("History")"><i class="fa fa-history"></i> Lịch sử áp dụng giá</a>
+            <a class="btn btn-warning" href="@Url.Action("ComparePrices")"><i class="fa fa-balance-scale"></i> Đối chiếu giá bán / giá nhập</a>
+            <a class="btn btn-info" href="@Url.Action("CalculatePrices")"><i class="fa fa-calculator"></i> Tính giá / Nạp Excel</a>
+            @if (ViewBag.PermissionCreate) { <a class="btn btn-success" href="@Url.Action("Create")"><i class="fa fa-plus"></i> Tạo công thức</a> }
+        </div>
+    </div>
+    @if (!String.IsNullOrEmpty(ViewBag.LoadError as string)) { <div class="alert alert-warning">@ViewBag.LoadError. Nếu vừa cài đặt, hãy chạy script SQL trước.</div> }
+    @if (TempData["SuccessMessage"] != null) { <div class="alert alert-success">@TempData["SuccessMessage"]</div> }
+    @if (TempData["TitleError"] != null) { <div class="alert alert-danger">@TempData["TitleError"]</div> }
+    @using (Html.BeginForm("Index", "PriceFormula", FormMethod.Get, new { @class = "form-inline", style = "margin-bottom:12px" })) {
+        <input class="form-control" name="Search" value="@Model.Search" placeholder="Tìm mã, tên hoặc nhóm hàng" style="min-width:280px" />
+        <button class="btn btn-default" type="submit"><i class="fa fa-search"></i> Tìm</button>
+    }
+    <div class="table-responsive formula-table"><table class="table table-bordered table-striped" id="example-table">
+        <thead><tr><th>Mã</th><th>Tên chương trình</th><th>Nhóm hàng</th><th>Giá được tính</th><th>Công thức</th><th>Hiệu lực</th><th>Trạng thái</th><th class="formula-action-cell">Thao tác</th></tr></thead>
+        <tbody>
+        @if (Model.Formulas.Count == 0) { <tr><td colspan="8" class="text-center">Chưa có công thức giá. Tạo công thức đầu tiên theo nhóm hàng.</td></tr> }
+        @foreach (var item in Model.Formulas) {
+            <tr><td>@item.MA</td><td>@item.NAME</td><td>@(String.IsNullOrWhiteSpace(item.TEN_NHOMHANGHOAS ?? item.TEN_NHOMHANGHOA) ? "Tất cả nhóm hàng hóa" : (item.TEN_NHOMHANGHOAS ?? item.TEN_NHOMHANGHOA))</td><td>@item.LOAIGIA</td><td><span class="formula-code">@item.CONGTHUC</span></td>
+                <td>@item.TUNGAY.ToString("dd/MM/yyyy") – @(item.DENNGAY.HasValue ? item.DENNGAY.Value.ToString("dd/MM/yyyy") : "Không giới hạn")</td>
+                <td>@(item.ISACTIVE ? "Đang áp dụng" : "Đã ngừng")</td><td class="formula-action-cell"><div class="formula-actions">
+                    @if (ViewBag.PermissionCreate) { <a class="btn btn-info btn-xs" href="@Url.Action("Copy", new { id = item.ID })" title="Sao chép thành công thức mới" aria-label="Sao chép thành công thức mới"><i class="fa fa-copy" aria-hidden="true"></i></a> }
+                    @if (ViewBag.PermissionEdit) { <a class="btn btn-primary btn-xs" href="@Url.Action("Edit", new { id = item.ID })" title="Sửa"><i class="fa fa-pencil"></i></a> }
+                    @if (item.ISACTIVE && ViewBag.PermissionDelete) { using (Html.BeginForm("Delete", "PriceFormula", new { id = item.ID }, FormMethod.Post, new { onsubmit = "return confirm('Ngưng áp dụng công thức này?')" })) { @Html.AntiForgeryToken()<button class="btn btn-warning btn-xs" type="submit" title="Ngưng áp dụng" aria-label="Ngưng áp dụng"><i class="fa fa-ban"></i></button> } }
+                    @if (!item.ISACTIVE && ViewBag.PermissionEdit) { using (Html.BeginForm("Apply", "PriceFormula", new { id = item.ID }, FormMethod.Post, new { onsubmit = "return confirm('Áp dụng công thức này? Hệ thống sẽ kiểm tra công thức có bị trùng hiệu lực hay không.')" })) { @Html.AntiForgeryToken()<button class="btn btn-success btn-xs" type="submit" title="Áp dụng" aria-label="Áp dụng"><i class="fa fa-play"></i></button> } }
+                </div></td></tr>
+        }
+        </tbody>
+    </table></div>
+</div>

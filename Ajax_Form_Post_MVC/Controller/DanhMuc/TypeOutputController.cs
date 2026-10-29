@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Web.Mvc;
@@ -13,7 +13,23 @@ namespace MVC_QuanLyTHP.Controllers
 
 	public class TypeOutputController : Controller
 	{
-		public ActionResult Index(int Page = 1, string SearchString = "", string ShowSearchValue = "")
+		        [HttpPost, ValidateAntiForgeryToken]
+        public ActionResult SetReturnFlag(string id, bool enabled)
+        {
+            if (Utility.KiemTra()) return new HttpStatusCodeResult(401);
+            if (!Utility.KiemTraQuyen("TypeOutput", "Edit")) return new HttpStatusCodeResult(403);
+            if (string.IsNullOrWhiteSpace(id)) return new HttpStatusCodeResult(400);
+            var result = Utility.Edit("SetReturnFlag/" + Uri.EscapeDataString(Utility.LOC_ID) + "/" + Uri.EscapeDataString(id),
+                new { ENABLED = enabled, USER_ID = Session["idUser"].ToString() }, "TypeOutput");
+            if (Request.IsAjaxRequest())
+                return Json(new { Success = result.Success, Message = result.Success
+                    ? "Đã cập nhật phân loại trả hàng."
+                    : "Không lưu được phân loại trả hàng. Vui lòng kiểm tra API và script SQL." });
+            TempData["ReturnFlagMessage"] = result.Success ? "Đã cập nhật phân loại trả hàng." : "Không lưu được phân loại trả hàng. Vui lòng kiểm tra API và script SQL.";
+            TempData["ReturnFlagError"] = !result.Success;
+            return RedirectToAction("Index");
+        }
+        public ActionResult Index(int Page = 1, string SearchString = "", string ShowSearchValue = "")
 		{
 			try
 			{
@@ -85,7 +101,7 @@ namespace MVC_QuanLyTHP.Controllers
 		[HttpPost]
 		[ValidateInput(false)]
 		[ValidateAntiForgeryToken]
-		public ActionResult Create([Bind(Include = "LOC_ID,ID,MA,NAME,NOTE,ISACTIVE,ISDEFAULT,THOIGIANSUA,ID_NGUOISUA,THOIGIANTHEM,ID_NGUOITAO,ISSYSTEM,TYPE")] v_v_dm_LoaiPhieuXuat dm_LoaiPhieuXuat)
+		public ActionResult Create([Bind(Include = "LOC_ID,ID,MA,NAME,NOTE,ISACTIVE,ISDEFAULT,THOIGIANSUA,ID_NGUOISUA,THOIGIANTHEM,ID_NGUOITAO,ISSYSTEM,TYPE,ISTRAHANG")] v_v_dm_LoaiPhieuXuat dm_LoaiPhieuXuat)
 		{
 			try
 			{
@@ -168,7 +184,7 @@ namespace MVC_QuanLyTHP.Controllers
 		[HttpPost]
 		[ValidateInput(false)]
 		[ValidateAntiForgeryToken]
-		public ActionResult Edit([Bind(Include = "LOC_ID,ID,MA,NAME,NOTE,ISACTIVE,ISDEFAULT,THOIGIANSUA,ID_NGUOISUA,THOIGIANTHEM,ID_NGUOITAO,ISSYSTEM,TYPE")] v_v_dm_LoaiPhieuXuat dm_LoaiPhieuXuat)
+		public ActionResult Edit([Bind(Include = "LOC_ID,ID,MA,NAME,NOTE,ISACTIVE,ISDEFAULT,THOIGIANSUA,ID_NGUOISUA,THOIGIANTHEM,ID_NGUOITAO,ISSYSTEM,TYPE,ISTRAHANG")] v_v_dm_LoaiPhieuXuat dm_LoaiPhieuXuat)
 		{
 			try
 			{
@@ -294,7 +310,7 @@ namespace MVC_QuanLyTHP.Controllers
 		[HttpPost]
 		[ValidateInput(false)]
 		[ValidateAntiForgeryToken]
-		public ActionResult CreatePopup([Bind(Include = "LOC_ID,ID,MA,NAME,NOTE,ISACTIVE,ISDEFAULT,THOIGIANSUA,ID_NGUOISUA,THOIGIANTHEM,ID_NGUOITAO,ISSYSTEM,TYPE")] v_v_dm_LoaiPhieuXuat dm_LoaiPhieuXuat)
+		public ActionResult CreatePopup([Bind(Include = "LOC_ID,ID,MA,NAME,NOTE,ISACTIVE,ISDEFAULT,THOIGIANSUA,ID_NGUOISUA,THOIGIANTHEM,ID_NGUOITAO,ISSYSTEM,TYPE,ISTRAHANG")] v_v_dm_LoaiPhieuXuat dm_LoaiPhieuXuat)
 		{
 			ApiResponse apiResponse = new ApiResponse();
 			try
@@ -448,7 +464,7 @@ namespace MVC_QuanLyTHP.Controllers
 		[HttpPost]
 		[ValidateInput(false)]
 		[ValidateAntiForgeryToken]
-		public ActionResult EditPopup([Bind(Include = "LOC_ID,ID,MA,NAME,NOTE,ISACTIVE,ISDEFAULT,THOIGIANSUA,ID_NGUOISUA,THOIGIANTHEM,ID_NGUOITAO,ISSYSTEM,TYPE")] v_v_dm_LoaiPhieuXuat dm_LoaiPhieuXuat)
+		public ActionResult EditPopup([Bind(Include = "LOC_ID,ID,MA,NAME,NOTE,ISACTIVE,ISDEFAULT,THOIGIANSUA,ID_NGUOISUA,THOIGIANTHEM,ID_NGUOITAO,ISSYSTEM,TYPE,ISTRAHANG")] v_v_dm_LoaiPhieuXuat dm_LoaiPhieuXuat)
 		{
 			ApiResponse apiResponse = new ApiResponse();
 			try

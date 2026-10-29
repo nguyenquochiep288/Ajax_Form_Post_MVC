@@ -1,0 +1,200 @@
+﻿@model MVC_QuanLyTHP.Models.PriceFormulaEditModel
+@{
+    ViewBag.Title = Model.IsEdit ? "Sửa công thức giá" : "Tạo công thức giá";
+    Layout = "~/Views/Shared/Admin.cshtml";
+}
+@Html.Partial("LoadCssDanhMuc")
+<style>
+    #priceFormulaForm input[type=date]{width:100%;min-width:0;max-width:100%;box-sizing:border-box}#trialValues label{overflow-wrap:anywhere}.pf-vars .btn{white-space:normal}
+    .pf-page{padding:18px}.pf-card{background:#fff;border:1px solid #ddd;border-radius:8px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,.04)}.pf-title{padding:14px 18px;border-bottom:1px solid #e5e5e5;font-size:20px;font-weight:600}.pf-body{padding:18px}.pf-operators .btn,.pf-vars .btn{margin:3px}.pf-expression{font:16px Consolas,monospace;min-height:100px}.pf-hint{color:#657482}.pf-result{font-size:18px;font-weight:bold;color:#087d72}.pf-component input{min-width:90px}.pf-action{margin-top:14px}
+    .pf-groups{border:1px solid #ccd5df;border-radius:8px;background:#fff;overflow:hidden}.pf-groups-toolbar{display:flex;gap:8px;padding:10px;border-bottom:1px solid #e5eaf0;background:#f8fafc}.pf-groups-search{position:relative;flex:1}.pf-groups-search input{padding-left:34px}.pf-groups-search .fa-search{position:absolute;left:12px;top:11px;color:#82909d}.pf-groups-list{max-height:230px;overflow:auto;padding:5px 10px}.pf-group-option{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:5px;margin:1px 0;cursor:pointer;font-weight:400}.pf-group-option:hover{background:#f0f8f7}.pf-group-option input{margin:0;width:16px;height:16px;accent-color:#16a895;flex:0 0 auto}.pf-groups-empty{padding:12px;color:#657482;display:none}.pf-groups-selected{display:flex;flex-wrap:wrap;gap:6px;padding:9px 10px;border-top:1px solid #e5eaf0;min-height:43px}.pf-group-chip{display:inline-flex;align-items:center;gap:6px;padding:5px 9px;border-radius:16px;background:#e6f6f3;color:#087d72;font-size:12px}.pf-group-chip button{border:0;background:transparent;color:#087d72;font-size:15px;line-height:1;padding:0 1px}.pf-group-count{font-weight:600;color:#087d72;white-space:nowrap}.pf-group-message{min-height:18px;margin-top:4px;color:#b94a48}
+    @@media(max-width:767px){.pf-page{padding:10px}.pf-body{padding:12px}.pf-groups-toolbar{flex-wrap:wrap}.pf-groups-toolbar .btn{flex:1}.pf-groups-list{max-height:200px}.pf-group-option{padding:10px 8px}}
+</style>
+<div class="pf-page">
+    @if (ViewBag.CopyNotice != null) { <div class="alert alert-info">@ViewBag.CopyNotice</div> }
+    <div style="margin-bottom:16px"><a class="btn btn-default" href="@Url.Action("Index", "PriceFormula")"><i class="fa fa-arrow-left" aria-hidden="true"></i> Quay lại danh sách công thức</a></div>
+    <h2 style="text-align:center">@(Model.IsEdit ? "SỬA CÔNG THỨC GIÁ" : "TẠO CÔNG THỨC GIÁ")</h2>
+    @Html.ValidationSummary(false, "", new { @class = "alert alert-danger" })
+    @using (Html.BeginForm("Save", "PriceFormula", FormMethod.Post, new { id = "priceFormulaForm" })) {
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(x => x.ID)
+        <div class="pf-card"><div class="pf-title">1. Thông tin và phạm vi</div><div class="pf-body"><div class="row">
+            <div class="col-md-6 form-group"><label>Mã công thức</label>@Html.TextBoxFor(x => x.MA, new { @class = "form-control", required = "required", maxlength = "50" })</div>
+            <div class="col-md-6 form-group"><label>Tên công thức</label>@Html.TextBoxFor(x => x.NAME, new { @class = "form-control", required = "required", maxlength = "200", placeholder = "Ví dụ: Giá bán nhóm bánh kẹo" })</div>
+            <div class="col-md-6 form-group"><label for="groupSearch">Nhóm hàng hóa áp dụng <span class="pf-group-count" id="groupCount"></span></label>
+                <div class="pf-groups" id="groupPicker">
+                    <div class="pf-groups-toolbar"><div class="pf-groups-search"><i class="fa fa-search"></i><input id="groupSearch" type="search" class="form-control" placeholder="Tìm nhóm hàng hóa..." autocomplete="off" /></div><button type="button" class="btn btn-default btn-sm" id="selectVisibleGroups">Chọn đang hiển thị</button><button type="button" class="btn btn-default btn-sm" id="clearGroups">Bỏ chọn</button></div>
+                    <div class="pf-groups-list" id="groupList">
+                        @foreach (var group in Model.Groups) { var selected = (Model.ID_NHOMHANGHOAS != null && Model.ID_NHOMHANGHOAS.Contains(group.ID)) || ((Model.ID_NHOMHANGHOAS == null || Model.ID_NHOMHANGHOAS.Count == 0) && group.ID == Model.ID_NHOMHANGHOA); <label class="pf-group-option" data-name="@group.NAME.ToLowerInvariant()"><input type="checkbox" name="ID_NHOMHANGHOAS" value="@group.ID" data-label="@group.NAME" @(selected ? "checked" : "") /><span>@group.NAME</span></label> }
+                        <div class="pf-groups-empty" id="groupEmpty">Không tìm thấy nhóm phù hợp.</div>
+                    </div>
+                    <div class="pf-groups-selected" id="selectedGroups" aria-live="polite"></div>
+                </div><div class="pf-group-message" id="groupMessage"></div><small class="pf-hint">Tìm theo tên, tích chọn nhóm cần áp dụng. Nếu không chọn nhóm nào, công thức áp dụng cho tất cả nhóm hàng hóa.</small></div>
+            <div class="col-md-3 form-group"><label>Cập nhật loại giá</label><select name="LOAIGIA" class="form-control"><option value="GIAMUA" @(Model.LOAIGIA == "GIAMUA" ? "selected" : "")>Giá mua</option><option value="GIA01" @(Model.LOAIGIA == "GIA01" ? "selected" : "")>Giá bán 1</option><option value="GIA02" @(Model.LOAIGIA == "GIA02" ? "selected" : "")>Giá bán 2</option><option value="GIA03" @(Model.LOAIGIA == "GIA03" ? "selected" : "")>Giá bán 3</option></select></div>
+            <div class="col-md-3 form-group"><label>Hiệu lực từ ngày</label><input type="date" name="TUNGAY" class="form-control" value="@Model.TUNGAY.ToString("yyyy-MM-dd")" required /></div>
+            <div class="col-md-3 form-group"><label>Đến ngày (để trống nếu không hết hạn)</label><input type="date" name="DENNGAY" class="form-control" value="@(Model.DENNGAY.HasValue ? Model.DENNGAY.Value.ToString("yyyy-MM-dd") : "")" /></div>
+            <div class="col-md-3 form-group" style="padding-top:25px"><label><input type="checkbox" name="TINHTHUE" value="true" @(Model.TINHTHUE ? "checked" : "") /> Cộng thuế sau khi tính</label></div>
+            <div class="col-md-3 form-group" style="padding-top:25px"><label><input type="checkbox" name="ISACTIVE" value="true" @(Model.ISACTIVE ? "checked" : "") /> Đang áp dụng</label></div>
+        </div><p class="pf-hint">Phạm vi được giới hạn theo chi nhánh đăng nhập, nhóm hàng, loại giá và khoảng hiệu lực. Không cho phép hai công thức đang hoạt động cùng loại giá chồng ngày trong một nhóm.</p></div></div>
+
+        <div class="pf-card"><div class="pf-title">2. Công thức giá</div><div class="pf-body">
+            <div class="pf-vars" id="customVariables"><strong>Thành phần đã khai báo:</strong>
+                <span id="componentTokens"></span>
+            </div>
+            <div class="pf-operators"><strong>Toán tử:</strong> <button type="button" class="btn btn-default insert-token" data-token=" + ">+</button><button type="button" class="btn btn-default insert-token" data-token=" - ">−</button><button type="button" class="btn btn-default insert-token" data-token=" * ">×</button><button type="button" class="btn btn-default insert-token" data-token=" / ">÷</button><button type="button" class="btn btn-default insert-token" data-token="(">(</button><button type="button" class="btn btn-default insert-token" data-token=")">)</button></div>
+            <label for="CONGTHUC">Nhập biểu thức (dùng dấu chấm cho số thập phân)</label>
+            <textarea id="CONGTHUC" name="CONGTHUC" class="form-control pf-expression" maxlength="1000" required placeholder="Nhập công thức giá">@Model.CONGTHUC</textarea>
+            <div id="formulaValidity" class="pf-hint" aria-live="polite">Bấm Tính thử để kiểm tra công thức.</div>
+            <p class="pf-hint">Dùng GIAMUA cho giá mua, THUE_SUAT cho thuế suất và mã thành phần tự khai báo ở mục 3. Công thức hỗ trợ số, biến, ngoặc và + − × ÷.</p>
+        </div></div>
+
+        <div class="pf-card"><div class="pf-title">3. Thành phần tùy chỉnh</div><div class="pf-body">
+            <p class="pf-hint">Khai báo chi phí/biên lợi nhuận riêng. Mã thành phần có thể dùng làm biến trong công thức, ví dụ PHI_BOC_XEP.</p>
+            <div class="table-responsive"><table class="table table-bordered" id="componentsTable"><thead><tr><th>Mã biến</th><th>Tên hiển thị</th><th>Kiểu</th><th>Giá trị mặc định</th><th></th></tr></thead><tbody>
+            @for (int i = 0; i < Model.Components.Count; i++) { <tr class="pf-component"><td><input class="form-control component-code" name="Components[@i].MA" value="@Model.Components[i].MA" placeholder="PHI_BOC_XEP" /></td><td><input class="form-control" name="Components[@i].TEN" value="@Model.Components[i].TEN" /></td><td><select class="form-control" name="Components[@i].KIEUGIATRI"><option value="TIEN" @(Model.Components[i].KIEUGIATRI == "TIEN" ? "selected" : "")>Tiền</option><option value="PHANTRAM" @(Model.Components[i].KIEUGIATRI == "PHANTRAM" ? "selected" : "")>%</option></select></td><td><input type="number" step="0.0001" class="form-control component-value" name="Components[@i].GIATRI_MACDINH" value="@(Model.Components[i].GIATRI_MACDINH.ToString(System.Globalization.CultureInfo.InvariantCulture))" /></td><td><button type="button" class="btn btn-danger btn-xs remove-component">Xóa</button></td></tr> }
+            </tbody></table></div><button type="button" class="btn btn-info" id="addComponent"><i class="fa fa-plus"></i> Thêm thành phần</button>
+        </div></div>
+
+        <div class="pf-card"><div class="pf-title">4. Tính thử trước khi lưu</div><div class="pf-body">
+            <div class="row"><div class="col-sm-3 form-group"><label>Giá mua mẫu</label><input type="number" step="0.01" id="samplePurchase" class="form-control" value="100000" /></div><div class="col-sm-3 form-group"><label>Thuế suất (%)</label><input type="number" step="0.01" id="sampleTax" class="form-control" value="10" /></div></div>
+            <p class="pf-hint">Giá trị thử của từng thành phần chỉ dùng cho phép tính mẫu, không thay đổi giá trị mặc định ở mục 3.</p>
+            <div id="trialValues" class="row"></div>
+            <button type="button" class="btn btn-primary" id="calculateFormula"><i class="fa fa-calculator"></i> <span>Tính thử công thức</span></button> <span class="pf-result" id="previewResult" aria-live="polite"></span><div id="previewError" class="text-danger" role="alert"></div>
+            <p id="calculationDetail" class="pf-hint" style="margin-top:12px;overflow-wrap:anywhere" aria-live="polite"></p>
+        </div></div>
+        <div id="saveFormulaMessage" class="alert" style="display:none" role="status"></div>
+        <div class="pf-action"><a class="btn btn-default" href="@Url.Action("Index", "PriceFormula")"><i class="fa fa-arrow-left" aria-hidden="true"></i> Quay lại danh sách công thức</a> <button id="saveFormula" type="submit" class="btn btn-success"><i class="fa fa-save"></i> Lưu công thức</button></div>
+    }
+</div>
+<script>
+(function () {
+    var tableBody = document.querySelector('#componentsTable tbody');
+    var groupList = document.getElementById('groupList');
+    var groupChecks = Array.prototype.slice.call(groupList.querySelectorAll('input[name="ID_NHOMHANGHOAS"]'));
+    var selectedGroups = document.getElementById('selectedGroups');
+    var form = document.getElementById('priceFormulaForm'), sampleVersion = 0;
+    function collectFormula() {
+        function field(name) { return form.querySelector('[name="' + name + '"]'); }
+        return {
+            ID: field('ID').value || null, MA: field('MA').value, NAME: field('NAME').value,
+            LOAIGIA: field('LOAIGIA').value, CONGTHUC: field('CONGTHUC').value,
+            TUNGAY: field('TUNGAY').value, DENNGAY: field('DENNGAY').value || null,
+            ISACTIVE: field('ISACTIVE').checked, TINHTHUE: field('TINHTHUE').checked,
+            ID_NHOMHANGHOAS: groupChecks.filter(function (x) { return x.checked; }).map(function (x) { return x.value; }),
+            Components: Array.prototype.map.call(tableBody.querySelectorAll('tr'), function (row, i) {
+                return { MA: row.querySelector('.component-code').value.trim().toUpperCase(), TEN: row.querySelector('[name$=".TEN"]').value,
+                    KIEUGIATRI: row.querySelector('select').value, GIATRI_MACDINH: Number(row.querySelector('.component-value').value || 0), STT: i + 1 };
+            })
+        };
+    }
+    function clearSample() { sampleVersion++; document.getElementById('previewResult').textContent = ''; document.getElementById('previewError').textContent = ''; document.getElementById('calculationDetail').textContent = ''; document.getElementById('formulaValidity').textContent = 'Bấm Tính thử để kiểm tra công thức.'; }
+    function formulaChanged() { clearSample(); }
+    form.addEventListener('input', function (e) { if (e.target.name && e.target.name !== '__RequestVerificationToken') formulaChanged(); });
+    form.addEventListener('change', function (e) { if (e.target.name && e.target.name !== '__RequestVerificationToken') formulaChanged(); });
+    form.addEventListener('submit', function (event) {
+        event.preventDefault(); if (!form.reportValidity()) return;
+        var button = document.getElementById('saveFormula'); if (button.disabled) return;
+        var draft = collectFormula(), fields = new URLSearchParams();
+        fields.append('draftPayload', JSON.stringify(draft)); fields.append('__RequestVerificationToken', form.querySelector('[name="__RequestVerificationToken"]').value);
+        button.disabled = true;
+        var notice = document.getElementById('saveFormulaMessage'); notice.style.display = 'block'; notice.className = 'alert alert-info'; notice.textContent = 'Đang lưu công thức...';
+        fetch(form.action, { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8', 'X-Requested-With': 'XMLHttpRequest' }, body: fields.toString() })
+            .then(function (response) { if (!response.ok) throw new Error('Không lưu được công thức (HTTP ' + response.status + ').'); return response.json(); })
+            .then(function (response) {
+                var success = response.Success === undefined ? response.success : response.Success;
+                if (!success) throw new Error(response.Message || response.message || 'Không lưu được công thức.');
+                var data = response.Data || response.data, id = data && (data.ID || data.id);
+                if (!id) throw new Error('Đã lưu nhưng chưa nhận được mã định danh. Mở lại công thức để tiếp tục.');
+                form.querySelector('[name="ID"]').value = id;
+                notice.className = 'alert alert-success'; notice.textContent = 'Đã lưu công thức.';
+            }).catch(function (error) { notice.className = 'alert alert-danger'; notice.textContent = error.message; })
+            .finally(function () { button.disabled = false; });
+    });
+    function renderGroups() {
+        var query = document.getElementById('groupSearch').value.trim().toLocaleLowerCase();
+        var selected = groupChecks.filter(function (input) { return input.checked; });
+        groupChecks.forEach(function (input) { var row = input.closest('.pf-group-option'); row.style.display = row.getAttribute('data-name').indexOf(query) >= 0 ? '' : 'none'; });
+        document.getElementById('groupEmpty').style.display = groupChecks.some(function (input) { return input.closest('.pf-group-option').style.display !== 'none'; }) ? 'none' : 'block';
+        document.getElementById('groupCount').textContent = selected.length ? '(' + selected.length + ' đã chọn)' : '(tất cả nhóm)';
+        selectedGroups.innerHTML = '';
+        selected.forEach(function (input) { var chip = document.createElement('span'); chip.className = 'pf-group-chip'; chip.appendChild(document.createTextNode(input.getAttribute('data-label'))); var remove = document.createElement('button'); remove.type = 'button'; remove.setAttribute('aria-label', 'Bỏ ' + input.getAttribute('data-label')); remove.innerHTML = '&times;'; remove.onclick = function () { input.checked = false; renderGroups(); formulaChanged(); }; chip.appendChild(remove); selectedGroups.appendChild(chip); });
+        if (!selected.length) selectedGroups.textContent = 'Không giới hạn nhóm — áp dụng cho tất cả nhóm hàng hóa.';
+    }
+    document.getElementById('groupSearch').addEventListener('input', renderGroups);
+    groupList.addEventListener('change', function (event) { if (event.target.matches('input[name="ID_NHOMHANGHOAS"]')) renderGroups(); });
+    document.getElementById('selectVisibleGroups').addEventListener('click', function () { groupChecks.forEach(function (input) { if (input.closest('.pf-group-option').style.display !== 'none') input.checked = true; }); renderGroups(); formulaChanged(); });
+    document.getElementById('clearGroups').addEventListener('click', function () { groupChecks.forEach(function (input) { input.checked = false; }); renderGroups(); formulaChanged(); });
+    document.getElementById('priceFormulaForm').addEventListener('submit', function () { document.getElementById('groupMessage').textContent = ''; });
+    renderGroups();
+    function appendToken(token) { var box = document.getElementById('CONGTHUC'), start = box.selectionStart, end = box.selectionEnd; box.value = box.value.substring(0, start) + token + box.value.substring(end); box.focus(); box.selectionStart = box.selectionEnd = start + token.length; renderTrialValues(); formulaChanged(); }
+    document.querySelectorAll('.insert-token').forEach(function (b) { b.addEventListener('click', function () { appendToken(b.getAttribute('data-token')); }); });
+    function renumber() { Array.prototype.forEach.call(tableBody.querySelectorAll('tr'), function (row, i) { row.querySelectorAll('[name]').forEach(function (input) { input.name = input.name.replace(/Components\[\d+\]/, 'Components[' + i + ']'); }); }); }
+    function tokenButtons() { var host = document.getElementById('componentTokens'); host.innerHTML = ''; tableBody.querySelectorAll('.component-code').forEach(function (input) { var code = input.value.trim(); if (!code) return; var b = document.createElement('button'); b.type = 'button'; b.className = 'btn btn-info btn-sm insert-custom'; b.textContent = code; b.onclick = function () { appendToken(code); }; host.appendChild(b); }); document.getElementById('customVariables').style.display = host.children.length ? '' : 'none'; }
+    function getResponseNumber(data, propertyName) {
+        if (data === null || data === undefined) return null;
+        if (typeof data === 'string') {
+            try { data = JSON.parse(data); } catch (ignore) { return null; }
+        }
+        if (typeof data !== 'object') return null;
+        var expected = propertyName.toUpperCase();
+        var keys = Object.keys(data);
+        for (var i = 0; i < keys.length; i++) {
+            if (keys[i].toUpperCase() === expected) {
+                var value = Number(data[keys[i]]);
+                if (isFinite(value)) return value;
+            }
+        }
+        for (var j = 0; j < keys.length; j++) {
+            var nestedValue = getResponseNumber(data[keys[j]], propertyName);
+            if (nestedValue !== null) return nestedValue;
+        }
+        return null;
+    }
+    function renderTrialValues() {
+        var host = document.getElementById('trialValues'), previous = Object.create(null);
+        host.querySelectorAll('input').forEach(function (input) { previous[input.dataset.code] = { value: input.value, initial: input.dataset.initial }; });
+        host.innerHTML = '';
+        var components = collectFormula().Components.slice(), expression = document.getElementById('CONGTHUC').value.toUpperCase();
+        [{ MA: 'TIEN_XANG', TEN: 'Tiền xăng' }, { MA: 'PHI_VAN_CHUYEN', TEN: 'Phí vận chuyển' }, { MA: 'LOI_NHUAN', TEN: 'Lợi nhuận' }].forEach(function (item) {
+            if (new RegExp('\\b' + item.MA + '\\b').test(expression)) { item.GIATRI_MACDINH = 0; components.push(item); }
+        });
+        components.forEach(function (component) {
+            if (!component.MA) return;
+            var wrapper = document.createElement('div'); wrapper.className = 'col-sm-4 form-group';
+            var label = document.createElement('label'); label.textContent = (component.TEN || component.MA) + ' (' + component.MA + ')' + (component.KIEUGIATRI === 'PHANTRAM' ? ' %' : '');
+            var input = document.createElement('input'); input.type = 'number'; input.step = 'any'; input.className = 'form-control'; input.dataset.code = component.MA;
+            input.dataset.initial = String(component.GIATRI_MACDINH); var old = previous[component.MA];
+            input.value = old && old.value !== old.initial ? old.value : input.dataset.initial;
+            input.setAttribute('aria-label', 'Giá trị thử ' + component.MA); input.addEventListener('input', clearSample);
+            wrapper.appendChild(label); wrapper.appendChild(input); host.appendChild(wrapper);
+        });
+    }
+    document.getElementById('CONGTHUC').addEventListener('input', renderTrialValues);
+    document.getElementById('samplePurchase').addEventListener('input', clearSample);
+    document.getElementById('sampleTax').addEventListener('input', clearSample);
+    document.getElementById('addComponent').onclick = function () { var i = tableBody.querySelectorAll('tr').length, tr = document.createElement('tr'); tr.className = 'pf-component'; tr.innerHTML = '<td><input class="form-control component-code" name="Components[' + i + '].MA" placeholder="PHI_BOC_XEP"></td><td><input class="form-control" name="Components[' + i + '].TEN"></td><td><select class="form-control" name="Components[' + i + '].KIEUGIATRI"><option value="TIEN">Tiền</option><option value="PHANTRAM">%</option></select></td><td><input type="number" step="0.0001" class="form-control component-value" name="Components[' + i + '].GIATRI_MACDINH" value="0"></td><td><button type="button" class="btn btn-danger btn-xs remove-component">Xóa</button></td>'; tableBody.appendChild(tr); tokenButtons(); renderTrialValues(); formulaChanged(); };
+    tableBody.addEventListener('click', function (e) { if (e.target.classList.contains('remove-component')) { e.target.closest('tr').remove(); renumber(); tokenButtons(); renderTrialValues(); formulaChanged(); } });
+    tableBody.addEventListener('input', function (e) { if (e.target.classList.contains('component-code')) tokenButtons(); renderTrialValues(); }); tokenButtons();
+    document.getElementById('calculateFormula').onclick = async function () {
+        var button = this, label = button.querySelector('span'), errorBox = document.getElementById('previewError'), resultBox = document.getElementById('previewResult');
+        button.disabled = true; label.textContent = 'Đang tính...'; errorBox.textContent = ''; resultBox.textContent = '';
+        var version = sampleVersion, expression = document.getElementById('CONGTHUC').value;
+        var values = { GIAMUA: Number(document.getElementById('samplePurchase').value || 0), TIEN_XANG: 0, PHI_VAN_CHUYEN: 0, LOI_NHUAN: 0, THUE_SUAT: Number(document.getElementById('sampleTax').value || 0) };
+        document.querySelectorAll('#trialValues input').forEach(function (input) { values[input.dataset.code] = Number(input.value || 0); });
+        try {
+            var response = await fetch('@Url.Action("Preview", "PriceFormula")', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: JSON.stringify({ CONGTHUC: document.getElementById('CONGTHUC').value, GIA_TRI: values, TINHTHUE: document.querySelector('[name="TINHTHUE"]').checked, THUE_SUAT: values.THUE_SUAT }) });
+            var result = await response.json();
+            if (version !== sampleVersion) return;
+            if (!response.ok || !result.success) throw new Error(result.message || ('Máy chủ trả về lỗi HTTP ' + response.status + '.'));
+            var beforeTax = getResponseNumber(result, 'GIA_TRUOC_THUE');
+            var afterTax = getResponseNumber(result, 'GIA_SAU_THUE');
+            if (beforeTax === null || afterTax === null) throw new Error('API không trả về đủ giá trước thuế và giá sau thuế.');
+            resultBox.textContent = 'Giá trước thuế: ' + beforeTax.toLocaleString('vi-VN') + ' · Giá sau thuế: ' + afterTax.toLocaleString('vi-VN');
+            document.getElementById('formulaValidity').textContent = 'Công thức hợp lệ ✓';
+            document.getElementById('calculationDetail').textContent = 'Chi tiết phép tính: ' + expression.replace(/\b[A-Za-z_][A-Za-z0-9_]*\b/g, function (code) { var value = values[code.toUpperCase()]; return value === undefined ? code : '(' + value.toLocaleString('vi-VN', { maximumFractionDigits: 4 }) + ')'; }) + ' = ' + beforeTax.toLocaleString('vi-VN') + (document.querySelector('[name="TINHTHUE"]').checked ? ' · Sau thuế ' + values.THUE_SUAT + '%: ' + afterTax.toLocaleString('vi-VN') : ' · Không cộng thêm thuế.');
+        } catch (error) { if (version === sampleVersion) { errorBox.textContent = 'Không tính được công thức: ' + (error.message || 'Không thể kết nối máy chủ.'); document.getElementById('formulaValidity').textContent = 'Chưa xác nhận được công thức. Xem thông báo tại mục Tính thử.'; } }
+        finally { button.disabled = false; label.textContent = 'Tính thử công thức'; }
+    };
+    renderTrialValues();
+})();
+</script>

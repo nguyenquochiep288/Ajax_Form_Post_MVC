@@ -1,0 +1,60 @@
+﻿@using MVC_QuanLyTHP.Class
+@{
+    ViewBag.Title = "Lịch sử áp dụng công thức giá";
+    Layout = "~/Views/Shared/Admin.cshtml";
+    var today = Utility.CurrentTime.Date;
+}
+@Html.Partial("LoadCssDanhMuc")
+<style>
+    .ph-page{padding:18px}.ph-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:20px}.ph-heading h2{margin:0;font-size:25px}.ph-panel{background:#fff;border:1px solid #dce3e9;border-radius:10px;padding:18px;margin-bottom:16px}.ph-filters{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}.ph-filters label{display:block;margin-bottom:6px}.ph-filters .form-control{width:100%;min-width:0}.ph-tools{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:16px}.ph-summary{display:flex;gap:22px;flex-wrap:wrap;font-size:16px;margin-bottom:14px}.ph-scroll{overflow:auto;max-height:65vh}.ph-table{min-width:2100px;margin:0}.ph-table th{background:#f2f6f8;white-space:nowrap}.ph-table td{vertical-align:middle!important}.ph-number{text-align:right;white-space:nowrap}.ph-up{color:#067647}.ph-down{color:#b42318}.ph-note{color:#61758a;margin:12px 0 0}.ph-status{white-space:nowrap}.ph-restored td{background:#eef8f4!important}.ph-paging{display:flex;gap:12px;align-items:center;justify-content:center;margin-top:16px}
+    @@media(max-width:1000px){.ph-filters{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    @@media(max-width:600px){.ph-page{padding:8px}.ph-filters{grid-template-columns:1fr}.ph-heading h2{font-size:21px}}
+</style>
+<div class="ph-page">
+    <div class="ph-heading"><h2>LỊCH SỬ ÁP DỤNG CÔNG THỨC GIÁ</h2><a class="btn btn-default" href="@Url.Action("Index", "PriceFormula")"><i class="fa fa-arrow-left" aria-hidden="true"></i> Quay lại danh sách công thức</a></div>
+    <form id="ph-filter" class="ph-panel">
+        @Html.AntiForgeryToken()
+        <div class="ph-filters">
+            <div><label for="ph-from">Áp dụng từ ngày</label><input id="ph-from" type="date" required class="form-control" value="@today.AddDays(1-today.Day).ToString("yyyy-MM-dd")" /></div>
+            <div><label for="ph-to">Đến hết ngày</label><input id="ph-to" type="date" required class="form-control" value="@today.ToString("yyyy-MM-dd")" /></div>
+            <div><label for="ph-type">Loại giá</label><select id="ph-type" class="form-control"><option value="">Tất cả</option><option value="GIA01">Giá bán 1</option><option value="GIA02">Giá bán 2</option><option value="GIA03">Giá bán 3</option><option value="GIAMUA">Giá mua</option></select></div>
+            <div><label for="ph-status">Trạng thái khôi phục</label><select id="ph-status" class="form-control"><option value="">Tất cả</option><option value="not-restored">Chưa khôi phục (có nhật ký)</option><option value="restored">Đã khôi phục</option><option value="unknown">Chưa có nhật ký khôi phục</option></select></div>
+            <div><label for="ph-search">Mã / tên sản phẩm</label><input id="ph-search" class="form-control" type="search" maxlength="200" placeholder="Tìm sản phẩm…" /></div>
+            <div><label for="ph-formula">Mã công thức</label><input id="ph-formula" class="form-control" type="search" maxlength="50" placeholder="Ví dụ: CTG-…" /></div>
+            <div><label for="ph-user">Tài khoản áp dụng</label><input id="ph-user" class="form-control" type="search" maxlength="50" placeholder="Tài khoản được ghi trong lịch sử" /></div>
+        </div>
+        <div class="ph-tools"><button type="submit" class="btn btn-primary" id="ph-load"><i class="fa fa-search"></i> Xem báo cáo</button><button type="button" class="btn btn-success" id="ph-export" disabled><i class="fa fa-file-excel-o"></i> Xuất Excel theo bộ lọc</button></div>
+        <p class="ph-note">Mỗi dòng là một lần cập nhật giá của một sản phẩm. Giá cũ/mới là giá đã lưu lúc áp dụng. Trạng thái “Chưa khôi phục” không có nghĩa giá hiện tại vẫn bằng giá đã áp dụng.</p>
+        <p class="ph-note">Các lần khôi phục trước khi bổ sung nhật ký không thể xác định lại chắc chắn. Báo cáo không suy đoán trạng thái các dòng cũ.</p>
+    </form>
+    <div id="ph-message" role="status" aria-live="polite"></div>
+    <section class="ph-panel">
+        <div id="ph-summary" class="ph-summary"></div>
+        <div class="ph-scroll"><table class="table table-bordered table-striped ph-table"><thead>
+            <tr><th rowspan="2">Thời gian áp dụng</th><th rowspan="2">Mã hàng</th><th rowspan="2">Tên sản phẩm</th><th rowspan="2">Loại giá</th><th colspan="3">Giá đơn vị gốc</th><th rowspan="2">Tỷ lệ QĐ</th><th colspan="3">Giá quy đổi</th><th colspan="2">Giá nhập tham chiếu</th><th rowspan="2">Mã công thức</th><th rowspan="2">Tài khoản áp dụng</th><th rowspan="2">Trạng thái khôi phục</th><th rowspan="2">Thời gian khôi phục</th><th rowspan="2">Tài khoản khôi phục</th></tr>
+            <tr><th>Giá cũ</th><th>Giá mới</th><th>Chênh lệch</th><th>Giá QĐ cũ</th><th>Giá QĐ mới</th><th>Chênh lệch QĐ</th><th>Giá nhập dùng tính</th><th>Ngày nhập / nguồn Excel</th></tr>
+        </thead><tbody id="ph-rows"></tbody></table></div>
+        <div class="ph-paging"><button type="button" id="ph-prev" class="btn btn-default" disabled>Trang trước</button><span id="ph-page"></span><button type="button" id="ph-next" class="btn btn-default" disabled>Trang sau</button></div>
+    </section>
+</div>
+<script>
+(function(){
+    var applied=null,page=1,pages=1,total=0,busy=false;
+    var types={GIA01:'Giá bán 1',GIA02:'Giá bán 2',GIA03:'Giá bán 3',GIAMUA:'Giá mua'};
+    var headers=['Thời gian áp dụng','Mã hàng','Tên sản phẩm','Loại giá','Giá cũ','Giá mới','Chênh lệch','Tỷ lệ QĐ','Giá QĐ cũ','Giá QĐ mới','Chênh lệch QĐ','Giá nhập dùng tính','Ngày nhập / nguồn Excel','Mã công thức','Tài khoản áp dụng','Trạng thái khôi phục','Thời gian khôi phục','Tài khoản khôi phục'];
+    function el(id){return document.getElementById('ph-'+id);}
+    function get(o,k){if(!o)return null;var key=Object.keys(o).find(function(x){return x.toUpperCase()===k;});return key===undefined?null:o[key];}
+    function date(v,time){if(!v)return '';var s=String(v),p=s.substring(0,10).split('-');return p.length===3?p[2]+'/'+p[1]+'/'+p[0]+(time?' '+s.substring(11,19):''):s;}
+    function num(v){return v==null?null:Number(v);}
+    function values(r){var old=num(get(r,'GIACU')),newPrice=num(get(r,'GIA_MOI')),qo=num(get(r,'GIA_QD_CU')),qn=num(get(r,'GIA_QD_MOI')),restored=get(r,'DA_KHOIPHUC');return [date(get(r,'THOIGIANTHEM'),true),get(r,'MAHANG'),get(r,'TENHANG'),types[get(r,'LOAIGIA')]||get(r,'LOAIGIA'),old,newPrice,newPrice-old,num(get(r,'TYLE_QD')),qo,qn,qo==null||qn==null?null:qn-qo,num(get(r,'GIAMUA_GANNHAT')),(get(r,'NGUON_GIA_NHAP')==='EXCEL'?'Excel · GIAHIENTAI':date(get(r,'NGAYNHAP_GANNHAT'))),get(r,'MA_CONGTHUC'),get(r,'ID_NGUOITAO'),restored===true?'Đã khôi phục':restored===false?'Chưa khôi phục':'Chưa có nhật ký khôi phục',date(get(r,'THOIGIAN_KHOIPHUC'),true),get(r,'ID_NGUOI_KHOIPHUC')];}
+    function message(text,error){el('message').textContent=text;el('message').className=text?'alert alert-'+(error?'danger':'info'):'';}
+    function state(flag){busy=flag;el('load').disabled=flag;el('export').disabled=flag||!applied||total===0;el('prev').disabled=flag||page<=1;el('next').disabled=flag||page>=pages;}
+    function request(filter,p,exporting){var payload=Object.assign({},filter,{PAGE:p,EXPORT:exporting});var body=new URLSearchParams();body.append('payload',JSON.stringify(payload));body.append('__RequestVerificationToken',document.querySelector('#ph-filter input[name=__RequestVerificationToken]').value);return fetch('@Url.Action("HistoryData")',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/x-www-form-urlencoded; charset=UTF-8'},body:body.toString()}).then(function(r){if(!r.ok)throw new Error('Không tải được báo cáo. Kiểm tra phiên đăng nhập và thử lại.');return r.json();}).then(function(r){if(!get(r,'SUCCESS'))throw new Error(get(r,'MESSAGE')||'Không tải được lịch sử.');return get(r,'DATA');});}
+    function render(data){var body=el('rows');body.innerHTML='';(get(data,'ROWS')||[]).forEach(function(r){var tr=document.createElement('tr');if(get(r,'DA_KHOIPHUC')===true)tr.className='ph-restored';values(r).forEach(function(v,i){var td=document.createElement('td');if(typeof v==='number'){td.textContent=v.toLocaleString('vi-VN',{maximumFractionDigits:4});td.className='ph-number';if(i===6||i===10)td.className+=' '+(v>0?'ph-up':v<0?'ph-down':'');}else td.textContent=v==null||v===''?'—':v;tr.appendChild(td);});body.appendChild(tr);});if(!body.children.length){var tr=document.createElement('tr'),td=document.createElement('td');td.colSpan=18;td.textContent='Không có lịch sử phù hợp với bộ lọc.';tr.appendChild(td);body.appendChild(tr);}total=get(data,'TOTAL');page=get(data,'PAGE');pages=get(data,'PAGES');el('page').textContent='Trang '+page+' / '+pages+' · 100 dòng/trang';el('summary').textContent=total+' lượt cập nhật · '+get(data,'INCREASED')+' tăng giá · '+get(data,'DECREASED')+' giảm giá · '+get(data,'RESTORED')+' đã khôi phục';}
+    function load(filter,p){if(busy)return;state(true);message('Đang tải lịch sử…');request(filter,p,false).then(function(data){applied=filter;render(data);message('');}).catch(function(e){applied=null;total=0;el('rows').innerHTML='';el('summary').textContent='';el('page').textContent='';page=pages=1;message(e.message,true);}).finally(function(){state(false);});}
+    el('filter').addEventListener('submit',function(e){e.preventDefault();var filter={FROM:el('from').value,TO:el('to').value,LOAIGIA:el('type').value,STATUS:el('status').value,SEARCH:el('search').value,FORMULA:el('formula').value,USER:el('user').value};if(!filter.FROM||!filter.TO||filter.FROM>filter.TO){message('Vui lòng chọn khoảng ngày hợp lệ.',true);return;}load(filter,1);});
+    el('prev').onclick=function(){if(applied)load(applied,page-1);};el('next').onclick=function(){if(applied)load(applied,page+1);};
+    el('filter').addEventListener('input',function(){if(applied)message('Điều kiện đã thay đổi. Bấm Xem báo cáo để cập nhật; xuất Excel dùng bộ lọc của kết quả đang hiển thị.');});
+    el('export').onclick=function(){if(busy||!applied)return;state(true);message('Đang xuất toàn bộ kết quả theo bộ lọc…');request(applied,1,true).then(function(data){return loadXlsx().then(function(){var rows=(get(data,'ROWS')||[]).map(values);var sheet=XLSX.utils.aoa_to_sheet([headers].concat(rows));sheet['!cols']=headers.map(function(h,i){return {wch:i===2?40:24};});sheet['!autofilter']={ref:sheet['!ref']};Object.keys(sheet).forEach(function(key){if(sheet[key].t==='n')sheet[key].z='#,##0.####';});var book=XLSX.utils.book_new();XLSX.utils.book_append_sheet(book,sheet,'Lich su ap dung gia');XLSX.writeFile(book,'LichSuCongThucGia_'+applied.FROM+'_'+applied.TO+'.xlsx');message('Đã xuất '+rows.length+' dòng.');});}).catch(function(e){message(e.message||'Không xuất được Excel.',true);}).finally(function(){state(false);});};
+})();
+</script>

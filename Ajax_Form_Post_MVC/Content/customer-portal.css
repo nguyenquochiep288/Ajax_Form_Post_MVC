@@ -1,0 +1,119 @@
+/* Scoped styles: this sheet is also loaded on the staff link-management page. */
+#customer-portal, .portal-management { --ink:#1e3344; --muted:#617181; --teal:#008d81; --orange:#f47b38; --line:#e0e8ec; font-family:Arial,sans-serif; color:var(--ink); line-height:1.5; }
+body:has(#customer-portal) { margin:0; background:#f3f6f8; }
+#customer-portal *, .portal-management * { box-sizing:border-box; }
+#customer-portal [hidden], .portal-management [hidden] { display:none !important; }
+#customer-portal button, .portal-management button { border:0; border-radius:8px; background:var(--teal); color:#fff; padding:11px 18px; font:inherit; font-weight:600; cursor:pointer; }
+#customer-portal button:disabled, .portal-management button:disabled { cursor:wait; opacity:.55; }
+#customer-portal button.secondary { background:#fff; color:var(--ink); border:1px solid var(--line); }
+#customer-portal button:focus-visible, #customer-portal a:focus-visible, .portal-management button:focus-visible { outline:3px solid #f1a24b; outline-offset:3px; }
+#customer-portal a, .portal-management a { color:#00786f; }
+#customer-portal .portal-header { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px; padding:20px max(24px,calc((100% - 1240px)/2)); background:#fff; border-bottom:1px solid var(--line); }
+#customer-portal .brand { color:var(--teal); text-decoration:none; font-size:32px; font-style:italic; font-weight:700; display:flex; align-items:center; gap:15px; }
+#customer-portal .brand span { font-size:12px; font-style:normal; letter-spacing:1px; }
+#customer-portal .customer-heading { display:flex; flex-direction:column; text-align:right; }
+#customer-portal .customer-heading span { color:var(--muted); font-size:13px; }
+#customer-portal main { max-width:1288px; padding:24px; margin:auto; }
+#customer-portal .portal-tabs { display:flex; flex-wrap:wrap; gap:6px; border-bottom:1px solid var(--line); padding-bottom:12px; }
+#customer-portal .portal-tabs button { background:transparent; color:var(--muted); }
+#customer-portal .portal-tabs button[aria-current="page"] { background:var(--teal); color:#fff; }
+#customer-portal .page-title { display:flex; justify-content:space-between; gap:16px; align-items:center; margin:28px 0 20px; }
+#customer-portal h1 { font-size:28px; margin:4px 0; }
+#customer-portal h2 { font-size:18px; margin:0 0 16px; }
+#customer-portal h3 { font-size:16px; margin:0 0 12px; }
+#customer-portal .eyebrow { color:var(--orange); font-size:12px; font-weight:700; letter-spacing:1.2px; }
+#customer-portal .filters { display:flex; flex-wrap:wrap; align-items:end; gap:14px; background:#fff; padding:18px; border-radius:12px; }
+#customer-portal label, .portal-management label { display:flex; flex-direction:column; gap:6px; font-size:14px; }
+#customer-portal input, .portal-management input, .portal-management select { min-height:43px; border:1px solid #c9d5dd; border-radius:6px; padding:9px 12px; font:inherit; color:var(--ink); background:#fff; max-width:100%; }
+#customer-portal #search-field { flex:1; min-width:220px; }
+#customer-portal #portal-status { color:var(--muted); font-size:14px; min-height:21px; }
+#customer-portal #portal-status.error { color:#a52232; }
+#customer-portal .stats { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:16px; margin-bottom:20px; }
+#customer-portal .stat { background:#fff; border-radius:12px; padding:22px; border-top:3px solid var(--teal); }
+#customer-portal .stat .label { color:var(--muted); font-size:14px; }
+#customer-portal .stat strong { display:block; font-size:25px; font-variant-numeric:tabular-nums; margin:8px 0; overflow-wrap:anywhere; }
+#customer-portal .stat small { color:var(--muted); }
+#customer-portal .panel { background:#fff; border-radius:12px; padding:24px; margin-bottom:20px; }
+#customer-portal .panel-subtitle { color:var(--muted); font-size:13px; margin:-8px 0 18px; }
+#customer-portal .chart { width:100%; min-height:280px; }
+#customer-portal .chart svg { display:block; max-width:100%; }
+#customer-portal .chart text { font:12px Arial,sans-serif; fill:var(--muted); }
+#customer-portal .chart .grid { stroke:#e6ecef; stroke-width:1; }
+#customer-portal .chart .series-orders { fill:#008d81; }
+#customer-portal .chart .series-outputs { fill:#f47b38; }
+#customer-portal .chart .series-invoices { fill:#399aca; }
+#customer-portal .legend { display:flex; flex-wrap:wrap; gap:18px; margin:10px 0; font-size:13px; color:var(--muted); }
+#customer-portal .legend span { display:inline-flex; align-items:center; gap:7px; }
+#customer-portal .legend i, #customer-portal .ring-legend i { width:10px; height:10px; border-radius:2px; display:inline-block; flex-shrink:0; }
+#customer-portal .c0 { background:#008d81; fill:#008d81; stroke:#008d81; }
+#customer-portal .c1 { background:#f47b38; fill:#f47b38; stroke:#f47b38; }
+#customer-portal .c2 { background:#399aca; fill:#399aca; stroke:#399aca; }
+#customer-portal .c3 { background:#9b72b5; fill:#9b72b5; stroke:#9b72b5; }
+#customer-portal .c4 { background:#c2a246; fill:#c2a246; stroke:#c2a246; }
+#customer-portal .c5 { background:#7c8d99; fill:#7c8d99; stroke:#7c8d99; }
+#customer-portal .donut-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:18px; }
+#customer-portal .ring-layout { display:flex; align-items:center; gap:16px; flex-wrap:wrap; }
+#customer-portal .ring { width:132px; height:132px; flex-shrink:0; }
+#customer-portal .ring circle { fill:none; stroke-width:18; }
+#customer-portal .ring circle.track { stroke:#edf1f3; }
+#customer-portal .ring text { fill:var(--ink); font:500 18px Arial,sans-serif; }
+#customer-portal .ring-legend { padding:0; margin:0; list-style:none; flex:1; min-width:125px; }
+#customer-portal .ring-legend li { display:flex; align-items:baseline; gap:7px; margin:8px 0; font-size:13px; }
+#customer-portal .ring-legend strong { margin-left:auto; white-space:nowrap; }
+#customer-portal .table-scroll { overflow:auto; }
+#customer-portal table { width:100%; border-collapse:collapse; font-size:14px; }
+#customer-portal th { color:var(--muted); font-weight:500; background:#f6f8fa; text-align:left; white-space:nowrap; }
+#customer-portal td, #customer-portal th { padding:13px 12px; border-bottom:1px solid var(--line); }
+#customer-portal td.num, #customer-portal th.num { text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; }
+#customer-portal td button.doc-link { border:0; background:none; color:#00786f; padding:0; text-align:left; text-decoration:underline; font-weight:500; }
+#customer-portal .badge { display:inline-block; font-size:12px; padding:4px 9px; border-radius:5px; color:#12655e; background:#e6f3f0; white-space:nowrap; }
+#customer-portal .pagination { display:flex; align-items:center; justify-content:flex-end; gap:14px; flex-wrap:wrap; margin-top:18px; }
+#customer-portal .empty { padding:36px 12px; text-align:center; color:var(--muted); }
+#customer-portal .debt-stats { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:18px; }
+#customer-portal .debt-stats div { padding:10px 0; }
+#customer-portal .debt-stats span { display:block; color:var(--muted); font-size:13px; }
+#customer-portal .debt-stats strong { font-size:20px; font-variant-numeric:tabular-nums; }
+#customer-portal .debt-note { font-size:13px; color:var(--muted); }
+#customer-portal footer { font-size:12px; color:var(--muted); text-align:center; padding:16px 0 24px; }
+#customer-portal footer span { display:block; }
+#customer-portal dialog { border:0; border-radius:14px; padding:24px; max-width:1080px; width:calc(100% - 32px); max-height:90vh; overflow:auto; color:var(--ink); box-shadow:0 20px 90px #15293840; }
+#customer-portal dialog::backdrop { background:#15293880; }
+#customer-portal .dialog-toolbar { display:flex; justify-content:space-between; gap:16px; align-items:center; margin-bottom:20px; }
+#customer-portal .dialog-toolbar h2 { margin:0; }
+#customer-portal .dialog-actions { display:flex; justify-content:flex-end; padding-top:20px; }
+#customer-portal .document-meta { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px 24px; margin-bottom:20px; overflow-wrap:anywhere; }
+#customer-portal .document-meta p { margin:3px 0; }
+#customer-portal .document-total { text-align:right; font-size:16px; }
+#customer-portal .export-actions { display:flex; flex-wrap:wrap; gap:12px; align-items:center; margin:0 0 20px; }
+#customer-portal .export-actions span { flex-basis:100%; }
+#customer-portal .payment-layout { display:flex; justify-content:space-between; gap:24px; flex-wrap:wrap; }
+#customer-portal .payment-info { overflow-wrap:anywhere; flex:1; min-width:210px; }
+#customer-portal .payment-info button { margin:4px 8px 8px 0; font-size:13px; }
+#customer-portal .payment-qr { display:flex; flex-direction:column; align-items:center; flex-shrink:0; }
+#customer-portal .payment-qr img { width:220px; height:220px; max-width:100%; image-rendering:pixelated; }
+#customer-portal .payment-qr p { margin:5px 0; }
+#customer-portal .payment-form { display:flex; flex-wrap:wrap; gap:12px; align-items:end; margin-top:18px; }
+#customer-portal .payment-form label { flex:1; min-width:180px; }
+#customer-portal .statement-heading p { margin:5px 0; }
+#customer-portal .statement-signatures { display:flex; justify-content:space-around; gap:20px; text-align:center; padding:28px 0 70px; break-inside:avoid; font-size:13px; }
+#customer-portal .statement-warning { color:#a52232; font-weight:700; }
+#customer-portal .statement-closing { break-inside:avoid; }
+#customer-portal .statement-closing > p { margin:8px 0; }
+@page { size:A4 landscape; margin:12mm; }
+@media print { #customer-portal .export-actions, #customer-portal .payment-panel { display:none !important; } #customer-portal.print-document dialog { font-size:10px; } #customer-portal.print-document table { font-size:10px; } #customer-portal.print-document th, #customer-portal.print-document td { padding:3px 5px; white-space:normal; } #customer-portal.print-document thead { display:table-header-group; } #customer-portal.print-document tfoot { display:table-row-group; break-inside:avoid; } #customer-portal.print-document tbody tr:last-child { break-after:avoid; } #customer-portal.print-document tr { break-inside:avoid; } }
+#customer-portal details { font-size:13px; color:var(--muted); margin-top:20px; }
+.portal-management { max-width:900px; margin:28px auto; padding:28px; background:#fff; border-radius:12px; }
+.portal-management form { display:flex; flex-wrap:wrap; align-items:end; gap:14px; margin:24px 0; }
+.portal-management button.danger { background:#ad2538; }
+.portal-management #issued-link { padding:20px 0; }
+.portal-management #issued-link input { width:100%; margin-bottom:14px; }
+.portal-management #issued-link a { margin-left:12px; }
+.portal-management .link-history { margin:28px 0; padding-top:16px; border-top:1px solid var(--line); }
+.portal-management #history-content { overflow:auto; }
+.portal-management .link-history table { width:100%; border-collapse:collapse; font-size:13px; }
+.portal-management .link-history td, .portal-management .link-history th { padding:12px 9px; text-align:left; border-bottom:1px solid var(--line); vertical-align:top; min-width:125px; }
+.portal-management .link-history th { background:#f3f6f8; }
+.portal-management .history-pagination { display:flex; flex-wrap:wrap; align-items:center; gap:12px; margin:16px 0; }
+@media(max-width:900px) { #customer-portal .stats { grid-template-columns:repeat(2,minmax(0,1fr)); } #customer-portal .donut-grid { grid-template-columns:1fr; } #customer-portal .ring-layout { flex-wrap:nowrap; } }
+@media(max-width:520px) { #customer-portal main { padding:16px; } #customer-portal .portal-header { padding:16px; } #customer-portal .brand span { display:none; } #customer-portal h1 { font-size:23px; } #customer-portal .page-title { align-items:start; } #customer-portal .page-title button { font-size:12px; padding:9px; } #customer-portal .portal-tabs button { padding:10px; font-size:14px; } #customer-portal .stats { gap:10px; } #customer-portal .stat { padding:14px; } #customer-portal .stat strong { font-size:20px; } #customer-portal .panel { padding:18px; } #customer-portal .debt-stats { grid-template-columns:repeat(2,minmax(0,1fr)); } #customer-portal .document-meta { grid-template-columns:1fr; } #customer-portal .filters label { flex:1; min-width:120px; } }
+@media print { body:has(#customer-portal) { background:#fff; } #customer-portal .portal-tabs, #customer-portal .filters, #customer-portal .page-title button, #customer-portal .pagination, #customer-portal .dialog-toolbar button, #customer-portal .dialog-actions, #customer-portal #portal-status { display:none !important; } #customer-portal main { padding:0; } #customer-portal .panel, #customer-portal .stat { border:1px solid #ddd; break-inside:avoid; } #customer-portal .table-scroll { overflow:visible; } #customer-portal .donut-grid { grid-template-columns:repeat(3,minmax(0,1fr)); } #customer-portal .stats { grid-template-columns:repeat(4,minmax(0,1fr)); } #customer-portal.print-document main, #customer-portal.print-document .portal-header { display:none; } #customer-portal.print-document dialog { position:static; display:block; max-height:none; width:100%; max-width:none; margin:0; padding:0; box-shadow:none; overflow:visible; } #customer-portal.print-document dialog::backdrop { background:none; } #customer-portal * { print-color-adjust:exact; -webkit-print-color-adjust:exact; } }

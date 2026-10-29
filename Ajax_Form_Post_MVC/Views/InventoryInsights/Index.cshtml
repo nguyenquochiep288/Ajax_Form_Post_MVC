@@ -1,0 +1,54 @@
+﻿@using DatabaseTHP
+@{
+    ViewBag.Title = "Báo cáo hàng hóa và tồn kho";
+    Layout = "~/Views/Shared/Admin.cshtml";
+    var groups = (List<dm_NhomHangHoa>)ViewBag.Groups;
+    var depots = (List<dm_Kho>)ViewBag.Depots;
+}
+@Html.Partial("LoadCssDanhMuc")
+<link rel="stylesheet" href="@Url.Content("~/Content/css/inventory-insights.css?v=20261022-5")" />
+<main class="ii-page" id="inventoryInsights" data-url="@Url.Action("Data")" data-mode="@ViewBag.Mode">
+    <header class="ii-heading"><h1>BÁO CÁO HÀNG HÓA VÀ TỒN KHO</h1><a class="btn btn-default" href="@Url.Action("Index", "Inventory")">Quay lại báo cáo tồn kho</a></header>
+    <nav class="ii-tabs" aria-label="Chọn báo cáo">
+        <button type="button" class="btn" data-mode="slow">Hàng tồn lâu, chậm luân chuyển</button>
+        <button type="button" class="btn" data-mode="reorder">Hàng sắp hết và đề xuất nhập</button>
+        <button type="button" class="btn" data-mode="sellers">Hàng bán chạy / ít bán</button>
+    </nav>
+    @if (ViewBag.LoadError != null) { <p class="alert alert-danger">@ViewBag.LoadError</p> }
+    <section class="ii-card">
+        <h2 id="ii-title"></h2>
+        <form id="ii-filter">
+            @Html.AntiForgeryToken()
+            <div class="ii-fields">
+                <div><label for="ii-from">Bán từ ngày</label><input class="form-control" id="ii-from" type="date" value="@DateTime.Today.AddDays(-29).ToString("yyyy-MM-dd")" required /></div>
+                <div><label for="ii-to">Đến ngày</label><input class="form-control" id="ii-to" type="date" value="@DateTime.Today.ToString("yyyy-MM-dd")" max="@DateTime.Today.ToString("yyyy-MM-dd")" required /></div>
+                <div><label for="ii-depot">Kho hàng</label><select class="form-control" id="ii-depot"><option value="">Tất cả kho</option>@foreach (var depot in depots) { <option value="@depot.ID">@depot.NAME</option> }</select></div>
+                <div><label for="ii-search">Mã / tên sản phẩm</label><input class="form-control" id="ii-search" maxlength="150" placeholder="Nhập mã hoặc tên…" /></div>
+                <div class="ii-groups"><label for="ii-group-search">Nhóm hàng hóa (chọn nhiều)</label>
+                    <details><summary id="ii-group-summary">Tất cả nhóm hàng hóa</summary>
+                        <input class="form-control" id="ii-group-search" placeholder="Tìm nhóm hàng…" />
+                        <div class="ii-tools"><button type="button" class="btn btn-default" id="ii-groups-all">Chọn kết quả tìm</button><button type="button" class="btn btn-default" id="ii-groups-clear">Bỏ chọn tất cả</button></div>
+                        <div class="ii-group-list">@foreach (var group in groups) { <label><input type="checkbox" value="@group.ID" /> <span>@group.NAME</span></label> }</div>
+                    </details><small>Không chọn nhóm = tất cả nhóm hàng hóa.</small>
+                </div>
+                <div data-for="slow"><label for="ii-idle">Ngưỡng chậm luân chuyển (ngày)</label><input class="form-control" id="ii-idle" type="number" min="1" max="3650" value="90" required /></div>
+                <div data-for="reorder"><label for="ii-lead">Thời gian chờ nhập (ngày)</label><input class="form-control" id="ii-lead" type="number" min="0" max="365" value="7" required /></div>
+                <div data-for="reorder"><label for="ii-cover">Dự trữ thêm (ngày)</label><input class="form-control" id="ii-cover" type="number" min="1" max="365" value="30" required /></div>
+                <div data-for="reorder"><label for="ii-min">Tồn an toàn (ĐVT tồn kho)</label><input class="form-control" id="ii-min" type="number" min="0" max="1000000000" step="any" value="0" required /></div>
+                <div data-for="sellers"><label for="ii-rank">Xếp hạng theo bán ròng quy đổi</label><select class="form-control" id="ii-rank"><option value="fast">Bán nhiều nhất trước</option><option value="slow">Bán ít nhất trước</option><option value="none">Chưa có lượt bán trong kỳ</option></select></div>
+            </div>
+            <label><input type="checkbox" id="ii-inactive" /> Bao gồm hàng ngưng hoạt động</label>
+            <div class="ii-tools"><button class="btn btn-primary" type="submit" id="ii-run"><i class="fa fa-search"></i> Lọc báo cáo</button><button class="btn btn-success" type="button" id="ii-export">Xuất CSV mở bằng Excel</button><button class="btn btn-default" type="button" id="ii-cancel" hidden>Dừng chờ</button></div>
+        </form>
+        <p class="ii-note">Tồn kho tại thời điểm tải báo cáo; mỗi dòng là một sản phẩm tại một kho. Các cột số lượng hiển thị theo quy cách từng hàng: thùng/bao/cây và phần lẻ gói/bịch/lon. Ví dụ 157.560 bịch, tỷ lệ 40 bịch/thùng, hiển thị 3.939 thùng. Bán ròng = xuất bán có đơn giá &gt; 0 trừ nhập khách trả có giá. Nhập khách trả theo cờ ISNHAPTRAHANG; xuất trả NCC theo cờ ISTRAHANG được thống kê riêng, không tính vào bán hàng. Tính cả phiếu xuất sinh từ đơn đặt hàng; chỉ loại dòng khuyến mãi và phiếu chuyển kho có liên kết. Cột tồn theo quy cách giúp đối chiếu thùng/gói/bịch với báo cáo tồn kho. Khi đối chiếu xuất bán, cần chọn cùng kỳ và cùng kho; tổng xuất kho có thể gồm cả xuất tặng hoặc xuất khác. Cần đánh dấu đúng loại phiếu trả hàng trước khi xem báo cáo. Doanh thu ròng chưa VAT theo các dòng phiếu đã lưu.</p>
+        <p class="ii-note" id="ii-definition"></p>
+    </section>
+    <p id="ii-error" class="alert alert-danger" role="alert" hidden></p>
+    <section class="ii-card">
+        <div id="ii-summary" role="status" aria-live="polite">Chọn điều kiện rồi bấm Lọc báo cáo.</div>
+        <small class="ii-drag-hint" id="ii-drag-hint">Giữ chuột trái trên ô rồi kéo sang trái/phải để xem các cột. Giữ Ctrl khi muốn bôi chọn chữ.</small>
+        <div class="ii-table" tabindex="0" role="region" aria-label="Bảng kết quả báo cáo, có thể cuộn ngang" aria-describedby="ii-drag-hint"><table class="table table-bordered"><thead id="ii-head"></thead><tbody id="ii-body"></tbody></table></div>
+        <div class="ii-tools"><button class="btn btn-default" id="ii-prev" type="button" disabled>Trang trước</button><span id="ii-page"></span><button class="btn btn-default" id="ii-next" type="button" disabled>Trang sau</button></div>
+    </section>
+</main>
+<script src="@Url.Content("~/Scripts/InventoryInsights.js?v=20261022-5")"></script>

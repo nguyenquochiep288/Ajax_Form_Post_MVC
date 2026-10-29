@@ -1,4 +1,18 @@
-﻿
+﻿function setBankPickerValue(select, value) {
+    var current = String(value || '').trim();
+    Array.from(select.querySelectorAll('[data-legacy-bank]')).forEach(function (option) { option.remove(); });
+    var match = Array.from(select.options).find(function (option) {
+        return [option.value, option.getAttribute('data-bank-code'), option.getAttribute('data-bank-short-name')].some(function (alias) { return alias !== null && alias.toUpperCase() === current.toUpperCase(); });
+    });
+    if (!match && current) {
+        match = document.createElement('option'); match.value = current; match.textContent = current;
+        match.setAttribute('data-legacy-bank', 'true'); select.appendChild(match);
+    }
+    select.value = match ? match.value : '';
+    if (window.jQuery) window.jQuery(select).trigger('chosen:updated');
+}
+
+
 $(document).ready(function ()
 {
     $("#SearchString").on("keyup", function (event)
@@ -277,6 +291,11 @@ function OnSuccessLoadEdit(apiResponse)
                       
                         if (lst[j].name == apiResponse.Detail[i].Key || lst[j].id == apiResponse.Detail[i].Key || lst[j].name == "MaHinhEdit" || (lst[j].id == "tbodyTempItemdivPromotion_YCEdit" && lst[j].id == apiResponse.Detail[i].Key) || (lst[j].id == "tbodyTempItemdivPromotion_TangEdit" && lst[j].id == apiResponse.Detail[i].Key) || (lst[j].id == "tbodyTempItemComboEdit" && lst[j].id == apiResponse.Detail[i].Key) || (lst[j].id == "tbodyTempItemInputEdit" && lst[j].id == apiResponse.Detail[i].Key))
                         {
+                            // MVC's hidden checkbox fallback must stay false when loading an edit.
+                            if (lst[j].type == "hidden" && (lst[j].name == "ISACTIVE" || lst[j].name == "ISDEFAULT")) {
+                                lst[j].value = "false";
+                                continue;
+                            }
                             if (lst[j].type == "checkbox")
                                 lst[j].checked = apiResponse.Detail[i].Value;
                             else if (lst[j].localName == "tbody")
@@ -301,6 +320,7 @@ function OnSuccessLoadEdit(apiResponse)
                                 $("#" + lst[j].name + "Edit").attr("src", imageUrl);
                             }
                             else if (lst[j].type == "select-one") {
+                                if (lst[j].hasAttribute("data-bank-picker")) { setBankPickerValue(lst[j], apiResponse.Detail[i].Value); continue; }
                                 var select = lst[j];
                                 var option1 = select.options[0];
 
@@ -854,6 +874,7 @@ function OnSuccessLoadCreate(apiResponse)
 
                             }
                             else if (lst[j].type == "select-one") {
+                                if (lst[j].hasAttribute("data-bank-picker")) { setBankPickerValue(lst[j], apiResponse.Detail[i].Value); continue; }
                                 if (apiResponse.NAME != "myModalAdd")
                                 {
                                     if (lst[j].id == "lstdm_Kho" || lst[j].id == "lstdm_NhaCungCap" || lst[j].id == "lstdm_KhachHang")
@@ -1124,6 +1145,7 @@ function OnSuccessCreate(apiResponse)
                 }
             }
         }
+        if (window.CatalogFlags) window.CatalogFlags.saved(apiResponse);
         CloseLoaderCategory();
     }
     catch (ex)
@@ -1238,6 +1260,7 @@ function OnSuccessEdit(apiResponse)
                 }
             }
         }
+        if (window.CatalogFlags) window.CatalogFlags.saved(apiResponse);
         CloseLoaderCategory();
     }
     catch (ex)
@@ -3080,6 +3103,7 @@ function OnSuccessLoadChangeCustomer(apiResponse)
                                 $("#" + lst[j].name + "Edit").attr("src", imageUrl);
                             }
                             else if (lst[j].type == "select-one") {
+                                if (lst[j].hasAttribute("data-bank-picker")) { setBankPickerValue(lst[j], apiResponse.Detail[i].Value); continue; }
                                 var select = lst[j];
                                 var option1 = select.options[0];
 
