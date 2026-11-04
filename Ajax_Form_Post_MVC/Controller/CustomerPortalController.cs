@@ -82,12 +82,13 @@ namespace MVC_QuanLyTHP.Controllers
             if (page < 1 || page > 100000 || (search ?? "").Length > 100) return new HttpStatusCodeResult(400);
             ViewBag.Search = search;
             var result = await Proxy(HttpMethod.Get, "links/" + Uri.EscapeDataString(Utility.LOC_ID)
-                + "?page=" + page + "&search=" + Uri.EscapeDataString(search ?? ""), null, null, true);
+                + "?page=" + page + "&search=" + Uri.EscapeDataString(search ?? ""), null, null, true, issuedList: true);
             var content = result as ContentResult;
             if (content == null)
             {
-                ViewBag.LoadError = Response.StatusCode == 403 ? "Bạn không có quyền xem danh sách link."
-                    : "Chưa tải được danh sách link. Vui lòng thử lại.";
+                var failure = result as JsonResult;
+                ViewBag.LoadError = failure == null ? "Chưa nhận được danh sách link từ API."
+                    : (string)JObject.FromObject(failure.Data)["message"];
                 return View();
             }
             return View(JsonConvert.DeserializeObject<MVC_QuanLyTHP.Models.IssuedPortalLinks>(content.Content));
@@ -137,7 +138,7 @@ namespace MVC_QuanLyTHP.Controllers
             return "links/" + Uri.EscapeDataString(Utility.LOC_ID) + "/" + Uri.EscapeDataString(id ?? "");
         }
 
-        private async Task<ActionResult> Proxy(HttpMethod method, string path, object body, string token, bool staff)
+        private async Task<ActionResult> Proxy(HttpMethod method, string path, object body, string token, bool staff, bool issuedList = false)
         {
             try
             {
@@ -158,6 +159,23 @@ namespace MVC_QuanLyTHP.Controllers
                                 : response.StatusCode == HttpStatusCode.BadRequest ? "Thông tin không hợp lệ. Kiểm tra thời gian (tối đa 3 năm), số tiền hoặc chọn kỳ xuất ngắn hơn (tối đa 50.000 phát sinh)."
                                 : response.StatusCode == HttpStatusCode.Conflict ? "Link vừa được thay đổi. Vui lòng tải lại trang."
                                 : "Chưa thể tải dữ liệu. Vui lòng thử lại sau.";
+                            if (issuedList)
+                            {
+                                if (response.StatusCode == HttpStatusCode.NotFound)
+                                    error = "API không tìm thấy chức năng Link đang cấp (HTTP 404). Kiểm tra phiên bản API và địa chỉ API mà MVC đang dùng.";
+                                else if (response.StatusCode == HttpStatusCode.BadRequest)
+                                    error = "API từ chối điều kiện tìm kiếm (HTTP 400). Vui lòng kiểm tra từ khóa và số trang.";
+                                else if ((int)response.StatusCode >= 500)
+                                {
+                                    error = "API gặp lỗi khi tải danh sách link (HTTP " + (int)response.StatusCode + "). Kiểm tra nhật ký API.";
+                                    if (response.Content.Headers.ContentType?.MediaType == "application/json")
+                                    {
+                                        var details = JObject.Parse(await response.Content.ReadAsStringAsync());
+                                        if (string.Equals((string)details.GetValue("code", StringComparison.OrdinalIgnoreCase), "PORTAL_LINK_SCHEMA_MISSING", StringComparison.Ordinal))
+                                            error = "Cơ sở dữ liệu API thiếu bảng hoặc cột của link khách hàng. Kiểm tra bảng web_CustomerPortalLink và chạy script 20261104_CustomerPortalLastAccess.sql trên đúng cơ sở dữ liệu.";
+                                    }
+                                }
+                            }
                             return Json(new { message = error }, JsonRequestBehavior.AllowGet);
                         }
                         string json = await response.Content.ReadAsStringAsync();
