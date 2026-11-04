@@ -75,6 +75,25 @@ namespace MVC_QuanLyTHP.Controllers
         }
 
         [HttpGet]
+        public async Task<ActionResult> IssuedLinks(int page = 1, string search = null)
+        {
+            if (Utility.KiemTra()) return RedirectToAction("Index", "Admin");
+            if (!CanManage()) return new HttpStatusCodeResult(403);
+            if (page < 1 || page > 100000 || (search ?? "").Length > 100) return new HttpStatusCodeResult(400);
+            ViewBag.Search = search;
+            var result = await Proxy(HttpMethod.Get, "links/" + Uri.EscapeDataString(Utility.LOC_ID)
+                + "?page=" + page + "&search=" + Uri.EscapeDataString(search ?? ""), null, null, true);
+            var content = result as ContentResult;
+            if (content == null)
+            {
+                ViewBag.LoadError = Response.StatusCode == 403 ? "Bạn không có quyền xem danh sách link."
+                    : "Chưa tải được danh sách link. Vui lòng thử lại.";
+                return View();
+            }
+            return View(JsonConvert.DeserializeObject<MVC_QuanLyTHP.Models.IssuedPortalLinks>(content.Content));
+        }
+
+        [HttpGet]
         public ActionResult Manage(string id)
         {
             if (Utility.KiemTra()) return RedirectToAction("Index", "Admin");

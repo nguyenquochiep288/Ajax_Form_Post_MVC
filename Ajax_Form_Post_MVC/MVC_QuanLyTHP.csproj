@@ -1093,6 +1093,8 @@
     <Content Include="Content\customer-portal.css" />
     <Content Include="Views\CustomerPortal\Index.cshtml" />
     <Content Include="Views\CustomerPortal\Manage.cshtml" />
+    <Content Include="Views\CustomerPortal\IssuedLinks.cshtml" />
+    <Compile Include="Models\IssuedPortalLinks.cs" />
     <Compile Include="Controller\CustomerPortalController.cs" />
     <Content Include="App_Data\vietqr-banks.json" />
     <Content Include="Views\BankAccount\_BankPicker.cshtml" />

@@ -1,0 +1,52 @@
+﻿@model MVC_QuanLyTHP.Models.IssuedPortalLinks
+@{
+    Layout = "~/Views/Shared/Admin.cshtml";
+    ViewBag.Title = "Link khách hàng đang cấp";
+}
+@functions {
+    private string DisplayTime(DateTime value)
+    {
+        return DateTime.SpecifyKind(value, DateTimeKind.Utc).AddHours(7).ToString("dd/MM/yyyy HH:mm:ss");
+    }
+}
+<div class="panel panel-default">
+    <div class="panel-heading"><h1 class="panel-title">Link khách hàng đang cấp</h1></div>
+    <div class="panel-body">
+        <form method="get" action="@Url.Action("IssuedLinks")" class="form-inline">
+            <label for="link-search">Mã hoặc tên khách hàng</label>
+            <input class="form-control" type="search" name="search" id="link-search" maxlength="100" value="@ViewBag.Search" />
+            <button class="btn btn-primary" type="submit">Tìm kiếm</button>
+            <a class="btn btn-default" href="@Url.Action("Index", "Customer")">Quay lại danh mục khách hàng</a>
+        </form>
+        @if (ViewBag.LoadError != null)
+        {
+            <p class="text-danger" role="alert">@ViewBag.LoadError</p>
+        }
+        else
+        {
+            <p>@Model.Total link còn hiệu lực · Thời gian Việt Nam (UTC+7)</p>
+            <div class="table-responsive"><table class="table table-striped">
+                <thead><tr><th>Mã khách hàng</th><th>Tên khách hàng</th><th>Ngày cấp</th><th>Hết hạn</th><th>Truy cập gần nhất</th><th>Link tra cứu</th></tr></thead>
+                <tbody>
+                @foreach (var row in Model.Rows)
+                {
+                    <tr><td>@row.Code</td><td>@row.Name</td><td>@DisplayTime(row.CreatedUtc)</td>
+                        <td>@(row.ExpiresUtc.HasValue ? DisplayTime(row.ExpiresUtc.Value) : "Không giới hạn")</td>
+                        <td>@(row.LastAccessUtc.HasValue ? DisplayTime(row.LastAccessUtc.Value) : "Chưa ghi nhận")</td>
+                        <td><a href="@Url.Action("Manage", new { id = row.CustomerId })">Xem / sao chép link</a></td>
+                    </tr>
+                }
+                @if (Model.Total == 0) { <tr><td colspan="6">Không tìm thấy link còn hiệu lực.</td></tr> }
+                </tbody>
+            </table></div>
+            if (Model.Total > Model.PageSize)
+            {
+                <nav aria-label="Phân trang">
+                    @if (Model.Page > 1) { <a class="btn btn-default" href="@Url.Action("IssuedLinks", new { page = Model.Page - 1, search = ViewBag.Search })">Trang trước</a> }
+                    Trang @Model.Page / @((Model.Total - 1) / Model.PageSize + 1)
+                    @if (Model.Page * Model.PageSize < Model.Total) { <a class="btn btn-default" href="@Url.Action("IssuedLinks", new { page = Model.Page + 1, search = ViewBag.Search })">Trang sau</a> }
+                </nav>
+            }
+        }
+    </div>
+</div>

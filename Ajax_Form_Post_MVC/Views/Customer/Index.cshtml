@@ -6,6 +6,7 @@
 @using MVC_QuanLyTHP.Models;
 @{
     ViewBag.Title = API.ViewBagTitle;
+    var canManageLinks = ViewBag.PermissionEdit && Utility.KiemTraQuyen("Deposit", "View") && Utility.KiemTraQuyen("Output", "View") && Utility.KiemTraQuyen("Invoiced", "View") && Utility.KiemTraQuyen("DebtCustomer", "View");
     Layout = "~/Views/Shared/Admin.cshtml";
 }
 @Html.Partial("LoadCssDanhMuc")
@@ -106,6 +107,10 @@
             <div class="form-group">
                 <div class="col-sm-3" style="padding-bottom: 5px;">
                     <button id="download-excel" style="background-color: #217346;" class="btn btn-success" onclick="ExportExcel('example-table')"><i class="fa fa-file-text-o" style="margin-right:10px"></i>@Utility.XuatExcel</button>
+                    @if (canManageLinks)
+                    {
+                        <a class="btn btn-default" href="@Url.Action("IssuedLinks", "CustomerPortal")"><i class="fa fa-link" aria-hidden="true"></i> Link đang cấp</a>
+                    }
                     @if (ViewBag.PermissionCreate)
                     {
                         if (Utility.IntWidth == 1)
@@ -241,7 +246,7 @@
                                                     @Html.ActionLink(Utility.Sua, "Edit", new { id = item.ID }, htmlAttributes: new { @class = "label label-primary" });
                                                 }
                                             }
-                                            @if (ViewBag.PermissionEdit && Utility.KiemTraQuyen("Deposit", "View") && Utility.KiemTraQuyen("Output", "View") && Utility.KiemTraQuyen("Invoiced", "View") && Utility.KiemTraQuyen("DebtCustomer", "View"))
+                                            @if (canManageLinks)
                                             {
                                                 <a class="label label-success" href="@Url.Action("Manage", "CustomerPortal", new { id = item.ID })" title="Link khách hàng" aria-label="Link khách hàng"><i class="fa fa-link" aria-hidden="true"></i></a>
                                                 <button type="button" class="label label-info customer-copy-link" style="border:0" title="Sao chép link khách hàng" aria-label="Sao chép link khách hàng" data-status-url="@Url.Action("Status", "CustomerPortal", new { id = item.ID })" data-portal-base="@Url.Content("~/khach-hang/")"><i class="fa fa-copy" aria-hidden="true"></i></button>
