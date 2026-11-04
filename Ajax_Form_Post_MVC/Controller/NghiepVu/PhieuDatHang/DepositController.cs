@@ -230,6 +230,8 @@ namespace MVC_QuanLyTHP.Controllers
 		[ValidateAntiForgeryToken]
 		public ActionResult CreatePopup([Bind(Include = "LOC_ID,ID,ID_KHO,MAPHIEU,SOPHIEU,NGAYLAP,ID_KHACHHANG,ID_NHANVIEN,GHICHU,TONGTHANHTIEN,CHIETKHAU,TONGTIENGIAMGIA,TONGTIENVAT,TONGTIEN,BUTTONTYPE,ADDRESS,TEL")] v_v_ct_PhieuDatHang ct_PhieuDatHang)
 		{
+			// The persisted API model does not carry the form's submit action.
+			var submittedAction = ct_PhieuDatHang.BUTTONTYPE;
 			ApiResponse apiResponse = new ApiResponse();
 			try
 			{
@@ -357,7 +359,7 @@ namespace MVC_QuanLyTHP.Controllers
 					Value = apiResponse.ProductCombo
 				});
 				apiResponse.Detail = list2;
-				apiResponse.TYPE = ct_PhieuDatHang.BUTTONTYPE;
+				apiResponse.TYPE = submittedAction;
 				return new JsonResult
 				{
 					Data = apiResponse,

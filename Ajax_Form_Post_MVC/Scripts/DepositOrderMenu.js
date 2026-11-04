@@ -193,16 +193,16 @@
         if (data.TYPE === 'Save') {
             saved = true;
             setBusy(false);
-            message('Đã lưu đơn hàng thành công. Về danh sách phiếu đặt hàng để xem đơn vừa tạo.');
+            message('Đã lưu đơn hàng thành công. Đang chuẩn bị đơn hàng mới.');
             // The server clears its cart after saving; prevent editing the submitted cart.
             form.querySelectorAll('input, select, textarea, button').forEach(function (control) { control.disabled = true; });
-            var link = document.createElement('a');
-            link.href = window.location.pathname;
-            link.className = 'btn btn-primary';
-            link.textContent = 'Tạo đơn hàng tiếp theo';
-            el('om-save-status').appendChild(document.createTextNode(' '));
-            el('om-save-status').appendChild(link);
             window.jQuery('.chosen-select').trigger('chosen:updated');
+            window.alert('Đã lưu đơn hàng thành công.');
+            window.location.replace(window.location.pathname);
+            return;
+        }
+        if (data.TYPE !== 'GetPromotion') {
+            message('Chưa xác định được kết quả thao tác. Vui lòng kiểm tra danh sách phiếu đặt hàng trước khi lưu lại.', true);
             return;
         }
         var cart = data.GETPROMOTION != null ? data.GETPROMOTION : data.ProductCombo;

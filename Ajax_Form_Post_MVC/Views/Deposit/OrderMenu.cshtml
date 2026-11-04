@@ -10,7 +10,7 @@
 @Html.Partial("LoadCssDanhMuc")
 <link rel="stylesheet" href="@Url.Content("~/Content/css/deposit-order-menu.css?v=20261021-3")" />
 <script src="@Url.Content("~/Scripts/Deposit_Temp.js?v=20261021-2")"></script>
-<script src="@Url.Content("~/Scripts/DepositOrderMenu.js?v=20261021-3")"></script>
+<script src="@Url.Content("~/Scripts/DepositOrderMenu.js?v=20261102-1")"></script>
 <div class="om-page" id="orderMenuPage" data-product-url="@Url.Action("LoadProduct")" data-products-url="@Url.Action("OrderMenuProducts")" data-customer-url="@Url.Action("CallChangeCustomer")">
     <header class="om-heading">
         <div><h1>ĐẶT HÀNG</h1><p>Chọn sản phẩm, nhập số lượng và xem lại đơn hàng trước khi lưu.</p></div>
@@ -22,7 +22,7 @@
         @Html.HiddenFor(m => m.LOC_ID)
         @Html.HiddenFor(m => m.ID)
         @Html.HiddenFor(m => m.SOPHIEU)
-        @Html.HiddenFor(m => m.NGAYLAP)
+        <input type="hidden" id="NGAYLAP" name="NGAYLAP" value="@Model.NGAYLAP.ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture)" />
         <section class="om-panel" id="collapseOneDeposit">
             <h2>1. Thông tin đơn hàng</h2>
             @Html.ValidationSummary(false, "", new { @class = "text-danger" })
